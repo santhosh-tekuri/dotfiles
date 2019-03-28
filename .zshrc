@@ -23,23 +23,23 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # graphical menu to select completion options. (hit TAB to enable)
 zstyle ':completion:*' menu select
 
-setopt CORRECT # spell check commands
-setopt AUTO_CD # just type `dir` to cd
-setopt HIST_IGNORE_DUPS # don't record duplicares
-setopt HIST_IGNORE_SPACE # don't record commands starting with space
+ # spell check commands
+setopt CORRECT
+
+# just type `dir` to cd
+setopt AUTO_CD
+
+# do not record duplicares
+setopt HIST_IGNORE_DUPS
+
+# do not record commands starting with space
+setopt HIST_IGNORE_SPACE
+
 setopt interactivecomments
 setopt transientrprompt # remove any right prompt from display when accepting a command line
 
+# use emacs keymap for command line editing
 bindkey -e
-
-function precmd(){
-	echo -n -e "\033]7;${PWD}\007"
-}
-
-function preexec(){
-	print -nrP %b%f
-	echo -en "\e[0m"
-}
 
 function ip(){
     if [ "$#" -eq 0 ]; then
@@ -92,32 +92,9 @@ alias -s txt=vi
 #source /Users/santhosh/.rvm/scripts/rvm
 
 alias .git='cd "$(git rev-parse --show-toplevel)"'
-function git_prompt {
-    curr_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null);
-    if [ $? -eq 0 ]; then
-        curr_remote=$(git config branch.$curr_branch.remote);
-        if git config branch.$curr_branch.merge > /dev/null; then
-            curr_merge_branch=$(git config branch.$curr_branch.merge | cut -d / -f 3);
-            ahead=$(git rev-list --left-only --count $curr_branch...$curr_remote/$curr_merge_branch);
-            behind=$(git rev-list --right-only --count $curr_branch...$curr_remote/$curr_merge_branch);
-
-            if [ $ahead -ne 0 ]; then
-                echo -n "+$ahead "
-            fi
-            if [ $behind -ne 0 ]; then
-                echo -n "-$behind "
-            fi
-        fi
-        echo -n $curr_branch
-        #git diff HEAD --quiet &> /dev/null || echo -n " *"
-        echo -n " "
-    fi
-}
-setopt prompt_subst
-PS1="%(?..%F{red})\$(git_prompt)➤ %f %F{yellow}%B"
-RPS1='%K{blue}[%~]%k'
 
 dir=$(dirname `readlink ~/.zshrc`)
+source $dir/bin/ps1.sh
 source $dir/bin/docker.sh
 source $dir/bin/virtualbox.sh
 source $dir/bin/jdk.sh
