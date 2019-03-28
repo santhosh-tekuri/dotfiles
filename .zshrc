@@ -8,7 +8,7 @@ hash -d cognitree="/Backup/projects/cognitree"
 # add custom completion scripts
 fpath=(~/.zsh/completion $fpath)
 
-## Completions
+# enable command completions
 autoload -U compinit
 compinit -D
 
