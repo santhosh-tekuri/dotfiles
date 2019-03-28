@@ -32,5 +32,8 @@ function git_prompt {
 # reevaluate the prompt expression each time a prompt is displayed
 setopt prompt_subst
 
+# remove any right prompt from display when accepting a command line
+setopt transientrprompt 
+
 PS1="%(?..%F{red})\$(git_prompt)➤ %f %F{yellow}%B"
 RPS1='%K{blue}[%~]%k'

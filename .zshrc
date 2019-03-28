@@ -1,8 +1,3 @@
-SAVEHIST=1000
-HISTFILE=~/.zsh_history
-setopt APPEND_HISTORY
-HISTSIZE=1200
-
 export EDITOR=vi
 export CLICOLOR=true
 export LSCOLORS=cxFxCxDxBxegedabagacad # to get colors in ls output
@@ -29,17 +24,12 @@ setopt CORRECT
 # just type `dir` to cd
 setopt AUTO_CD
 
-# do not record duplicares
-setopt HIST_IGNORE_DUPS
-
-# do not record commands starting with space
-setopt HIST_IGNORE_SPACE
-
-setopt interactivecomments
-setopt transientrprompt # remove any right prompt from display when accepting a command line
 
 # use emacs keymap for command line editing
 bindkey -e
+
+# turns on interactive comments; comments begin with a #
+setopt interactivecomments
 
 function ip(){
     if [ "$#" -eq 0 ]; then
@@ -91,10 +81,12 @@ alias -s txt=vi
 #export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 #source /Users/santhosh/.rvm/scripts/rvm
 
+# cd to git repo root directory
 alias .git='cd "$(git rev-parse --show-toplevel)"'
 
 dir=$(dirname `readlink ~/.zshrc`)
 source $dir/bin/ps1.sh
+source $dir/bin/hist.sh
 source $dir/bin/docker.sh
 source $dir/bin/virtualbox.sh
 source $dir/bin/jdk.sh
