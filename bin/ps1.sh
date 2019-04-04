@@ -24,8 +24,11 @@ function git_prompt {
             fi
         fi
         echo -n $curr_branch
-        #git diff HEAD --quiet &> /dev/null || echo -n " *"
-        echo -n " "
+        if [ -z "$(git status --porcelain)" ]; then
+            echo -n " "
+        else
+            echo -n "*"
+        fi
     fi
 }
 
