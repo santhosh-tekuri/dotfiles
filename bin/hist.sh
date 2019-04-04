@@ -15,7 +15,3 @@ setopt HIST_IGNORE_DUPS
 
 # do not record commands starting with space
 setopt HIST_IGNORE_SPACE
-
-# new sessions inherit current history
-setopt SHARE_HISTORY
-
