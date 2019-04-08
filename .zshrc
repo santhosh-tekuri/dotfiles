@@ -91,3 +91,4 @@ source $dir/bin/docker.sh
 source $dir/bin/virtualbox.sh
 source $dir/bin/jdk.sh
 source $dir/bin/go.sh
+source ~/.localrc
