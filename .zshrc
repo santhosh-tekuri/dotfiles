@@ -85,10 +85,10 @@ alias -s txt=vi
 alias .git='cd "$(git rev-parse --show-toplevel)"'
 
 dir=$(dirname `readlink ~/.zshrc`)
+export PATH=$dir/bin:$PATH
+
 source $dir/bin/ps1.sh
 source $dir/bin/hist.sh
 source $dir/bin/docker.sh
-source $dir/bin/virtualbox.sh
 source $dir/bin/jdk.sh
-source $dir/bin/go.sh
 source ~/.localrc

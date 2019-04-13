@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# this script does ssh into virtualbox machine
+# usage: vboxssh <machine-name>
+
+ssh `vboxip $1`

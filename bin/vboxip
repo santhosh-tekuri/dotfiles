@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# this script prints ip of virtualbox machine
+# usage: vboxip <machine-name>
+
+vboxmanage guestproperty get "$1" "/VirtualBox/GuestInfo/Net/0/V4/IP" | awk '{print $2}'
