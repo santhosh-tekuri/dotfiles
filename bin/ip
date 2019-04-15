@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# without argument it prints ip of each interface
+#    $ ip
+#    lo0  127.0.0.1
+#    en1  192.168.0.26
+#
+# you can pass interface name to print its ip
+#    $ ip en1
+#    192.168.0.26
+
+if [ "$#" -eq 0 ]; then
+    {
+    for interface in `ifconfig | grep -o -e '^[a-z0-9]\+'`; do
+        address=`ifconfig $interface | grep 'inet ' | cut -di -f 2 | cut -d ' ' -f2`
+        if [ -n "$address" ]; then
+            echo $interface $address
+        fi
+    done
+    } | column -t
+else
+    ifconfig $1 | grep 'inet ' | cut -di -f 2 | cut -d ' ' -f2
+fi

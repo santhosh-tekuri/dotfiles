@@ -31,21 +31,6 @@ bindkey -e
 # turns on interactive comments; comments begin with a #
 setopt interactivecomments
 
-function ip(){
-    if [ "$#" -eq 0 ]; then
-        {
-        for interface in `ifconfig | grep -o -e '^[a-z0-9]\+'`; do
-            address=`ifconfig $interface | grep 'inet ' | cut -di -f 2 | cut -d ' ' -f2`
-            if [ -n "$address" ]; then
-                echo $interface $address
-            fi
-        done
-        } | column -t
-    else
-        ifconfig $1 | grep 'inet ' | cut -di -f 2 | cut -d ' ' -f2
-    fi        
-}
-
 function hilite(){
     echo -en "\033[31m"  ## red
     eval $* | while read line; do
