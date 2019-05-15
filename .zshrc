@@ -76,4 +76,6 @@ source $dir/bin/ps1.sh
 source $dir/bin/hist.sh
 source $dir/bin/docker.sh
 source $dir/bin/jdk.sh
-source ~/.localrc
+if [ -f ~/.localrc ]; then
+    source ~/.localrc
+fi
