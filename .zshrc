@@ -10,7 +10,7 @@ fpath=(~/.zsh/completion $fpath)
 
 # enable command completions
 autoload -U compinit
-compinit -D
+compinit -u -D
 
 # case-insensitive tab completion for filenames (useful on Mac OS X)
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
