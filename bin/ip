@@ -11,7 +11,7 @@
 
 if [ "$#" -eq 0 ]; then
     {
-    for interface in `ifconfig | grep -o -e '^[a-z0-9]\+'`; do
+    for interface in `ifconfig | grep -o -e '^[a-z0-9.]\+'`; do
         address=`ifconfig $interface | grep 'inet ' | cut -di -f 2 | cut -d ' ' -f2`
         if [ -n "$address" ]; then
             echo $interface $address
