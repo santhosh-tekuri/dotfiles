@@ -28,6 +28,11 @@ setopt AUTO_CD
 # use emacs keymap for command line editing
 bindkey -e
 
+# open command in $EDITOR using ctrl+x ctrl+e
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey "^X^E" edit-command-line
+
 # turns on interactive comments; comments begin with a #
 setopt interactivecomments
 
