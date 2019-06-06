@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# author: santhosh kumar tekuri <santhosh.tekuri@gmail.com>
+#
+# this script rotates stdin into logfiles
+# example:
+#    $ rotate-logs app.log 10 3
+# this rotates after 10MB and keeps 3 log files
+
+if [ $# -ne 3 ]; then
+    echo "usage: rotate-logs <logfile> <maxsize-in-mb> <numfiles>"
+    exit 1
+fi
+logfile=$1
+maxsize=`expr 1024 \* 1024 \* $2`
+numfiles=$3
+
+touch $logfile
+exec >> $logfile
+size=`stat -f %z $logfile`
+while read; do
+    echo $REPLY
+    size=`expr $size + ${#REPLY}`
+    if [ $size -ge $maxsize ]; then
+        # rotating log file
+        for ((i=$numfiles-1;i>=1;i--)); do
+            f1=${logfile}.$i
+            f2=${logfile}.$((i+1))
+            if test -f $f1; then
+                mv $f1 $f2
+            fi
+        done
+        size=0
+        mv $logfile $logfile.1
+        touch $logfile
+        exec >> $logfile
+    fi
+done 
+

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# author: santhosh kumar tekuri <santhosh.tekuri@gmail.com>
+#
+# saves stdin to logfile and reopens logfile on SIGHUP
+# example:
+#     $ save-log log.pid app.log
+# to rotate:
+#     $ mv app.log app.log.1
+#     $ kill -SIGHUP `cat log.pid`
+ 
+if [ $# -ne 2 ]; then
+    echo "usage: save-log <pidfile> <logfile>"
+    exit 1
+fi
+pidfile=$1
+logfile=$2
+
+trap sighandler HUP
+function sighandler () {
+    exec 1> $logfile
+}
+
+echo $$ > $pidfile
+exec 1> $logfile
+
+while read; do
+    echo $REPLY
+done 
+
