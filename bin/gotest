@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# author: santhosh kumar tekuri <santhosh.tekuri@gmail.com>
+#
 # this script adds colors to "go test"
 
 set -o pipefail
