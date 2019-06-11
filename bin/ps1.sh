@@ -1,12 +1,3 @@
-function precmd(){
-	echo -n -e "\033]7;${PWD}\007"
-}
-
-function preexec(){
-	print -nrP %b%f
-	echo -en "\e[0m"
-}
-
 function git_prompt {
     curr_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null);
     if [ $? -eq 0 ]; then
@@ -38,5 +29,6 @@ setopt prompt_subst
 # remove any right prompt from display when accepting a command line
 setopt transientrprompt 
 
-PS1="%(?..%F{red})\$(git_prompt)➤ %f %F{yellow}%B"
+PS1="%(?..%F{red})\$(git_prompt)➤ %f "
 RPS1='%K{blue}[%~]%k'
+zle_highlight=(default:fg=yellow,bold)
