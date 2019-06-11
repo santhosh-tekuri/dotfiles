@@ -77,6 +77,11 @@ alias .git='cd "$(git rev-parse --show-toplevel)"'
 dir=$(dirname `readlink ~/.zshrc`)
 export PATH=$dir/bin:$PATH
 
+if [ ! -d $dir/zsh-autosuggestions ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git $dir/zsh-autosuggestions
+fi
+source $dir/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 source $dir/bin/ps1.sh
 source $dir/bin/hist.sh
 source $dir/bin/docker.sh
