@@ -64,6 +64,8 @@ alias ll="ls -alh"
 alias grep="grep --color"
 alias myip="ipconfig getifaddr en0"
 alias mvn="mvn -Dhttps.protocols=TLSv1.2"
+alias encrypt="openssl enc -aes-256-cbc -salt -in"
+alias decrypt="openssl enc -aes-256-cbc -d -in"
 
 # suffix aliases - "Open With..."
 alias -s txt=vi
@@ -81,6 +83,10 @@ if [ ! -d $dir/zsh-autosuggestions ]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions.git $dir/zsh-autosuggestions
 fi
 source $dir/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+if command -v kubectl >/dev/null 2>&1; then
+    source <(kubectl completion zsh)
+fi
 
 source $dir/bin/ps1.sh
 source $dir/bin/hist.sh
