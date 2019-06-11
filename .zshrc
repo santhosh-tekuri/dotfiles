@@ -64,8 +64,8 @@ alias ll="ls -alh"
 alias grep="grep --color"
 alias myip="ipconfig getifaddr en0"
 alias mvn="mvn -Dhttps.protocols=TLSv1.2"
-alias encrypt="openssl enc -aes-256-cbc -salt"
-alias decrypt="openssl enc -aes-256-cbc -d"
+alias encrypt="openssl enc -aes-256-cbc -salt -in"
+alias decrypt="openssl enc -aes-256-cbc -d -in"
 
 # suffix aliases - "Open With..."
 alias -s txt=vi
