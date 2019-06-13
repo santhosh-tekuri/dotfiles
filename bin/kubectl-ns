@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# if no arguments is passed, lists namespaces and prefixes current namespace with "*"
+# if argument is passed, it changes current namespace
+
+if [ $# -ne 0 ]; then
+    kubectl config set-context $(kubectl config current-context) --namespace=$1
+else
+    cur=$(kubectl config view --minify --output 'jsonpath={..namespace}')
+    for ns in $(kubectl get ns -o 'jsonpath={..name}'); do
+        if [ "$ns" = "$cur" ]; then
+            echo "* $ns"
+        else
+            echo "  $ns"
+        fi
+    done
+fi
