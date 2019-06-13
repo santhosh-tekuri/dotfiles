@@ -28,6 +28,9 @@ setopt AUTO_CD
 # use emacs keymap for command line editing
 bindkey -e
 
+# ctrl-u -> kill before cursor
+bindkey \^U backward-kill-line
+
 # open command in $EDITOR using ctrl+x ctrl+e
 autoload -z edit-command-line
 zle -N edit-command-line
@@ -64,8 +67,8 @@ alias ll="ls -alh"
 alias grep="grep --color"
 alias myip="ipconfig getifaddr en0"
 alias mvn="mvn -Dhttps.protocols=TLSv1.2"
-alias encrypt="openssl enc -aes-256-cbc -salt -in"
-alias decrypt="openssl enc -aes-256-cbc -d -in"
+alias encrypt="openssl enc -aes-256-cbc -salt"
+alias decrypt="openssl enc -aes-256-cbc -d"
 
 # suffix aliases - "Open With..."
 alias -s txt=vi
