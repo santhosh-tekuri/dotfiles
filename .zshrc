@@ -18,7 +18,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # graphical menu to select completion options. (hit TAB to enable)
 zstyle ':completion:*' menu select
 
- # spell check commands
+# spell check commands
 setopt CORRECT
 
 # just type `dir` to cd
