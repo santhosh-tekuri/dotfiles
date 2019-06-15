@@ -82,6 +82,11 @@ alias .git='cd "$(git rev-parse --show-toplevel)"'
 dir=$(dirname `readlink ~/.zshrc`)
 export PATH=$dir/bin:$PATH
 
+if [ ! -d $dir/fast-syntax-highlighting ]; then
+    git clone https://github.com/zdharma/fast-syntax-highlighting.git $dir/fast-syntax-highlighting
+fi
+source $dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+
 if [ ! -d $dir/zsh-autosuggestions ]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions.git $dir/zsh-autosuggestions
 fi
