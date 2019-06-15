@@ -92,6 +92,13 @@ if [ ! -d $dir/zsh-autosuggestions ]; then
 fi
 source $dir/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+if [ ! -d $dir/zsh-history-substring-search ]; then
+    git clone https://github.com/zsh-users/zsh-history-substring-search.git $dir/zsh-history-substring-search
+fi
+source $dir/zsh-history-substring-search/zsh-history-substring-search.zsh
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
 if command -v kubectl >/dev/null 2>&1; then
     source <(kubectl completion zsh)
 fi

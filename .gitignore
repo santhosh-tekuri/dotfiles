@@ -1,3 +1,4 @@
 .DS_Store
 zsh-autosuggestions
 fast-syntax-highlighting
+zsh-history-substring-search
