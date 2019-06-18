@@ -83,6 +83,9 @@ dir=$(dirname `readlink ~/.zshrc`)
 export PATH=$dir/bin:$PATH
 export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 
+# to get mouse scrolling work for git-log, man
+export LESS=-R
+
 if [ ! -d $dir/fast-syntax-highlighting ]; then
     git clone https://github.com/zdharma/fast-syntax-highlighting.git $dir/fast-syntax-highlighting
 fi
