@@ -1,5 +1,4 @@
 ln -s `pwd`/.zshrc ~/.zshrc
-ln -s `pwd`/.zshenv ~/.zshenv
 ln -s `pwd`/.vimrc ~/.vimrc
 ln -s `pwd`/.inputrc ~/.inputrc
 ln -s `pwd`/.screenrc ~/.screenrc
