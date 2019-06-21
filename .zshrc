@@ -87,7 +87,19 @@ if command -v kubectl >/dev/null 2>&1; then
     source <(kubectl completion zsh)
 fi
 
-source $dir/bin/ps1.sh
+function setup_ps1() {
+    # reevaluate the prompt expression each time a prompt is displayed
+    setopt prompt_subst
+
+    # remove any right prompt from display when accepting a command line
+    setopt transientrprompt
+
+    PS1="%(?..%F{red})\$(git-ps1)➤ %f "
+    RPS1='%K{blue}[%~]%k'
+    zle_highlight=(default:fg=yellow,bold)
+}
+setup_ps1
+
 source $dir/bin/hist.sh
 source $dir/bin/docker.sh
 source $dir/bin/jdk.sh
