@@ -2,10 +2,9 @@ dir=$(dirname `readlink ~/.zshrc`)
 
 source $dir/.shrc
 
-function ps1() {
+function ps1_color() {
     if [ $? -ne 0 ]; then
         echo -n -e "\033[31m"
     fi
-    echo -n -e "$(git-ps1)➤ \033[0m"
 }
-PS1='$(ps1) '
+PS1='$(ps1_color)\w $(git-ps1) ➤ \033[0m '
