@@ -1,0 +1,23 @@
+export EDITOR=vi
+export CLICOLOR=true
+export LSCOLORS=cxFxCxDxBxegedabagacad # to get colors in ls output
+
+export GOPATH=~/go
+export PATH=/usr/local/sbin:$GOPATH/bin:$PATH
+
+alias cls=clear
+alias ll="ls -alh"
+alias grep="grep --color"
+alias myip="ipconfig getifaddr en0"
+alias mvn="mvn -Dhttps.protocols=TLSv1.2"
+alias encrypt="openssl enc -aes-256-cbc -salt"
+alias decrypt="openssl enc -aes-256-cbc -d"
+
+# cd to git repo root directory
+alias .git='cd "$(git rev-parse --show-toplevel)"'
+
+export PATH=$dir/bin:$PATH
+export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+
+# to get mouse scrolling work for git-log, man
+export LESS=-R

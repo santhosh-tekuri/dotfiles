@@ -1,6 +1,6 @@
-export EDITOR=vi
-export CLICOLOR=true
-export LSCOLORS=cxFxCxDxBxegedabagacad # to get colors in ls output
+dir=$(dirname `readlink ~/.zshrc`)
+
+source $dir/.shrc
 
 hash -d personal="/Backup/projects/personal"
 hash -d cognitree="/Backup/projects/cognitree"
@@ -51,9 +51,6 @@ function hilite(){
     return $exit_code
 }
 
-export GOPATH=~/go
-export PATH=/usr/local/sbin:~/.scripts:$GOPATH/bin:$PATH
-
 function color(){
     awk '
       /WARN/ {print "\033[35m" $0 "\033[39m"; system(""); next}
@@ -62,29 +59,12 @@ function color(){
       1; system("")
     '
 }
-alias cls=clear
-alias ll="ls -alh"
-alias grep="grep --color"
-alias myip="ipconfig getifaddr en0"
-alias mvn="mvn -Dhttps.protocols=TLSv1.2"
-alias encrypt="openssl enc -aes-256-cbc -salt"
-alias decrypt="openssl enc -aes-256-cbc -d"
 
 # suffix aliases - "Open With..."
 alias -s txt=vi
 
 #export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 #source /Users/santhosh/.rvm/scripts/rvm
-
-# cd to git repo root directory
-alias .git='cd "$(git rev-parse --show-toplevel)"'
-
-dir=$(dirname `readlink ~/.zshrc`)
-export PATH=$dir/bin:$PATH
-export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
-
-# to get mouse scrolling work for git-log, man
-export LESS=-R
 
 if [ ! -d $dir/fast-syntax-highlighting ]; then
     git clone https://github.com/zdharma/fast-syntax-highlighting.git $dir/fast-syntax-highlighting
