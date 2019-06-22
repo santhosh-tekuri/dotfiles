@@ -7,7 +7,6 @@ export PATH=/usr/local/sbin:$GOPATH/bin:$PATH
 
 alias cls=clear
 alias ll="ls -alh"
-alias grep="grep --color"
 alias myip="ipconfig getifaddr en0"
 alias mvn="mvn -Dhttps.protocols=TLSv1.2"
 alias encrypt="openssl enc -aes-256-cbc -salt"
@@ -21,3 +20,7 @@ export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 
 # to get mouse scrolling work for git-log, man
 export LESS=-R
+
+# make grep highlight results using color
+export GREP_OPTIONS='--color=auto'
+
