@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # without argument it prints ip of each interface
 #    $ ip

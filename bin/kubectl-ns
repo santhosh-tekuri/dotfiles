@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # if no arguments is passed, lists namespaces and prefixes current namespace with "*"
 # if argument is passed, it changes current namespace
