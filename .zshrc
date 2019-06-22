@@ -122,7 +122,6 @@ function setup_history() {
 setup_history
 
 source $dir/bin/docker.sh
-source $dir/bin/jdk.sh
 if [ -f ~/.localrc ]; then
     source ~/.localrc
 fi
