@@ -15,3 +15,7 @@ if [ "$(uname -s)" == "Darwin" ]; then
     export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
     [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 fi
+
+if command -v kubectl >/dev/null 2>&1; then
+    source <(kubectl completion bash)
+fi
