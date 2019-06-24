@@ -1,5 +1,5 @@
 ln -s `pwd`/.zshrc ~
-ln -s `pwd`/.vimrc ~
+echo source `pwd`/.vimrc >> ~/.vimrc
 ln -s `pwd`/.inputrc ~
 ln -s `pwd`/.screenrc ~
 ln -s `pwd`/.tmux.conf ~
