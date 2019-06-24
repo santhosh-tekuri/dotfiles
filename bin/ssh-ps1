@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+if [ -n "$SSH_CLIENT" ]; then
+    echo -n "${USER}@$(hostname) "
+fi
