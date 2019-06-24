@@ -7,7 +7,7 @@ function exit_color() {
         echo -n -e "\033[31m"
     fi
 }
-PS1='$(exit_color)$(ssh-ps1)\w $(git-ps1) ➤ \033[0m '
+PS1='$(exit_color)$(ssh-ps1)\w $(git-ps1)➤ \033[0m '
 
 # bash completion
 test -f /usr/share/bash-completion/bash_completion && source /usr/share/bash-completion/bash_completion
