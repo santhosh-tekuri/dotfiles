@@ -1,4 +1,4 @@
-ln -s `pwd`/.zshrc ~
+echo source `pwd`/.zshrc >> ~/.zshrc
 echo source `pwd`/.vimrc >> ~/.vimrc
 ln -s `pwd`/.inputrc ~
 ln -s `pwd`/.screenrc ~

@@ -1,4 +1,4 @@
-dir=$(dirname `readlink ~/.zshrc`)
+dir=$(cd $(dirname $0) && pwd)
 
 source $dir/.shrc
 
