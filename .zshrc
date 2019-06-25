@@ -122,6 +122,3 @@ function setup_history() {
 setup_history
 
 source $dir/bin/docker.sh
-if [ -f ~/.localrc ]; then
-    source ~/.localrc
-fi
