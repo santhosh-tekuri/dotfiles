@@ -18,6 +18,18 @@ fi
 
 export HISTCONTROL=erasedups:ignorespace
 
+# append current session history to .bash_history, rather than overwriting it
+shopt -s histappend
+
+# number of commands stored in memory history for current session
+HISTSIZE=1000000
+
+# number of commands allowed at startup & stored in history file
+HISTFILESIZE=1000000
+
+# record command in .bash_history immediately, to avoid losing history if you crash
+PROMPT_COMMAND='history -a'
+
 if command -v kubectl >/dev/null 2>&1; then
     source <(kubectl completion bash)
 fi
