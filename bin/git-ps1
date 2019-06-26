@@ -19,6 +19,6 @@ if [ $? -eq 0 ]; then
     if [ -z "$(git status --porcelain)" ]; then
         echo -n " "
     else
-        echo -n "*"
+        echo -n "* "
     fi
 fi
