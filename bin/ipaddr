@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 # without argument it prints ip of each interface
-#    $ ip
+#    $ ipaddr
 #    lo0  127.0.0.1
 #    en1  192.168.0.26
 #
 # you can pass interface name to print its ip
-#    $ ip en1
+#    $ ipaddr en1
 #    192.168.0.26
 
 if [ "$#" -eq 0 ]; then
