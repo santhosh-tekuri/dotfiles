@@ -1,4 +1,4 @@
-dir=$(cd $(dirname $0) && pwd)
+dir=$(cd $(dirname $BASH_SOURCE) && pwd)
 
 source $dir/.shrc
 
