@@ -16,6 +16,8 @@ if [ "$(uname -s)" == "Darwin" ]; then
     [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 fi
 
+export HISTCONTROL=erasedups:ignorespace
+
 if command -v kubectl >/dev/null 2>&1; then
     source <(kubectl completion bash)
 fi
