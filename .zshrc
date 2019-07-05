@@ -51,15 +51,6 @@ function hilite(){
     return $exit_code
 }
 
-function color(){
-    awk '
-      /WARN/ {print "\033[35m" $0 "\033[39m"; system(""); next}
-      /SEVERE/ {print "\033[31m" $0 "\033[39m"; system(""); next}
-      /ERROR/ {print "\033[31m" $0 "\033[39m"; system(""); next}
-      1; system("")
-    '
-}
-
 # suffix aliases - "Open With..."
 alias -s txt=vi
 
