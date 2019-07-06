@@ -9,7 +9,6 @@
 # 00:00:01 | 64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.080 ms
 # 00:00:02 | 64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.064 ms
 
-SECONDS=0
 while read; do
     sec=$SECONDS
     min=$(expr $sec / 60)
