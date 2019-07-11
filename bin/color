@@ -2,7 +2,7 @@
 
 # author: Santhosh Kumar Tekuri
 #
-# this script colors stdin based on pattern match
+# this script colors stdin based on extended-regex-pattern match
 # usage: 
 #      color [<pattern> <color>]*
 # example: 
@@ -26,7 +26,7 @@ white=37
 while read; do
     color=none
     for i in `seq 1 2 $#`; do
-        if echo $REPLY | grep "${!i}" > /dev/null; then
+        if echo $REPLY | grep -E "${!i}" > /dev/null; then
             j=`expr $i + 1`
             color=${!j}
             break
