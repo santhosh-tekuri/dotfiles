@@ -112,4 +112,14 @@ function setup_history() {
 }
 setup_history
 
+#######################[ alias expansion ]##########################
+function expand-alias() {
+	zle _expand_alias
+	zle self-insert
+}
+zle -N expand-alias
+bindkey -M main ' ' expand-alias
+bindkey '^ '   magic-space          # control-space to bypass completion
+bindkey -M isearch " "  magic-space # normal space during searches
+
 source $dir/bin/docker.sh
