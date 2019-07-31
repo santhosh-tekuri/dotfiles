@@ -86,7 +86,7 @@ function setup_ps1() {
     setopt transientrprompt
 
     PS1="%(?..%F{red})\$(ssh-ps1)\$(git-ps1)❯%f "
-    RPS1='%K{blue}[%~]%k'
+    RPS1='%K{blue}%F{white}[%~]%f%k'
     zle_highlight=(default:fg=yellow,bold)
 }
 setup_ps1
