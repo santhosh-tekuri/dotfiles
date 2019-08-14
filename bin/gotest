@@ -15,5 +15,7 @@ do
     elif echo ${line} | grep -q -e "^\s*--- FAIL: "; then
         prefix="\033[91m";suffix="\033[0m"
     fi
-    echo -e "$prefix$line$suffix"
+    echo -en "$prefix"
+    echo -n "$line"
+    echo -e "$suffix"
 done
