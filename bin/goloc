@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# author: santhosh kumar tekuri <santhosh.tekuri@gmail.com>
+#
+# this script gives lines of source code and test code of go project
+#
+# should be run in go project dir
+
+set -e
+
+if ! command -v cloc > /dev/null; then
+    echo cloc command not found. please install cloc
+    exit 1
+fi
+
+echo
+echo '*************** [source files] **************************'
+echo
+cloc --match-f=.go --not-match-f=_test.go .
+
+echo
+echo '*************** [test files] **************************'
+echo
+
+cloc . --match-f=_test.go
