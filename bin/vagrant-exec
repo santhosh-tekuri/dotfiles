@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# author: Santhosh Kumar Tekuri
+# this script runs given command on all vagrant machines
+#
+#   vagrant-exec ifconfig
+
+set -e
+
+declare -a machines
+while IFS="," read timestamp target type data; do
+    if [ "$type" = "state" ]; then
+        machines+=("$target")
+    fi
+done < <(vagrant status --machine-readable)
+
+for machine in "${machines[@]}"; do
+    vagrant ssh "$machine" -- $* 2>&1 | prefix "[$machine] " 
+    echo
+done
