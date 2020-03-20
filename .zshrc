@@ -1,4 +1,4 @@
-dir=$(cd $(dirname $0) && pwd)
+dir=~/dotfiles
 
 source $dir/.shrc
 
