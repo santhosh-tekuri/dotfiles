@@ -73,3 +73,15 @@ let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_operators = 1
 inoremap <C-@> <C-x><C-o>
+
+if $VIM_PRIVATE
+    set history=0
+    set nobackup
+    set nomodeline
+    set noshelltemp
+    set noswapfile
+    set noundofile
+    set nowritebackup
+    set secure
+    set viminfo=""
+endif
