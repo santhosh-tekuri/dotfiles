@@ -1,3 +1,4 @@
 startup_message off
 caption always "%{= kw}%-w%{= gW} %n %t %{-}%+w"
+unsetenv PROMPT_COMMAND
 
