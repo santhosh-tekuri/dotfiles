@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -e
+if [ $# = 0 ]; then
+    echo usage: kubectl logz SELECTOR OPTIONS
+    echo
+    echo examples:
+    echo "    kubectl logz app=nginx -f"
+    echo "    kubectl logz app=nginx --tail=20"
+    echo "    kubectl logz app=nginx --since=1h"
+    exit 1
+fi
+selector=$1
+shift
+
+i=0
+new_window() {
+    if [ $i = 0 ]; then
+        tmux rename-window -t $session:0 $1
+    else
+        tmux new-window -t $session -n $1
+    fi
+    i=$((i+1))
+}
+
+pods=$(kubectl get pods -l $selector -o 'jsonpath={.items[*].metadata.name}' | tr ' ' '\n' | sort)
+session=logz-$$
+tmux new-session -d -s $session
+trap "tmux kill-session -t $session" EXIT
+i=0
+for pod in $pods; do
+    read -a containers <<<"$(kubectl get pods $pod -o 'jsonpath={.spec.containers[*].name}')"
+    if [ ${#containers[@]} = 1 ]; then
+        new_window $pod
+        tmux send-keys -t $session "kubectl logs $@ $pod" Enter
+    else
+        for container in ${containers[@]}; do
+            new_window $pod/$container
+            tmux send-keys -t $session "kubectl logs $@ $pod -c $container" Enter
+        done
+    fi
+    i=$((i+1))
+done
+tmux select-window -t $session:0
+tmux attach-session -t $session
