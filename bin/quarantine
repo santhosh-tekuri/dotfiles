@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# author: Santhosh Kumar Tekuri
+#
+# this script quanrantines files/folders. thus prevent Gatekeeper checks
+#
+# usage:
+#      quarantine file*
+# example:
+#      quarantine ~/Downloads/google-cloud*.tar.gz
+
+xattr -d -r com.apple.quarantine $*
