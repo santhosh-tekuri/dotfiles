@@ -44,3 +44,8 @@ fi
 if /usr/libexec/java_home -v 1.8 >/dev/null 2>&1; then
     export JAVA8_HOME=`/usr/libexec/java_home -v 1.8`
 fi
+
+# if screen session, unset PROMT_COMMAND
+if [ -n "$STY" ]; then
+    unset PROMPT_COMMAND
+fi
