@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ "$#" -ne 1 ]; then
+   echo 'usage: show-cert HOST:PORT' 1>&2
+   exit 1
+fi
+echo -n | openssl s_client -showcerts -connect $1 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
