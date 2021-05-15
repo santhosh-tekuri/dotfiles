@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [ "$#" -ne 1 ]; then
+    >&2 echo "usage: ipv6 off/automatic"
+    >&2 echo "configures ipv6 on Wi-Fi"
+    exit 1
+fi
+
+networksetup -setv6$1 Wi-Fi
