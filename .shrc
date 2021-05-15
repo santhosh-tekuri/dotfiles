@@ -21,6 +21,12 @@ alias ssh-gen="ssh-keygen -t rsa -b 4096 -C"
 alias encrypt="openssl enc -aes-256-cbc -salt"
 alias decrypt="openssl enc -aes-256-cbc -d"
 
+alias get='curl -XGET'
+alias post='curl -XPOST'
+alias put='curl -XPUT'
+alias delete='curl -XDELETE'
+
+
 # cd to git repo root directory
 alias .git='cd "$(git rev-parse --show-toplevel)"'
 
