@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 if [ "$#" -ne 1 ]; then
-   echo 'usage: show-cert HOST:PORT' 1>&2
-   exit 1
+    echo 'usage: show-certs HOST:PORT' 1>&2
+    exit 1
 fi
+if ! echo "$1" | grep -qE '^.+:[0-9]+$'; then
+    echo 'usage: show-certsHOST:PORT' 1>&2
+    exit 1
+fi
+
 echo -n | openssl s_client -showcerts -connect $1 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
