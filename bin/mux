@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# author Santhosh Kumar Tekuri
+# 
+# launches tmux/screen with windows
+# 
+# $cat test.mux
+# -- tab0
+# ifconfig
+# ping google.com
+# -- tab1
+# cal
+# ping yahoo.com
+#
+# $ mux test.mux
+
+set -e
+
+if [ -x "$(command -v tmux)" ]; then
+    mux=tmux
+elif [ -x "$(command -v screen)" ]; then
+    mux=screen
+else
+    echo neither tmux nor screen found >&2
+fi
+
+session=mux-$$
+
+function new_session() {
+    if [ $mux == screen ]; then
+        screen -AdmS $session
+    else
+        tmux new-session -d -s $session
+    fi
+}
+
+i=-1
+function new_window() {
+    i=$((i+1))
+    if [ $i = 0 ]; then
+        if [ $mux == screen ]; then
+            screen -S $session -p $i -X title $1
+        else
+            tmux rename-window -t $session:0 $1
+        fi
+    else
+        if [ $mux == screen ]; then
+            screen -S $session -X screen -t $1
+        else
+            tmux new-window -t $session -n $1
+        fi
+    fi
+}
+
+function execute() {
+    if [ $mux == screen ]; then
+        screen -S $session -p $i -X stuff "$*"
+    else
+        tmux send-keys -t $session "$*" Enter
+    fi
+}
+
+function show() {
+    if [ $mux == screen ]; then
+        screen -r $session -p 0
+    else
+        tmux select-window -t $session:0
+        tmux attach-session -t $session
+    fi
+}
+
+new_session
+while read; do
+    if [ "${REPLY:0:3}" == '-- ' ]; then
+        new_window ${REPLY:3}
+    else
+        execute $REPLY
+    fi
+done < $1
+show
