@@ -33,6 +33,8 @@ set tabstop=4     " number of spaces used to display tab character
 set smarttab      " tab and backspace are smart
 
 "----------------------------------------[ Go Indentation ]--------------------------------------------------"
+
+autocmd BufNewFile,BufRead *.go set filetype=go
 au FileType go set noexpandtab
 au FileType go set shiftwidth=4
 au FileType go set softtabstop=4
