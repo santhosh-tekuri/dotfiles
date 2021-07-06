@@ -3,6 +3,8 @@
 # author Santhosh Kumar Tekuri
 # 
 # launches tmux/screen with windows
+#
+# usage: mux <mux-file> [session-name]
 # 
 # $cat test.mux
 # -- tab0
@@ -12,19 +14,30 @@
 # cal
 # ping yahoo.com
 #
-# $ mux test.mux
+# $ mux test.mux santhosh
 
 set -e
+
+if [ $# = 0 ]; then
+    >&2 echo 'usage: mux <mux-file> [session-name]'
+    exit 1
+fi
+if [ ! -f "$1" ]; then
+    >&2 echo "no such file: $1"
+    exit 1
+fi
+mux_file=$1
+session=${2:-mux-$$}
 
 if [ -x "$(command -v tmux)" ]; then
     mux=tmux
 elif [ -x "$(command -v screen)" ]; then
     mux=screen
 else
-    echo neither tmux nor screen found >&2
+    >&2 echo neither tmux nor screen found
+    exit 1
 fi
 
-session=mux-$$
 
 function new_session() {
     if [ $mux == screen ]; then
