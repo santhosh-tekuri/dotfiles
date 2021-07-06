@@ -2,21 +2,25 @@
 
 # author: santhosh kumar tekuri <santhosh.tekuri@gmail.com>
 #
-# saves stdin to logfile and reopens logfile on SIGHUP
+# saves stdin to logfile and reopens logfile on SIGNAL
+#
+# usage:
+#     save-log <pidfile> <logfile> <signal>
 # example:
-#     $ save-log log.pid app.log
+#     $ some-cmd 2>&1 | save-log log.pid app.log SIGUSR1
 # to rotate:
 #     $ mv app.log app.log.1
-#     $ kill -SIGHUP `cat log.pid`
+#     $ kill -SIGUSR1 `cat log.pid`
  
-if [ $# -ne 2 ]; then
-    echo "usage: save-log <pidfile> <logfile>"
+if [ $# -ne 3 ]; then
+    echo "usage: save-log <pidfile> <logfile> <signal>"
     exit 1
 fi
 pidfile=$1
 logfile=$2
+signal=$3
 
-trap sighandler HUP
+trap sighandler $signal
 function sighandler () {
     exec 1> $logfile
 }
