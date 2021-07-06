@@ -3,8 +3,11 @@
 # author: santhosh kumar tekuri <santhosh.tekuri@gmail.com>
 #
 # this script rotates stdin into logfiles
+#
+# usage:
+#    rotate-logs <logfile> <maxsize-in-mb> <numfiles>
 # example:
-#    $ rotate-logs app.log 10 3
+#    $ some-cmd 2>&1 | rotate-logs app.log 10 3
 # this rotates after 10MB and keeps 3 log files
 
 if [ $# -ne 3 ]; then
