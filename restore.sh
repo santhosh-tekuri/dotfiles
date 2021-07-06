@@ -7,4 +7,4 @@ ln -s `pwd`/.gitconfig ~
 echo source `pwd`/.bashrc >> ~/.bashrc
 
 mkdir -p ~/.ssh
-ln -s `pwd`/.ssh/config ~/.ssh/config
+echo Include `pwd`/.ssh/config >> ~/.ssh/config
