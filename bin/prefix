@@ -14,6 +14,12 @@
 # 0 64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.043 ms
 # 1 64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.132 ms
 # 2 64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.134 ms
+#
+# ping localhost | prefix '$(date) \|'
+# Tue Jul 6 22:32:47 IST 2021 | PING localhost (127.0.0.1): 56 data bytes
+# Tue Jul 6 22:32:47 IST 2021 | 64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.143 ms
+# Tue Jul 6 22:32:48 IST 2021 | 64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.201 ms
+# Tue Jul 6 22:32:49 IST 2021 | 64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.173 ms
 
 while read; do
     echo `eval echo $*` $REPLY
