@@ -23,7 +23,9 @@ alias decrypt="openssl enc -aes-256-cbc -d"
 
 alias get='curl -XGET'
 alias post='curl -XPOST'
+alias postj='curl -XPOST -H "Content-Type: application/json"'
 alias put='curl -XPUT'
+alias putj='curl -XPUT -H "Content-Type: application/json"'
 alias delete='curl -XDELETE'
 
 
