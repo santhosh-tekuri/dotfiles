@@ -73,13 +73,6 @@ endif
 noremap <c-s-up> :m -2<CR>
 noremap <c-s-down> :m +1<CR>
 
-let g:go_fmt_command = "goimports"
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_operators = 1
-inoremap <C-@> <C-x><C-o>
 
 if $VIM_PRIVATE
     set history=0
