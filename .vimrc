@@ -47,6 +47,11 @@ set incsearch    " search for text as you type
 set ignorecase   " ignore case when searching
 set smartcase    " if ignorecase is on, a search is case-insensitive if the search string is in lowercase
 
+"---------------------------------------[ Highlight Trailing Whitespace ]---------------------------------------------"
+
+highlight TrailingSpaces ctermbg=red guibg=red
+match TrailingSpaces /\s\+$/
+
 "---------------------------------------[ Current Line Highlighting ]-------------------------------------------"
 
 set cursorline   " highlight current line
