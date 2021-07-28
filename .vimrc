@@ -12,6 +12,12 @@ hi PmenuSel ctermfg=White ctermbg=DarkBlue
 
 hi LineNr ctermfg=8
 
+"----------------------------------[ forgive uninteded caps ]--------------"
+"
+command! Q :q
+command! W :q
+command! WQ :wq
+
 "----------------------------------------[ UI ]--------------------------------------------------"
 syntax on
 set bg=dark
