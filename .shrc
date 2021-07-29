@@ -23,7 +23,7 @@ alias ssh-gen="ssh-keygen -t rsa -b 4096 -C"
 alias encrypt="openssl enc -aes-256-cbc -salt"
 alias decrypt="openssl enc -aes-256-cbc -d"
 
-alias get='curl -XGET'
+alias get='curl -G'
 alias post='curl -XPOST'
 alias postj='curl -XPOST -H "Content-Type: application/json"'
 alias put='curl -XPUT'
