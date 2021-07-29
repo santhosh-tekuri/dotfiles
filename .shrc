@@ -16,6 +16,7 @@ if ls --color=auto> /dev/null 2>&1; then
 fi
 alias ll="ls -alh"
 alias vi="vim -p"
+alias chmox="chmod +x"
 alias myip="ipconfig getifaddr en0"
 alias mvn="mvn -Dhttps.protocols=TLSv1.2"
 alias ssh-gen="ssh-keygen -t rsa -b 4096 -C"
