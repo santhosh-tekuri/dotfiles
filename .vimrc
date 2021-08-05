@@ -93,3 +93,18 @@ if $VIM_PRIVATE
     set secure
     set viminfo=""
 endif
+
+"---------------------------------------------[  vim gitgutter customization ]-----------------------------------"
+set updatetime=100
+
+highlight clear SignColumn
+highlight GitGutterAdd guifg=#009900 ctermbg=Green ctermfg=Green
+highlight GitGutterChange guifg=#bbbb00 ctermbg=Red ctermfg=Red
+highlight GitGutterDelete guifg=#ff2222 ctermfg=Gray
+
+let g:gitgutter_sign_removed = '▶'
+let g:gitgutter_sign_removed_first_line = '▶'
+let g:gitgutter_sign_removed_above_and_below = '▶'
+
+nmap ) <Plug>(GitGutterNextHunk)
+nmap ( <Plug>(GitGutterPrevHunk)
