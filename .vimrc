@@ -96,6 +96,7 @@ endif
 
 "---------------------------------------------[  vim gitgutter customization ]-----------------------------------"
 set updatetime=100
+set signcolumn=yes
 
 highlight clear SignColumn
 highlight GitGutterAdd guifg=#009900 ctermbg=Green ctermfg=Green
