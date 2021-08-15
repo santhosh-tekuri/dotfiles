@@ -57,7 +57,9 @@ set smartcase    " if ignorecase is on, a search is case-insensitive if the sear
 
 "-------------------------------[ undo history between sessions ] -----------------------"
 
-call mkdir($HOME . "/.vim/undodir", "p")
+if !isdirectory($HOME . "/.vim/undodir")
+    call mkdir($HOME . "/.vim/undodir", "p")
+endif
 set undofile
 set undodir=~/.vim/undodir
 
