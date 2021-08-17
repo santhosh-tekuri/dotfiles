@@ -1,3 +1,8 @@
 [user]
-	name = Santhosh Kumar Tekuri
-	email = santhosh.tekuri@gmail.com
+    name = Santhosh Kumar Tekuri
+    email = santhosh.tekuri@gmail.com
+[alias]
+    root = rev-parse --show-toplevel
+    vi = !vi -p $(git diff --name-only)
+[core]
+    excludesfile = ~/.gitignore
