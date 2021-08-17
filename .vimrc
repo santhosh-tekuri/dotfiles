@@ -23,14 +23,15 @@ cnoreabbrev wsudo w !sudo tee %
 "----------------------------------------[ UI ]--------------------------------------------------"
 syntax on
 set bg=dark
-set number       " show line numbers
-set showmode     " show current mode
-set showcmd      " show partial commands
-set showmatch    " show matching bracets when cursor is over them
-set ruler        " shows statusline displaying current cursor position
-set nowrap       " don't wrap lines
-set scrolloff=3  " have 3 lines of offset when scrolling
-set mouse=a      " enable mouse support
+set number        " show line numbers
+set showmode      " show current mode
+set showcmd       " show partial commands
+set showmatch     " show matching bracets when cursor is over them
+set ruler         " shows statusline displaying current cursor position
+set nowrap        " don't wrap lines
+set scrolloff=3   " have 3 lines of offset when scrolling
+set mouse=a       " enable mouse support
+set showtabline=2 " show tabline always
 
 "----------------------------------------[ Indents and Tabs ]--------------------------------------------------"
 
