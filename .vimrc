@@ -41,13 +41,20 @@ set shiftwidth=4  " number of spaces to auto(indent)
 set tabstop=4     " number of spaces used to display tab character
 set smarttab      " tab and backspace are smart
 
-"----------------------------------------[ Go Indentation ]--------------------------------------------------"
+"----------------------------------------[ Go File ]--------------------------------------------------"
 
 autocmd BufNewFile,BufRead *.go set filetype=go
+
+" use tabs for indentation
 au FileType go set noexpandtab
 au FileType go set shiftwidth=4
 au FileType go set softtabstop=4
 au FileType go set tabstop=4
+
+" run gofmt on save and reload
+autocmd BufWritePost *.go silent! !go fmt %
+autocmd BufWritePost *.go edit
+autocmd BufWritePost *.go redraw!
 
 "----------------------------------------[ Searching Behavior ]--------------------------------------------------"
 
