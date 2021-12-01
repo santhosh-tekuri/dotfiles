@@ -58,7 +58,7 @@ alias -s txt=vi
 #source /Users/santhosh/.rvm/scripts/rvm
 
 if [ ! -d $dir/fast-syntax-highlighting ]; then
-    git clone https://github.com/zdharma/fast-syntax-highlighting.git $dir/fast-syntax-highlighting
+    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git $dir/fast-syntax-highlighting
 fi
 source $dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 
