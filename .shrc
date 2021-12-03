@@ -37,6 +37,8 @@ alias .git='cd "$(git rev-parse --show-toplevel)"'
 export PATH=$dir/bin:$PATH
 export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 
+test -d /opt/homebrew/bin/ && eval $(/opt/homebrew/bin/brew shellenv)
+
 # to get mouse scrolling work for git-log, man
 export LESS=-R
 
