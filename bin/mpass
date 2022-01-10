@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+
+import getpass
+import hashlib
+import hmac
+import sys
+
+scope = 'com.lyndir.masterpassword'.encode()
+template_sets = {
+    'b': ('aaanaaan', 'aannaaan', 'aaannaaa'),
+    'l': (
+        'CvcvnoCvcvCvcv', 'CvcvCvcvnoCvcv', 'CvcvCvcvCvcvno', 'CvccnoCvcvCvcv',
+        'CvccCvcvnoCvcv', 'CvccCvcvCvcvno', 'CvcvnoCvccCvcv', 'CvcvCvccnoCvcv',
+        'CvcvCvccCvcvno', 'CvcvnoCvcvCvcc', 'CvcvCvcvnoCvcc', 'CvcvCvcvCvccno',
+        'CvccnoCvccCvcv', 'CvccCvccnoCvcv', 'CvccCvccCvcvno', 'CvcvnoCvccCvcc',
+        'CvcvCvccnoCvcc', 'CvcvCvccCvccno', 'CvccnoCvcvCvcc', 'CvccCvcvnoCvcc',
+        'CvccCvcvCvccno'),
+    'M': ('anoxxxxxxxxxxxxxxxxx', 'axxxxxxxxxxxxxxxxxno'),
+    'm': ('CvcnoCvc', 'CvcCvcno'),
+    'n': ('cvccvcvcv',),
+    'P': ('cvcc cvc cvccvcv cvc', 'cvc cvccvcvcv cvcv', 'cv cvccv cvc cvcvccv'),
+    'p': ('nnnn',),
+    's': ('Cvcn',)
+}
+char_sets = {
+    ' ': ' ', 'A': 'AEIOUBCDFGHJKLMNPQRSTVWXYZ', 'C': 'BCDFGHJKLMNPQRSTVWXYZ',
+    'V': 'AEIOU', 'a': 'AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz',
+    'c': 'bcdfghjklmnpqrstvwxyz', 'n': '0123456789',
+    'o': "@&%?,=[]_:-+*$#!'^~;()/.", 'v': 'aeiou',
+    'x': 'AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfg'
+         'hjklmnpqrstvwxyz0123456789!@#$%^&*()'
+}
+
+def bigend(uint_32):
+    return (uint_32 & 0xffffffff).to_bytes(4, 'big')
+
+if len(sys.argv) != 4:
+    print('usage: mpass SITE COUNTER TYPE', file=sys.stderr)
+    sys.exit(1)
+
+site = sys.argv[1]
+counter = int(sys.argv[2])
+template_class = sys.argv[3]
+name = getpass.getpass('name: ')
+master_password = getpass.getpass('password: ')
+
+master_key = hashlib.scrypt(
+    password = master_password.encode(),
+    salt = scope + bigend(len(name)) + name.encode(),
+    n=32768,
+    r=8,
+    p=2,
+    maxmem=64*1024*1024,
+    dklen=64
+)
+
+site_key = hmac.new(
+    key = master_key,
+    msg = scope + bigend(len(site)) + site.encode() + bigend(counter),
+    digestmod = hashlib.sha256
+).digest()
+
+templates = template_sets[template_class]
+template = templates[site_key[0]%len(templates)]
+password = ''
+for i, c in enumerate(template, 1):
+    chars = char_sets[c]
+    password += chars[site_key[i]%len(chars)]
+
+print(password)
+
