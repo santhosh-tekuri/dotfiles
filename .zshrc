@@ -57,19 +57,9 @@ alias -s txt=vi
 #export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 #source /Users/santhosh/.rvm/scripts/rvm
 
-if [ ! -d $dir/fast-syntax-highlighting ]; then
-    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git $dir/fast-syntax-highlighting
-fi
 source $dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-
-if [ ! -d $dir/zsh-autosuggestions ]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git $dir/zsh-autosuggestions
-fi
 source $dir/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-if [ ! -d $dir/zsh-history-substring-search ]; then
-    git clone https://github.com/zsh-users/zsh-history-substring-search.git $dir/zsh-history-substring-search
-fi
 source $dir/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
