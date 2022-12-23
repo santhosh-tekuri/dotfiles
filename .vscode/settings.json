@@ -1,0 +1,25 @@
+{
+    "workbench.colorCustomizations": {
+        "[Default Dark+]": {
+            "editorInlayHint.background": "#1a1a1a",
+            "editorInlayHint.foreground": "#525252",
+            "editorInlayHint.parameterBackground": "#1a1a1a",
+            "editorInlayHint.parameterForeground": "#525252",
+            "editorInlayHint.typeBackground": "#1a1a1a",
+            "editorInlayHint.typeForeground": "#525252",
+        }
+    },
+    "editor.fontSize": 16,
+    "window.zoomLevel": 1,
+    "errorLens.messageTemplate": "$severity $message",
+    "errorLens.severityText": [
+        "◼︎",
+        "◼︎",
+        "◼︎",
+        "◼︎"
+    ],
+    "editor.minimap.autohide": true,
+    "editor.fontFamily": "'Anonymous Pro', Menlo, Monaco, 'Courier New', monospace",
+    "errorLens.messageBackgroundMode": "none",
+    "editor.inlayHints.enabled": "offUnlessPressed",
+}
