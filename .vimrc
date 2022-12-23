@@ -125,3 +125,8 @@ let g:gitgutter_sign_removed_above_and_below = '▶'
 
 nmap ) <Plug>(GitGutterNextHunk)
 nmap ( <Plug>(GitGutterPrevHunk)
+
+"---------------------------------------------[  vim markdown customization ]-----------------------------------"
+
+"disable Vim Markdown specific folding
+let g:vim_markdown_folding_disabled = 1

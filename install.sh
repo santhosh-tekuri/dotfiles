@@ -20,3 +20,8 @@ cd ~/.vim/pack/airblade/start
 git clone https://github.com/airblade/vim-gitgutter.git
 vim -u NONE -c "helptags vim-gitgutter/doc" -c q
 cd -
+
+# install vim markdown
+cd ~/.vim
+curl -L https://github.com/preservim/vim-markdown/archive/master.tar.gz |  tar --strip=1 -zx
+cd -
