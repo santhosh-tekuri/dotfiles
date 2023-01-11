@@ -47,7 +47,8 @@
 
 "ui.background" = { bg = "bg0" }
 "ui.background.separator" = "grey"
-"ui.cursor" = { fg = "bg0", bg = "fg" }
+"ui.cursor" = { fg = "black", bg = "grey" }
+"ui.cursor.primary" = { fg = "bg0", bg = "fg" }
 "ui.cursor.match" = { fg = "orange", bg = "diff_yellow" }
 "ui.cursor.insert" = { fg = "black", bg = "grey" }
 "ui.cursor.select" = { fg = "bg0", bg = "blue" }
