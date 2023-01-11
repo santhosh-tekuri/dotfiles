@@ -7,6 +7,9 @@ ln -s `pwd`/.tmux.conf ~
 ln -s `pwd`/.gitconfig ~
 ln -s `pwd`/.wezterm.lua ~
 
+mkdir -p ~/.config
+ln -s `pwd`/helix ~/.config
+
 mkdir -p ~/.ssh
 echo Include `pwd`/.ssh/config >> ~/.ssh/config
 

@@ -1,0 +1,10 @@
+theme = "edge"
+
+[editor]
+bufferline = "multiple"
+
+[keys.insert]
+C-a = "goto_line_start"
+C-e = "goto_line_end_newline"
+A-b = "move_prev_word_end"
+A-f = "move_next_word_start"
