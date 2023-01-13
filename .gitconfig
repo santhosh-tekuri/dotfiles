@@ -6,5 +6,43 @@
     vi = !vi -p $(git diff --name-only) # open modified files in vim
 [core]
     excludesfile = ~/.gitignore
+    editor = hx
+    pager = delta
 [push]
     default = current # push current branch to a remote branch of the same name
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true
+    features = decorations
+[delta "decorations"]
+    commit-decoration-style = none
+    dark = true
+    file-added-label = [+]
+    file-copied-label = [C]
+    file-decoration-style = none
+    file-modified-label = [M]
+    file-removed-label = [-]
+    file-renamed-label = [R]
+    file-style = 232 bold "#375d73"
+    hunk-header-decoration-style = none
+    hunk-header-file-style = "#999999"
+    hunk-header-line-number-style = bold "#03a4ff"
+    hunk-header-style = syntax
+    line-numbers = true
+    line-numbers-left-style = black
+    line-numbers-minus-style = "#B10036"
+    line-numbers-plus-style = "#007800"
+    line-numbers-right-style = black
+    line-numbers-zero-style = "#999999"
+    minus-emph-style = syntax "#780000"
+    minus-style = syntax "#493636"
+    plus-emph-style = syntax "#007800"
+    plus-style = syntax "#364937"
+    whitespace-error-style = "#280050" reverse
+    zero-style = syntax
+    syntax-theme = Nord
+[merge]
+    conflictstyle = diff3
+[diff]
+    colorMoved = default
