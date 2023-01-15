@@ -2,9 +2,6 @@ dir=~/dotfiles
 
 source $dir/.shrc
 
-hash -d personal="/Backup/projects/personal"
-hash -d cognitree="/Backup/projects/cognitree"
-
 # add custom completion scripts
 fpath=(~/.zsh/completion $fpath)
 
