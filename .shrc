@@ -21,7 +21,7 @@ alias myip="ipconfig getifaddr en0"
 alias mvn="mvn -Dhttps.protocols=TLSv1.2"
 alias ssh-gen="ssh-keygen -t rsa -b 4096 -C"
 alias encrypt="openssl enc -aes-256-cbc -salt"
-alias decrypt="openssl enc -aes-256-cbc -d"
+alias decrypt="openssl enc -aes-256-cbc -d -md md5"
 
 alias get='curl -G'
 alias post='curl -XPOST'
