@@ -1,1 +1,10 @@
-echo GOPROXY=proxy.golang.org go list -m $*
+#!/usr/bin/env bash
+
+set -e
+
+if [ $# = 0 ]; then
+    >&2 echo 'usage: go-publish PACKAGE@VERSION'
+    exit 1
+fi
+
+GOPROXY=proxy.golang.org go list -m $1
