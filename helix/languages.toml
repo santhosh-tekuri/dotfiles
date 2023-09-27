@@ -1,0 +1,6 @@
+[[language]]
+name="rust"
+[language.config]
+checkOnSave = {command = "clippy"}
+check = { command = "clippy" }
+cargo = { features = "all" }
