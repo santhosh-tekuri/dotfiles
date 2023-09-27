@@ -11,7 +11,7 @@
     },
     "editor.fontSize": 16,
     "window.zoomLevel": 1,
-    "errorLens.messageTemplate": "$severity $message",
+    "errorLens.messageTemplate": "$severity $message.",
     "errorLens.severityText": [
         "◼︎",
         "◼︎",
@@ -19,7 +19,33 @@
         "◼︎"
     ],
     "editor.minimap.autohide": true,
-    "editor.fontFamily": "'Anonymous Pro', Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontFamily": "'Cascadia Code ExtraLight', 'Anonymous Pro', Menlo, Monaco, 'Courier New', monospace",
     "errorLens.messageBackgroundMode": "none",
     "editor.inlayHints.enabled": "offUnlessPressed",
+    "editor.formatOnSave": true,
+    "terminal.integrated.fontSize": 16,
+    "editor.suggest.insertMode": "replace",
+    "editor.formatOnType": true,
+    "editor.semanticTokenColorCustomizations": {
+        "rules": {
+            "variable": {
+                "fontStyle": "underline"
+            },
+            "*.consuming": {
+                "fontStyle": "underline",
+            },
+            "*.reference": {
+                "fontStyle": "",
+            },
+            "*.mutable": {
+                // "fontStyle": ""
+                "foreground": "#228b22",
+            },
+            "*.trait": {
+                "fontStyle": "italic"
+            }
+        }
+    },
+    "editor.fontLigatures": true,
+    // "editor.fontWeight": "300",
 }
