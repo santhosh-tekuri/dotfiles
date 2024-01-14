@@ -8,7 +8,12 @@ function spec.config()
         base = "#2c2e34",
         mantle = "#3b3e48",
       }
-    }
+    },
+    custom_highlights = function(colors)
+      return {
+        GitSignsChange = { fg = "#e59b77" },
+      }
+    end
   })
   vim.cmd "colorscheme catppuccin"
 end
