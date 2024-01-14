@@ -9,6 +9,7 @@ ln -s `pwd`/.wezterm.lua ~
 
 mkdir -p ~/.config
 ln -s `pwd`/helix ~/.config
+ln -s `pwd`/nvim ~/.config
 
 mkdir -p ~/.ssh
 echo Include `pwd`/.ssh/config >> ~/.ssh/config

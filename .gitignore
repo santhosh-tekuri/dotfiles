@@ -2,3 +2,4 @@
 zsh-autosuggestions
 fast-syntax-highlighting
 zsh-history-substring-search
+nvim/lazy-lock.json
