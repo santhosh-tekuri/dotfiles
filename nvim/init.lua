@@ -22,7 +22,8 @@ vim.opt.rtp:prepend(lazypath)
 -- load plugin specs
 require("lazy").setup({
   require("specs.catppuccin"),
+  require("specs.gitsigns"),
   require("specs.telescope"),
   require("specs.treesitter"),
 })
-		
+
