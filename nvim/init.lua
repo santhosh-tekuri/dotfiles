@@ -1,6 +1,10 @@
 vim.opt.number = true
 vim.opt.relativenumber = true
-
+vim.opt.termguicolors = true
+vim.opt.expandtab = true -- convert tabs to spaces
+vim.opt.shiftwidth = 4 -- no of spaces inserted for each indentation
+vim.opt.tabstop = 4 -- no of spaces inserted for tab
+                
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -15,8 +19,10 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- load plugin specs
 require("lazy").setup({
-  "nvim-lua/plenary.nvim",
+  require("specs.catppuccin"),
   require("specs.telescope"),
   require("specs.treesitter"),
 })
+		
