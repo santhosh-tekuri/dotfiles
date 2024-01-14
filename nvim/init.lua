@@ -4,7 +4,8 @@ vim.opt.termguicolors = true
 vim.opt.expandtab = true -- convert tabs to spaces
 vim.opt.shiftwidth = 4 -- no of spaces inserted for each indentation
 vim.opt.tabstop = 4 -- no of spaces inserted for tab
-                
+vim.opt.clipboard = "unnamedplus" -- use system clipboard
+
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -25,5 +26,6 @@ require("lazy").setup({
   require("specs.gitsigns"),
   require("specs.telescope"),
   require("specs.treesitter"),
+  require("specs.mason"),
 })
 
