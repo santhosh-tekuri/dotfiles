@@ -29,5 +29,6 @@ require("lazy").setup({
     require("specs.treesitter"),
     require("specs.lspconfig"),
     require("specs.cmp"),
+    require("specs.whichkey"),
 })
 
