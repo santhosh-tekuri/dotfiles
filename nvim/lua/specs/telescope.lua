@@ -9,6 +9,8 @@ function spec.config()
     vim.keymap.set('n', ' b', builtin.buffers, {})
     vim.keymap.set('n', ' s', builtin.lsp_document_symbols, {})
     vim.keymap.set('n', ' S', builtin.lsp_workspace_symbols, {})
+    vim.keymap.set('n', ' d', function() builtin.diagnostics({ bufnr = 0 }) end, {})
+    vim.keymap.set('n', ' D', builtin.diagnostics, {})
 
     local actions = require("telescope.actions")
     require("telescope").setup({
