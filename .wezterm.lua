@@ -23,6 +23,7 @@ return {
     initial_rows = 35,
     initial_cols = 150,
     hide_tab_bar_if_only_one_tab = true,
+    use_fancy_tab_bar = false,
     keys = {
         { key='q', mods='CTRL', action=act{SendString="\x11"}}, -- detect ctrl-q. see issue 2630
         { key='LeftArrow', mods='OPT', action=act.SendKey{key='b', mods='ALT'}},
