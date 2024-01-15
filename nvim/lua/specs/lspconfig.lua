@@ -3,6 +3,7 @@ local spec = {
     dependencies = {
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
+        "folke/neodev.nvim", -- for neovim plugin development
     },
 }
 
