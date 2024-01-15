@@ -25,7 +25,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     require("specs.catppuccin"),
     require("specs.gitsigns"),
-    require("specs.telescope"),
+    require("specs.fzf"),
     require("specs.treesitter"),
     require("specs.lspconfig"),
     require("specs.cmp"),
