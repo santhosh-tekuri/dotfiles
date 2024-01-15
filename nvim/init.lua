@@ -27,6 +27,8 @@ require("lazy").setup({
   require("specs.gitsigns"),
   require("specs.telescope"),
   require("specs.treesitter"),
+  require("specs.lspconfig"),
   require("specs.mason"),
+  require("specs.cmp"),
 })
 
