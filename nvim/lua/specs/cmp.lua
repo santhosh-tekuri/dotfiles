@@ -2,6 +2,8 @@ local spec = {
     "hrsh7th/nvim-cmp",
     dependencies = {
         { "hrsh7th/cmp-nvim-lsp" },
+
+        -- use vsnip for snippets
         { "hrsh7th/cmp-vsnip" },
         { "hrsh7th/vim-vsnip" },
     },
@@ -25,6 +27,24 @@ function spec.config()
         }),
         sources = {
             { name = "nvim_lsp" },
+        },
+        sorting = {
+            comparators = {
+                cmp.config.compare.order,
+                cmp.config.compare.score,
+                cmp.config.compare.exact,
+                cmp.config.compare.sort_text,
+                cmp.config.compare.offset,
+                cmp.config.compare.kind,
+                cmp.config.compare.length,
+            }
+        },
+        formatting = {
+            fields = { "abbr", "kind" },
+            format = function(entry, vim_item)
+                vim_item.menu = "" -- need to empty explictly to reduce popup width
+                return vim_item
+            end,
         },
     }
 end
