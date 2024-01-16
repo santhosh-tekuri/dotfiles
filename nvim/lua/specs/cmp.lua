@@ -28,6 +28,9 @@ function spec.config()
         sources = {
             { name = "nvim_lsp" },
         },
+        matching = {
+            disallow_fuzzy_matching = true,
+        },
         sorting = {
             comparators = {
                 cmp.config.compare.order,
