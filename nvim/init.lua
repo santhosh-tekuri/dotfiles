@@ -7,6 +7,11 @@ vim.opt.tabstop = 4        -- no of spaces inserted for tab
 vim.opt.signcolumn = "yes" -- always show signcolumn
 vim.opt.wrap = false
 
+-- show whitespace using :set list
+vim.opt.listchars:append("space:.")
+vim.opt.listchars:append("trail:.")
+vim.opt.listchars:append("tab:>-")
+
 -- retain selection after indent ('gv' highlights previous selection)
 vim.keymap.set('v', '>', '>gv', { remap = false })
 vim.keymap.set('v', '<', '<gv', { remap = false })
