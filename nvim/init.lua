@@ -7,6 +7,10 @@ vim.opt.tabstop = 4        -- no of spaces inserted for tab
 vim.opt.signcolumn = "yes" -- always show signcolumn
 vim.opt.wrap = false
 
+-- retain selection after indent ('gv' highlights previous selection)
+vim.keymap.set('v', '>', '>gv', { remap = false })
+vim.keymap.set('v', '<', '<gv', { remap = false })
+
 -- system clipboard
 vim.keymap.set('n', ' y', '"+y', { desc = "Copy to system clipboard" })
 vim.keymap.set('n', ' p', '"+p', { desc = "Paste clipboard after selection" })
