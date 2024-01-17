@@ -9,13 +9,13 @@ vim.opt.signcolumn = "yes" -- always show signcolumn
 vim.opt.wrap = false
 
 -- goto motions
-vim.keymap.set('n', 'gl', '$', { desc = "Goto line end" })
-vim.keymap.set('n', 'gh', '0', { desc = "Goto line start" })
-vim.keymap.set('n', 'gs', '^', { desc = "Goto first non-blank in line" })
-vim.keymap.set('n', 'ge', 'G', { desc = "Goto last line" })
-vim.keymap.set('n', 'gt', 'H', { desc = "Goto window top" })
-vim.keymap.set('n', 'gc', 'M', { desc = "Goto window center" })
-vim.keymap.set('n', 'gb', 'L', { desc = "Goto window bottom" })
+vim.keymap.set({'n', 'v'}, 'gl', '$', { desc = "Goto line end" })
+vim.keymap.set({'n', 'v'}, 'gh', '0', { desc = "Goto line start" })
+vim.keymap.set({'n', 'v'}, 'gs', '^', { desc = "Goto first non-blank in line" })
+vim.keymap.set({'n', 'v'}, 'ge', 'G', { desc = "Goto last line" })
+vim.keymap.set({'n', 'v'}, 'gt', 'H', { desc = "Goto window top" })
+vim.keymap.set({'n', 'v'}, 'gc', 'M', { desc = "Goto window center" })
+vim.keymap.set({'n', 'v'}, 'gb', 'L', { desc = "Goto window bottom" })
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -32,7 +32,6 @@ vim.opt.rtp:prepend(lazypath)
 
 -- load plugin specs
 require("lazy").setup({
-    require("specs.catppuccin"),
     require("specs.gitsigns"),
     require("specs.fzf"),
     require("specs.treesitter"),
@@ -41,5 +40,8 @@ require("lazy").setup({
     require("specs.whichkey"),
     require("specs.sandwich"),
     require("specs.minimove"),
+    require("specs.kanagawa"),
 })
+
+vim.cmd.colorscheme "kanagawa-wave"
 
