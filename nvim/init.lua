@@ -4,9 +4,13 @@ vim.opt.termguicolors = true
 vim.opt.expandtab = true -- convert tabs to spaces
 vim.opt.shiftwidth = 4 -- no of spaces inserted for each indentation
 vim.opt.tabstop = 4 -- no of spaces inserted for tab
-vim.opt.clipboard = "unnamedplus" -- use system clipboard
 vim.opt.signcolumn = "yes" -- always show signcolumn
 vim.opt.wrap = false
+
+-- system clipboard
+vim.keymap.set('n', ' y', '"+y', { desc = "Copy to system clipboard" })
+vim.keymap.set('n', ' p', '"+p', { desc = "Paste clipboard after selection" })
+vim.keymap.set('n', ' P', '"+P', { desc = "Paste clipboard before selection" })
 
 -- goto motions
 vim.keymap.set({'n', 'v'}, 'gl', '$', { desc = "Goto line end" })
