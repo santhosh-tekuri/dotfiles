@@ -22,6 +22,7 @@ function spec.config()
     }
 
     -- setup each server
+    require("neodev").setup({})
     local lspconfig = require "lspconfig"
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     for _, server in pairs(servers) do
@@ -34,6 +35,7 @@ function spec.config()
         end
         lspconfig[server].setup(opts)
     end
+
 
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
