@@ -49,6 +49,7 @@ require("lazy").setup({
     require("specs.sandwich"),
     require("specs.minimove"),
     require("specs.kanagawa"),
+    require("specs.lualine"),
 })
 
 vim.cmd.colorscheme "kanagawa-wave"
