@@ -33,21 +33,22 @@ vim.keymap.set({ 'n', 'v' }, 'gb', 'L', { desc = "Goto window bottom" })
 -- lsp-format on save
 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
 
+-- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system({
+    vim.fn.system {
         "git",
         "clone",
         "--filter=blob:none",
         "https://github.com/folke/lazy.nvim.git",
         "--branch=stable", -- latest stable release
         lazypath,
-    })
+    }
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- load plugin specs
-require("lazy").setup({
+require("lazy").setup {
     require("specs.gitsigns"),
     require("specs.fzf"),
     require("specs.treesitter"),
@@ -59,6 +60,6 @@ require("lazy").setup({
     require("specs.minimove"),
     require("specs.kanagawa"),
     require("specs.lualine"),
-})
+}
 
 vim.cmd.colorscheme "kanagawa-wave"
