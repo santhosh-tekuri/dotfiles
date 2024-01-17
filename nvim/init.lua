@@ -42,6 +42,7 @@ require("lazy").setup({
     require("specs.lspconfig"),
     require("specs.cmp"),
     require("specs.whichkey"),
+    require("specs.comment"),
     require("specs.sandwich"),
     require("specs.minimove"),
     require("specs.kanagawa"),
