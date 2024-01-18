@@ -25,12 +25,12 @@ return {
     hide_tab_bar_if_only_one_tab = true,
     use_fancy_tab_bar = false,
     keys = {
-        { key='q', mods='CTRL', action=act{SendString="\x11"}}, -- detect ctrl-q. see issue 2630
-        { key='LeftArrow', mods='OPT', action=act.SendKey{key='b', mods='ALT'}},
-        { key='RightArrow', mods='OPT', action=act.SendKey{key='f', mods='ALT'}},
-        { key='LeftArrow', mods='SUPER', action=act.SendKey{key='a', mods='CTRL'}},
-        { key='RightArrow', mods='SUPER', action=act.SendKey{key='e', mods='CTRL'}},
-        { key='k', mods='SUPER', action=act.ClearScrollback 'ScrollbackAndViewport'},
-        { key='K', mods='CTRL|SHIFT', action=act.ClearScrollback 'ScrollbackAndViewport'},
+        { key = 'q',          mods = 'CTRL',       action = act { SendString = "\x11" } }, -- detect ctrl-q. see issue 2630
+        { key = 'LeftArrow',  mods = 'OPT',        action = act.SendKey { key = 'b', mods = 'ALT' } },
+        { key = 'RightArrow', mods = 'OPT',        action = act.SendKey { key = 'f', mods = 'ALT' } },
+        { key = 'LeftArrow',  mods = 'SUPER',      action = act.SendKey { key = 'a', mods = 'CTRL' } },
+        { key = 'RightArrow', mods = 'SUPER',      action = act.SendKey { key = 'e', mods = 'CTRL' } },
+        { key = 'k',          mods = 'SUPER',      action = act.ClearScrollback 'ScrollbackAndViewport' },
+        { key = 'K',          mods = 'CTRL|SHIFT', action = act.ClearScrollback 'ScrollbackAndViewport' },
     },
 }
