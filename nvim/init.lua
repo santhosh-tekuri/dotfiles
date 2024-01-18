@@ -6,6 +6,7 @@ vim.opt.shiftwidth = 4     -- no of spaces inserted for each indentation
 vim.opt.tabstop = 4        -- no of spaces inserted for tab
 vim.opt.signcolumn = "yes" -- always show signcolumn
 vim.opt.wrap = false
+vim.opt.laststatus = 3     -- single statusline for all splits
 
 -- show whitespace using :set list
 vim.opt.listchars:append("space:.")
@@ -15,6 +16,8 @@ vim.opt.listchars:append("tab:>-")
 -- retain selection after indent ('gv' highlights previous selection)
 vim.keymap.set('v', '>', '>gv', { remap = false })
 vim.keymap.set('v', '<', '<gv', { remap = false })
+
+vim.keymap.set('n', '<esc>', '<c-w>o', { desc = "close other windows" })
 
 -- system clipboard
 vim.keymap.set({ 'n', 'v' }, ' y', '"+y', { desc = "Copy to system clipboard" })
@@ -32,6 +35,9 @@ vim.keymap.set({ 'n', 'v' }, 'gb', 'L', { desc = "Goto window bottom" })
 
 -- lsp-format on save
 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+
+-- disable virtual text for diagnostics
+vim.diagnostic.config({ virtual_text = false })
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
