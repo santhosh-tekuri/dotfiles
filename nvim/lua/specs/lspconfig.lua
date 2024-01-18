@@ -1,6 +1,7 @@
 local spec = {
     "neovim/nvim-lspconfig",
     dependencies = {
+        "nvimtools/none-ls.nvim",
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
         "folke/neodev.nvim", -- for neovim plugin development
@@ -14,6 +15,12 @@ function spec.config()
         "gopls",
         "rust_analyzer",
     }
+
+    local null_ls = require("null-ls")
+    null_ls.setup({
+        sources = {
+        },
+    })
 
     -- install serve
     require("mason").setup()
