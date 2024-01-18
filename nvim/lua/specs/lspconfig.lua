@@ -61,7 +61,6 @@ function spec.config()
             vim.keymap.set('n', ' s', fzf.lsp_document_symbols, { desc = "Open symbol picker" })
             vim.keymap.set('n', ' S', fzf.lsp_workspace_symbols, { desc = "Open workspace symbol picker" })
             vim.keymap.set({ 'n', 'v'} , ' a', fzf.lsp_code_actions, { desc = "Perform code action" })
-            vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts("Show signature"))
       end,
     })
 

@@ -54,6 +54,7 @@ require("lazy").setup {
     require("specs.treesitter"),
     require("specs.lspconfig"),
     require("specs.cmp"),
+    require("specs.lspsignature"),
     require("specs.whichkey"),
     require("specs.comment"),
     require("specs.sandwich"),
