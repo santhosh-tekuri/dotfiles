@@ -17,9 +17,9 @@ vim.keymap.set('v', '>', '>gv', { remap = false })
 vim.keymap.set('v', '<', '<gv', { remap = false })
 
 -- system clipboard
-vim.keymap.set('n', ' y', '"+y', { desc = "Copy to system clipboard" })
-vim.keymap.set('n', ' p', '"+p', { desc = "Paste clipboard after selection" })
-vim.keymap.set('n', ' P', '"+P', { desc = "Paste clipboard before selection" })
+vim.keymap.set({ 'n', 'v' }, ' y', '"+y', { desc = "Copy to system clipboard" })
+vim.keymap.set({ 'n', 'v' }, ' p', '"+p', { desc = "Paste clipboard after selection" })
+vim.keymap.set({ 'n', 'v' }, ' P', '"+P', { desc = "Paste clipboard before selection" })
 
 -- goto motions
 vim.keymap.set({ 'n', 'v' }, 'gl', '$', { desc = "Goto line end" })
