@@ -4,7 +4,16 @@ local spec = {
 
 function spec.config()
     local fzf = require("fzf-lua")
-    fzf.setup({})
+    fzf.setup({
+        winopts = {
+            width = 0.9,
+            col = 0.5,
+            preview = {
+                vertial = 'down:50%',
+                horizontal = 'right:50%',
+            }
+        },
+    })
 
     vim.keymap.set('n', ' f', fzf.files, { desc = "Open file picker" })
     vim.keymap.set('n', ' b', fzf.buffers, { desc = "Open buffer picker" })
