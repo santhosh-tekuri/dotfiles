@@ -60,7 +60,12 @@ function spec.config()
             vim.keymap.set('n', 'gr', fzf.lsp_references, opts("Goto references"))
             vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
             vim.keymap.set('n', ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
-            vim.keymap.set('n', ' d', fzf.diagnostics_document, { desc = "Open diagnostic picker" })
+            vim.keymap.set('n', ' d', function()
+                fzf.diagnostics_document({ fzf_opts = {
+                    ['--delimiter'] = ':',
+                    ['--with-nth'] = '2,4',
+                }})
+            end, { desc = "Open diagnostic picker" })
             vim.keymap.set('n', ' D', fzf.diagnostics_workspace, { desc = "Open workspace diagnotic picker" })
             vim.keymap.set('n', ' e', function()
                 vim.diagnostic.open_float(nil, {focus=false})
