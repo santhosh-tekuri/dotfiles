@@ -1,6 +1,7 @@
 return {
     "rebelot/kanagawa.nvim",
     opts={
+        dimInactive = true,
         colors = {
             theme = {
                 all = {
@@ -9,6 +10,12 @@ return {
                     }
                 }
             }
-        }
+        },
+        overrides = function(colors)
+            local theme = colors.theme
+            return {
+                WinSeparator = { fg = theme.ui.nontext }, -- brighter
+            }
+        end,
     }
 }
