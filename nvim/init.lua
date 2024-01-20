@@ -24,15 +24,6 @@ vim.keymap.set({ 'n', 'v' }, ' y', '"+y', { desc = "Copy to system clipboard" })
 vim.keymap.set({ 'n', 'v' }, ' p', '"+p', { desc = "Paste clipboard after selection" })
 vim.keymap.set({ 'n', 'v' }, ' P', '"+P', { desc = "Paste clipboard before selection" })
 
--- goto motions
-vim.keymap.set({ 'n', 'v' }, 'gl', '$', { desc = "Goto line end" })
-vim.keymap.set({ 'n', 'v' }, 'gh', '0', { desc = "Goto line start" })
-vim.keymap.set({ 'n', 'v' }, 'gs', '^', { desc = "Goto first non-blank in line" })
-vim.keymap.set({ 'n', 'v' }, 'ge', 'G', { desc = "Goto last line" })
-vim.keymap.set({ 'n', 'v' }, 'gt', 'H', { desc = "Goto window top" })
-vim.keymap.set({ 'n', 'v' }, 'gc', 'M', { desc = "Goto window center" })
-vim.keymap.set({ 'n', 'v' }, 'gb', 'L', { desc = "Goto window bottom" })
-
 -- lsp-format on save
 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
 
