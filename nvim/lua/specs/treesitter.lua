@@ -17,9 +17,9 @@ function spec.config()
             enable = true,
             keymaps = {
                 init_selection = false,
-                node_incremental = "v",
+                node_incremental = "<tab>",
                 scope_incremental = false,
-                node_decremental = "V",
+                node_decremental = "<s-tab>",
             },
         },
     }
