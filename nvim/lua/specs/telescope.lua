@@ -5,12 +5,21 @@ local spec = {
 
 function spec.config()
     local builtin = require('telescope.builtin')
-    vim.keymap.set('n', ' f', builtin.find_files, {})
-    vim.keymap.set('n', ' b', builtin.buffers, {})
-    vim.keymap.set('n', ' s', builtin.lsp_document_symbols, {})
-    vim.keymap.set('n', ' S', builtin.lsp_workspace_symbols, {})
-    vim.keymap.set('n', ' d', function() builtin.diagnostics({ bufnr = 0 }) end, {})
-    vim.keymap.set('n', ' D', builtin.diagnostics, {})
+    vim.keymap.set('n', ' f', builtin.find_files, { desc = "Open file picker" })
+    vim.keymap.set('n', ' b', builtin.buffers, { desc = "Open buffer picker" })
+    vim.keymap.set('n', ' /', builtin.live_grep, { desc = "Global search in workspace folder" })
+
+    -- when LS attaches to the current buffer
+    vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('TelescopeLspConfig', {}),
+        callback = function(ev)
+            vim.keymap.set('n', 'gr', builtin.lsp_references, { desc = "Goto references" })
+            vim.keymap.set('n', ' s', builtin.lsp_document_symbols, { desc = "Open symbol picker" })
+            vim.keymap.set('n', ' S', builtin.lsp_workspace_symbols, { desc = "Open workspace symbol picker" })
+            vim.keymap.set('n', ' d', function() builtin.diagnostics({ bufnr = 0 }) end, { desc = "Open diagnostic picker" })
+            vim.keymap.set('n', ' D', builtin.diagnostics, { desc = "Open workspace diagnostic picker" })
+      end,
+    });
 
     local actions = require("telescope.actions")
     require("telescope").setup({
