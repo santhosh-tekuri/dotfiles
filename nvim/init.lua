@@ -8,6 +8,10 @@ vim.opt.signcolumn = "yes" -- always show signcolumn
 vim.opt.wrap = false
 vim.opt.laststatus = 3     -- single statusline for all splits
 
+-- Case-insensitive searching UNLESS \C or capital in search
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+
 -- show whitespace using :set list
 vim.opt.listchars:append("space:.")
 vim.opt.listchars:append("trail:.")
