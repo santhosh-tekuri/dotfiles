@@ -17,6 +17,9 @@ vim.opt.listchars:append("space:.")
 vim.opt.listchars:append("trail:.")
 vim.opt.listchars:append("tab:>-")
 
+-- use <space>w for window commands
+vim.keymap.set('n', ' w', '<c-w>', { remap = false })
+
 -- retain selection after indent ('gv' highlights previous selection)
 vim.keymap.set('v', '>', '>gv', { remap = false })
 vim.keymap.set('v', '<', '<gv', { remap = false })
