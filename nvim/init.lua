@@ -53,6 +53,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- load plugin specs
 require("lazy").setup {
+    require("specs.kanagawa"),
     require("specs.notify"),
     require("specs.gitsigns"),
     require("specs.fzf"),
@@ -62,13 +63,13 @@ require("lazy").setup {
     require("specs.cmp"),
     require("specs.lspsignature"),
     require("specs.lspprogress"),
-    require("specs.whichkey"),
     require("specs.comment"),
     require("specs.sandwich"),
+    require("specs.smarttab"),
     require("specs.minimove"),
-    require("specs.kanagawa"),
     require("specs.lualine"),
     require("specs.trouble"),
+    require("specs.whichkey"),
 }
 
 vim.cmd.colorscheme "kanagawa-wave"
