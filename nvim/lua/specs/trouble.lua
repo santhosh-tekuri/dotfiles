@@ -5,6 +5,13 @@ function spec.config()
     require("trouble").setup {
         icons = false,
         padding = false,
+        signs = {
+            error = '',
+            warning = '',
+            hint = '',
+            information = '',
+            other = '',
+        },
     }
 
     -- when LS attaches to the current buffer

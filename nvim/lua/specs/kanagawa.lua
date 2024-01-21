@@ -14,6 +14,11 @@ return {
             local theme = colors.theme
             return {
                 WinSeparator = { fg = theme.ui.nontext }, -- brighter
+                TroubleText = { fg = theme.ui.fg },
+                TroubleTextInformation = { link = "DiagnosticInfo" },
+                TroubleTextWarning = { link = "DiagnosticWarn" },
+                TroubleTextHint = { link = "DiagnosticHint" },
+                TroubleTextError = { link = "DiagnosticError" },
             }
         end,
     }
