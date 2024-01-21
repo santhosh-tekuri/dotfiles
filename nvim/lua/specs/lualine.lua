@@ -8,8 +8,15 @@ return {
         },
         sections = {
             lualine_a = { 'mode' },
+            lualine_b = {},
             lualine_c = { 'filename' },
-            lualine_x = { 'diagnostics' },
+            lualine_x = {
+                {
+                    'diagnostics',
+                    sections = { 'error', 'warn', 'info', 'hint' },
+                    symbols = {error = ' ', warn = ' ', info = ' ', hint = ' '},
+                },
+            },
             lualine_y = { 'branch' },
             lualine_z = { 'location' }
         },
