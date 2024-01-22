@@ -72,7 +72,7 @@ function setup_ps1() {
     # remove any right prompt from display when accepting a command line
     setopt transientrprompt
 
-    PS1="%(?..%F{red})\$(ssh-ps1)\$(git-ps1)❯%f "
+    PS1="%(?..%F{red})\$(ssh-ps1)\$(git-prompt)❯%f "
     RPS1='%K{blue}%F{white}[%~]%f%k'
     zle_highlight=(default:fg=yellow,bold)
 }
