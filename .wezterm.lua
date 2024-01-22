@@ -2,6 +2,7 @@ local wezterm = require 'wezterm'
 local act = wezterm.action
 
 return {
+    term = "wezterm",
     window_frame = {
         font = wezterm.font 'Cascadia Code Light',
         font_size = 15,
