@@ -69,6 +69,7 @@ require("lazy").setup {
     require("specs.minimove"),
     require("specs.lualine"),
     require("specs.trouble"),
+    require("specs.colorizer"),
     require("specs.whichkey"),
 }
 
