@@ -65,7 +65,7 @@ require("lazy").setup {
     require("specs.lspprogress"),
     require("specs.comment"),
     require("specs.sandwich"),
-    require("specs.smarttab"),
+    --require("specs.smarttab"),
     require("specs.minimove"),
     require("specs.lualine"),
     require("specs.trouble"),
@@ -73,4 +73,4 @@ require("lazy").setup {
     require("specs.whichkey"),
 }
 
-vim.cmd.colorscheme "kanagawa-wave"
+vim.cmd.colorscheme "kanagawa"
