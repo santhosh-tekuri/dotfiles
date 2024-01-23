@@ -17,6 +17,8 @@ return {
     colors = {
         foreground = '#FFFFFF',
         background = '#252525',
+        cursor_bg = "#dcd7ba",
+        cursor_fg = "#1f1f28",
     },
     font = wezterm.font 'Cascadia Code Light',
     font_size = 18,
