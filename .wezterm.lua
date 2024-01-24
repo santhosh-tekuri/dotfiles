@@ -15,8 +15,8 @@ return {
     },
     color_scheme = "Tango (terminal.sexy)",
     colors = {
-        foreground = '#FFFFFF',
-        background = '#252525',
+        foreground = '#dcd7ba',
+        background = '#1f1f28',
         cursor_bg = "#dcd7ba",
         cursor_fg = "#1f1f28",
     },
