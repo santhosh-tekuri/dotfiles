@@ -3,13 +3,14 @@ local spec = {
 }
 
 function spec.config()
-    require'nvim-treesitter.configs'.setup {
+    require("nvim-treesitter.configs").setup {
         ensure_installed = {
-            "c", "lua", "vim", "vimdoc", "query", -- should always be installed
+            "c", "lua", "vim", "vimdoc", "query",           -- should always be installed
             "regex", "bash", "markdown", "markdown_inline", -- for lsp docs
-            "xml", "json", "yaml", "toml",        -- config related
-            "go", "gomod", "gosum", "gowork",     -- golang related
+            "xml", "json", "yaml", "toml",                  -- config related
+            "go", "gomod", "gosum", "gowork",               -- golang related
             "rust",
+            "python",
         },
         highlight = {
             enable = true,
