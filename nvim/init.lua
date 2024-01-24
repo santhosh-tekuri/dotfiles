@@ -34,6 +34,14 @@ vim.keymap.set({ 'n', 'v' }, ' P', '"+P', { desc = "Paste clipboard before selec
 -- disable virtual text for diagnostics
 vim.diagnostic.config({ virtual_text = false })
 
+-- highlight selection on yank
+vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = "Hightlight selection on yank",
+    callback = function()
+        vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 600 })
+    end,
+})
+
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
