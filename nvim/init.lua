@@ -64,6 +64,7 @@ require("lazy").setup {
     require("specs.fzf"),
     -- require("specs.telescope"),
     require("specs.treesitter"),
+    require("specs.treesitter_textobjs"),
     require("specs.lspconfig"),
     require("specs.cmp"),
     require("specs.lspsignature"),
