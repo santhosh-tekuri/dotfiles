@@ -25,8 +25,8 @@ function spec.config()
         callback = function(ev)
             vim.keymap.set('n', ' s', fzf.lsp_document_symbols, { desc = "Open symbol picker" })
             vim.keymap.set('n', ' S', fzf.lsp_workspace_symbols, { desc = "Open workspace symbol picker" })
-            vim.keymap.set({ 'n', 'v'} , ' a', fzf.lsp_code_actions, { desc = "Perform code action" })
-      end,
+            -- vim.keymap.set({ 'n', 'v'} , ' a', fzf.lsp_code_actions, { desc = "Perform code action" })
+        end,
     })
 end
 
