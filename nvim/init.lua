@@ -78,6 +78,7 @@ require("lazy").setup {
     require("specs.colorizer"),
     require("specs.whichkey"),
     require("specs.textobj_line"),
+    require("specs.autopairs"),
 }
 
 vim.cmd.colorscheme "kanagawa"
