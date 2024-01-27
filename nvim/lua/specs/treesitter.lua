@@ -12,6 +12,7 @@ function spec.config()
             "rust",
             "python",
         },
+        auto_install = true,
         highlight = {
             enable = true,
         },
