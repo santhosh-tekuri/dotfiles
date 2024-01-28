@@ -68,7 +68,7 @@ require("lazy").setup {
     require("specs.lspsignature"),
     require("specs.lspprogress"),
     require("specs.comment"),
-    require("specs.sandwich"),
+    require("specs.surround"),
     --require("specs.smarttab"),
     require("specs.minimove"),
     require("specs.lualine"),

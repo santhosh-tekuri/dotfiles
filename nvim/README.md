@@ -59,8 +59,11 @@ srb{addition}               replace surrounding char with {addition}
 ## surround textobject
 
 ```java
-s{char}         surrounded by {char}
-sb              surrounded by char 
+ys{motion}{char}        surround by {char}
+cs{char}{replacement}   replace surrouding {char} by {replacement}
+ds{char}                delete surrounding {char}
+
+use `q` for {char} to find surrounding char automatically
 ```
 
 ## move lines

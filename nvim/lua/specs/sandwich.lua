@@ -1,2 +1,0 @@
-return { "machakann/vim-sandwich" }
-
