@@ -13,9 +13,7 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- show whitespace using :set list
-vim.opt.listchars:append("space:.")
-vim.opt.listchars:append("trail:.")
-vim.opt.listchars:append("tab:>-")
+vim.opt.listchars = { space = '.', tab = '>-', trail = '.' }
 
 -- use <space>w for window commands
 vim.keymap.set('n', ' w', '<c-w>', { remap = false })
