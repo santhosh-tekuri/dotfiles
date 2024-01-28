@@ -9,6 +9,8 @@ vim.opt.wrap = false
 vim.opt.laststatus = 3        -- single statusline for all splits
 vim.opt.splitbelow = true     -- put new window below the split
 vim.opt.splitright = true     -- put new window right to the split
+vim.opt.virtualedit = "block" -- allow cursor anywhere in visual block mode
+vim.opt.inccommand = "split"  -- show substitute preview in split
 
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.opt.ignorecase = true
