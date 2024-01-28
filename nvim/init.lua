@@ -1,12 +1,12 @@
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.termguicolors = true
-vim.opt.expandtab = true   -- convert tabs to spaces
-vim.opt.shiftwidth = 4     -- no of spaces inserted for each indentation
-vim.opt.tabstop = 4        -- no of spaces inserted for tab
-vim.opt.signcolumn = "yes" -- always show signcolumn
+vim.opt.termguicolors = true -- enable RGB colors
+vim.opt.expandtab = true     -- convert tabs to spaces
+vim.opt.shiftwidth = 4       -- no of spaces inserted for each indentation
+vim.opt.tabstop = 4          -- no of spaces inserted for tab
+vim.opt.signcolumn = "yes"   -- always show signcolumn
 vim.opt.wrap = false
-vim.opt.laststatus = 3     -- single statusline for all splits
+vim.opt.laststatus = 3       -- single statusline for all splits
 
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.opt.ignorecase = true
