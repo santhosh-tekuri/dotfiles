@@ -44,26 +44,14 @@ gcA         insert comment end of line
 gcO         insert comment prev line
 ```
 
-## surround operator
-
-```java
-sa{noun}{addition}          surround with {addition}
-
-sd{deletion}                delete surrounding {deletion} 
-sdb                         delete  surrounding char
-
-sr{deletion}{addition}      replace surrounding {deletion} with {addition}
-srb{addition}               replace surrounding char with {addition}
-```
-
-## surround textobject
+## surround
 
 ```java
 ys{motion}{char}        surround by {char}
 cs{char}{replacement}   replace surrouding {char} by {replacement}
 ds{char}                delete surrounding {char}
 
-use `q` for {char} to find surrounding char automatically
+use `s` for {char} to find surrounding char automatically
 ```
 
 ## move lines
