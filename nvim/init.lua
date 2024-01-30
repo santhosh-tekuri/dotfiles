@@ -80,7 +80,7 @@ require("lazy").setup {
     require("specs.colorizer"),
     require("specs.whichkey"),
     require("specs.textobj_line"),
-    require("specs.textobj_entrire"),
+    require("specs.textobj_entire"),
     require("specs.autopairs"),
 }
 
