@@ -34,6 +34,10 @@ vim.keymap.set('n', ' Y', '"+Y', { desc = "Copy to system clipboard" })
 vim.keymap.set({ 'n', 'v' }, ' p', '"+p', { desc = "Paste clipboard after selection" })
 vim.keymap.set({ 'n', 'v' }, ' P', '"+P', { desc = "Paste clipboard before selection" })
 
+-- move current line up/down
+vim.keymap.set("n", "<M-j>", ":m .+1<CR>==")
+vim.keymap.set("n", "<M-k>", ":m .-2<CR>==")
+
 -- move selected lines up/down
 vim.keymap.set("v", "<M-j>", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "<M-k>", ":m '<-2<CR>gv=gv")
