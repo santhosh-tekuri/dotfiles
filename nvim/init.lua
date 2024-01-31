@@ -83,5 +83,3 @@ require("lazy").setup {
     require("specs.textobj_entire"),
     require("specs.autopairs"),
 }
-
-vim.cmd.colorscheme "kanagawa"

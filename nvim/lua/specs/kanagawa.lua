@@ -1,6 +1,9 @@
-return {
+local spec = {
     "rebelot/kanagawa.nvim",
-    opts={
+}
+
+function spec.config()
+    require("kanagawa").setup {
         colors = {
             theme = {
                 all = {
@@ -22,4 +25,8 @@ return {
             }
         end,
     }
-}
+
+    vim.cmd.colorscheme "kanagawa"
+end
+
+return spec
