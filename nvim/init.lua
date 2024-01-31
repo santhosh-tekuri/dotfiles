@@ -30,8 +30,13 @@ vim.keymap.set('n', '<esc>', '<c-w>o', { desc = "close other windows" })
 
 -- system clipboard
 vim.keymap.set({ 'n', 'v' }, ' y', '"+y', { desc = "Copy to system clipboard" })
+vim.keymap.set('n', ' Y', '"+Y', { desc = "Copy to system clipboard" })
 vim.keymap.set({ 'n', 'v' }, ' p', '"+p', { desc = "Paste clipboard after selection" })
 vim.keymap.set({ 'n', 'v' }, ' P', '"+P', { desc = "Paste clipboard before selection" })
+
+-- move selected lines up/down
+vim.keymap.set("v", "<M-j>", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "<M-k>", ":m '<-2<CR>gv=gv")
 
 -- disable virtual text for diagnostics
 vim.diagnostic.config({ virtual_text = false })
@@ -74,7 +79,7 @@ require("lazy").setup {
     require("specs.comment"),
     require("specs.surround"),
     --require("specs.smarttab"),
-    require("specs.minimove"),
+    -- require("specs.minimove"),
     require("specs.lualine"),
     require("specs.trouble"),
     require("specs.colorizer"),

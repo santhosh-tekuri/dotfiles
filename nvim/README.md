@@ -57,5 +57,5 @@ use `s` for {char} to find surrounding char automatically
 ## move lines
 
 ```java
-<alt>{h/j/k/l}  move current/selected line(s)
+<alt>{j/k}  move selected lines up/down
 ```
