@@ -18,7 +18,7 @@ function spec.config()
         group = vim.api.nvim_create_augroup('TelescopeLspConfig', {}),
         callback = function(ev)
             vim.keymap.set('n', ' s', builtin.lsp_document_symbols, { desc = "Open symbol picker" })
-            vim.keymap.set('n', ' S', builtin.lsp_workspace_symbols, { desc = "Open workspace symbol picker" })
+            vim.keymap.set('n', ' S', builtin.lsp_dynamic_workspace_symbols, { desc = "Open workspace symbol picker" })
             vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, { desc = "Perform code action" })
         end,
     });
