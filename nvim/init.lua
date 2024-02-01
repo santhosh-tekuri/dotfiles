@@ -70,7 +70,7 @@ vim.opt.rtp:prepend(lazypath)
 -- load plugin specs
 require("lazy").setup {
     require("specs.kanagawa"),
-    require("specs.notify"),
+    require("specs.fidget"),
     require("specs.gitsigns"),
     -- require("specs.fzf"),
     require("specs.telescope"),
@@ -79,11 +79,9 @@ require("lazy").setup {
     require("specs.lspconfig"),
     require("specs.cmp"),
     require("specs.lspsignature"),
-    require("specs.lspprogress"),
     require("specs.comment"),
     require("specs.surround"),
     --require("specs.smarttab"),
-    -- require("specs.minimove"),
     require("specs.lualine"),
     require("specs.trouble"),
     require("specs.colorizer"),
