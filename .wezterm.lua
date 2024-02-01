@@ -28,6 +28,7 @@ return {
     hide_tab_bar_if_only_one_tab = true,
     use_fancy_tab_bar = false,
     keys = {
+        { key = 'Enter',      mods = 'ALT',        action = wezterm.action.DisableDefaultAssignment },
         { key = 'q',          mods = 'CTRL',       action = act { SendString = "\x11" } }, -- detect ctrl-q. see issue 2630
         { key = 'LeftArrow',  mods = 'OPT',        action = act.SendKey { key = 'b', mods = 'ALT' } },
         { key = 'RightArrow', mods = 'OPT',        action = act.SendKey { key = 'f', mods = 'ALT' } },
