@@ -13,6 +13,7 @@ function spec.config()
         "lua_ls",
         "gopls",
         "rust_analyzer",
+        "pyright",
     }
 
     local null_ls = require("null-ls")
