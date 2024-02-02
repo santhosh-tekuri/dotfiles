@@ -1,28 +1,27 @@
 local spec = {
     "hrsh7th/nvim-cmp",
     dependencies = {
-        { "hrsh7th/cmp-nvim-lsp" },
+        -- snippet engine
+        'L3MON4D3/LuaSnip',
+        'saadparwaiz1/cmp_luasnip',
 
-        -- use vsnip for snippets
-        { "hrsh7th/cmp-vsnip" },
-        { "hrsh7th/cmp-path" },
-        { "hrsh7th/cmp-buffer" },
-        { "hrsh7th/cmp-cmdline" },
-        { "hrsh7th/vim-vsnip" },
+        -- sources
+        "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-path",
+        "hrsh7th/cmp-buffer",
+        "hrsh7th/cmp-cmdline",
     },
 }
 
-local feedkey = function(key, mode)
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
-end
-
 function spec.config()
     local cmp = require "cmp"
+    local luasnip = require "luasnip"
+    luasnip.config.setup {}
 
     cmp.setup {
         snippet = {
             expand = function(args)
-                vim.fn["vsnip#anonymous"](args.body)
+                luasnip.lsp_expand(args.body)
             end,
         },
         mapping = cmp.mapping.preset.insert({
@@ -36,15 +35,15 @@ function spec.config()
             ['<Tab>'] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
-                elseif vim.fn["vsnip#available"](1) == 1 then
-                    feedkey("<Plug>(vsnip-expand-or-jump)", "")
+                elseif luasnip.expand_or_locally_jumpable() then
+                    luasnip.expand_or_jump()
                 else
                     fallback()
                 end
             end, { 'i', 's' }),
             ['<S-Tab>'] = cmp.mapping(function(fallback)
-                if vim.fn["vsnip#jumpable"](-1) == 1 then
-                    feedkey("<Plug>(vsnip-jump-prev)", "")
+                if luasnip.locally_jumpable(-1) then
+                    luasnip.jump(-1)
                 else
                     fallback()
                 end
@@ -75,11 +74,6 @@ function spec.config()
             end,
         },
     }
-
-    -- vim.cmd [[imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>']]
-    -- vim.cmd [[smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>']]
-    -- vim.cmd [[imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>']]
-    -- vim.cmd [[smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>']]
 
     -- Use cmdline & path source for ':'
     cmp.setup.cmdline(':', {
