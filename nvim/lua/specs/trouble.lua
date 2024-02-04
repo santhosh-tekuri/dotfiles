@@ -5,13 +5,7 @@ function spec.config()
     require("trouble").setup {
         icons = false,
         padding = false,
-        signs = {
-            error = '',
-            warning = '',
-            hint = '',
-            information = '',
-            other = '',
-        },
+        use_diagnostic_signs = true,
     }
 
     -- when LS attaches to the current buffer
@@ -27,7 +21,7 @@ function spec.config()
             vim.keymap.set('n', ' D', function()
                 trouble.toggle("workspace_diagnostics")
             end, { desc = "Open workspace diagnotic picker" })
-      end,
+        end,
     })
 end
 
