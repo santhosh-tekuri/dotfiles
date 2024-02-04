@@ -22,17 +22,7 @@ function spec.config()
         },
     })
 
-    -- install serve
-    require("mason").setup()
-    require("mason-lspconfig").setup {
-        ensure_installed = servers,
-    }
-
-    -- setup each server
-    require("neodev").setup({})
-    local lspconfig = require "lspconfig"
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
-    local fmt_augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
     local on_attach = function(client, bufnr)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = "Goto definition" })
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { desc = "Goto declaration" })
@@ -41,14 +31,13 @@ function spec.config()
         vim.keymap.set('n', ' r', vim.lsp.buf.rename, { desc = "Rename symbol" })
         vim.keymap.set('n', ' k', vim.lsp.buf.hover, { desc = "Show docs for item under cursor" })
         vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, { desc = "Show signature" })
-        vim.keymap.set('n', ' e', function()
-            vim.diagnostic.open_float(nil, { focus = false })
-        end, { desc = "Show error on current line" })
+        vim.keymap.set('n', ' e', vim.diagnostic.open_float, { desc = "Show error on current line" })
 
         if client.supports_method("textDocument/formatting") then
-            vim.api.nvim_clear_autocmds({ group = fmt_augroup, buffer = bufnr })
+            local group = vim.api.nvim_create_augroup("LspFormatting", { clear = false })
+            vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
             vim.api.nvim_create_autocmd("BufWritePre", {
-                group = fmt_augroup,
+                group = group,
                 buffer = bufnr,
                 callback = function()
                     vim.lsp.buf.format()
@@ -56,17 +45,26 @@ function spec.config()
             })
         end
     end
-    for _, server in pairs(servers) do
-        local opts = {
-            capabilities = capabilities,
-            on_attach = on_attach,
-        }
-        local ok, settings = pcall(require, "lspsettings." .. server)
-        if ok then
-            opts.settings = settings
-        end
-        lspconfig[server].setup(opts)
-    end
+
+    -- install serve
+    require("mason").setup()
+    require("neodev").setup({})
+    require("mason-lspconfig").setup {
+        ensure_installed = servers,
+        handlers = {
+            function(server_name)
+                local opts = {
+                    capabilities = capabilities,
+                    on_attach = on_attach,
+                }
+                local ok, settings = pcall(require, "lspsettings." .. server_name)
+                if ok then
+                    opts.settings = settings
+                end
+                require("lspconfig")[server_name].setup(opts)
+            end,
+        },
+    }
 
     -- set diagnotic text
     local signs = {
