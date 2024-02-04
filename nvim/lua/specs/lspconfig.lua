@@ -9,13 +9,6 @@ local spec = {
 }
 
 function spec.config()
-    local servers = {
-        "lua_ls",
-        "gopls",
-        "rust_analyzer",
-        "pyright",
-    }
-
     local null_ls = require("null-ls")
     null_ls.setup({
         sources = {
@@ -50,18 +43,23 @@ function spec.config()
     require("mason").setup()
     require("neodev").setup({})
     require("mason-lspconfig").setup {
-        ensure_installed = servers,
+        ensure_installed = {
+            "lua_ls",
+            "gopls",
+            "rust_analyzer",
+            "pyright",
+        },
         handlers = {
             function(server_name)
-                local opts = {
+                local config = {
                     capabilities = capabilities,
                     on_attach = on_attach,
                 }
                 local ok, settings = pcall(require, "lspsettings." .. server_name)
                 if ok then
-                    opts.settings = settings
+                    config.settings = settings
                 end
-                require("lspconfig")[server_name].setup(opts)
+                require("lspconfig")[server_name].setup(config)
             end,
         },
     }
