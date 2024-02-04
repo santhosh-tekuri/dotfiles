@@ -49,6 +49,10 @@ function spec.config()
             mappings = {
                 i = {
                     ["<esc>"] = actions.close, -- close telescope with single <esc>
+                    ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble,
+                },
+                n = {
+                    ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble,
                 },
             },
         },
