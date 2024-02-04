@@ -35,12 +35,38 @@ def bigend(uint_32):
     return (uint_32 & 0xffffffff).to_bytes(4, 'big')
 
 if len(sys.argv) != 4:
-    print('usage: mpass SITE COUNTER TYPE', file=sys.stderr)
+    print('''usage: mpass SITE COUNTER TYPE
+
+COUNTER must be greater than zero
+TYPE must be:
+          b: Basic
+          l: Long
+          M: Maximum
+          m: Medium
+          n: Name
+          P: Phrase
+          p: PIN
+          s: Short''', file=sys.stderr)
     sys.exit(1)
 
 site = sys.argv[1]
 counter = int(sys.argv[2])
+if counter < 0:
+    print("counter must be greater than zero", file=sys.stderr)
+    sys.exit(1)
 template_class = sys.argv[3]
+if template_class not in template_sets:
+    print("""TYPE must be:
+          b: Basic
+          l: Long
+          M: Maximum
+          m: Medium
+          n: Name
+          P: Phrase
+          p: PIN
+          s: Short""", file=sys.stderr)
+    sys.exit(1)
+
 name = getpass.getpass('name: ')
 master_password = getpass.getpass('password: ')
 
