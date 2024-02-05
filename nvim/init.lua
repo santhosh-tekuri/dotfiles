@@ -83,7 +83,7 @@ require("lazy").setup {
     require("specs.telescope"),
     require("specs.treesitter"),
     require("specs.treesitter_textobjs"),
-    require("specs.lspsignature"),
+    -- require("specs.lspsignature"),
     require("specs.lspconfig"),
     require("specs.cmp"),
     require("specs.comment"),

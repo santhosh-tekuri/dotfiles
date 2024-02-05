@@ -15,7 +15,10 @@ function spec.config()
         },
     })
 
-    local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    local cap1 = vim.lsp.protocol.make_client_capabilities()
+    local cap2 = require("cmp_nvim_lsp").default_capabilities(cap1)
+    local capabilities = vim.tbl_deep_extend("force", cap1, cap2)
+
     local on_attach = function(client, bufnr)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = "Goto definition" })
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { desc = "Goto declaration" })
@@ -23,8 +26,7 @@ function spec.config()
         vim.keymap.set('n', 'gy', vim.lsp.buf.type_definition, { desc = "Goto type definition" })
         vim.keymap.set('n', ' r', vim.lsp.buf.rename, { desc = "Rename symbol" })
         vim.keymap.set('n', ' k', vim.lsp.buf.hover, { desc = "Show docs for item under cursor" })
-        vim.keymap.set({ 'n', 'i' }, '<c-k>', require("lsp_signature").toggle_float_win, { desc = "Show signature" })
-        -- vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, { desc = "Show signature" })
+        vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, { desc = "Show signature" })
         vim.keymap.set('n', ' e', vim.diagnostic.open_float, { desc = "Show error on current line" })
 
         if client.supports_method("textDocument/formatting") then
