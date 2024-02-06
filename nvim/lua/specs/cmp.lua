@@ -13,8 +13,42 @@ local spec = {
     },
 }
 
+local function deprio(kind)
+    return function(e1, e2)
+        if e1:get_kind() == kind then
+            return false
+        end
+        if e2:get_kind() == kind then
+            return true
+        end
+    end
+end
+
+local function no_detail_first(e1, e2)
+    local types = require("cmp.types")
+    if e1:get_kind() == e2:get_kind() then
+        local item1 = e1:get_completion_item();
+        local item2 = e2:get_completion_item();
+        local detail1 = nil
+        if item1.labelDetails and item1.labelDetails.detail then
+            detail1 = item1.labelDetails.detail
+        end
+        local detail2 = nil
+        if item2.labelDetails and item2.labelDetails.detail then
+            detail2 = item2.labelDetails.detail
+        end
+        if detail1 == nil and detail2 ~= nil then
+            return true
+        end
+        if detail1 ~= nil and detail2 == nil then
+            return false
+        end
+    end
+end
+
 function spec.config()
     local cmp = require "cmp"
+    local types = require("cmp.types")
     local luasnip = require "luasnip"
     luasnip.config.setup {}
 
@@ -57,19 +91,26 @@ function spec.config()
         },
         sorting = {
             comparators = {
-                cmp.config.compare.order,
-                cmp.config.compare.score,
-                cmp.config.compare.exact,
-                cmp.config.compare.sort_text,
+                no_detail_first,
+                deprio(types.lsp.CompletionItemKind.Snippet),
                 cmp.config.compare.offset,
+                cmp.config.compare.exact,
+                cmp.config.compare.score,
+                cmp.config.compare.recently_used,
+                cmp.config.compare.locality,
                 cmp.config.compare.kind,
                 cmp.config.compare.length,
+                cmp.config.compare.order,
             }
         },
         formatting = {
-            fields = { "abbr", "kind" },
+            fields = { "abbr", "menu", "kind" },
             format = function(entry, vim_item)
-                vim_item.menu = "" -- need to empty explictly to reduce popup width
+                vim_item.menu = ""
+                local item = entry:get_completion_item()
+                if item.labelDetails and item.labelDetails.detail then
+                    vim_item.menu = item.labelDetails.detail
+                end
                 return vim_item
             end,
         },
