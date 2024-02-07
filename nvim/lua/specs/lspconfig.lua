@@ -67,6 +67,9 @@ function spec.config()
         },
     }
 
+    -- disable virtual text for diagnostics
+    vim.diagnostic.config({ virtual_text = false })
+
     -- set diagnotic text
     local signs = {
         { name = 'DiagnosticSignError', text = '' },
