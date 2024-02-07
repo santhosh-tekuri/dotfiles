@@ -25,7 +25,6 @@ local function deprio(kind)
 end
 
 local function no_detail_first(e1, e2)
-    local types = require("cmp.types")
     if e1:get_kind() == e2:get_kind() then
         local item1 = e1:get_completion_item();
         local item2 = e2:get_completion_item();
@@ -43,6 +42,22 @@ local function no_detail_first(e1, e2)
         if detail1 ~= nil and detail2 == nil then
             return false
         end
+    end
+end
+
+local function kind_order(kinds)
+    local order = {}
+    for i, kind in ipairs(kinds) do
+        order[kind] = i
+    end
+    return function(e1, e2)
+        local diff = order[e1:get_kind()] - order[e2:get_kind()]
+        if diff < 0 then
+            return true
+        elseif diff > 0 then
+            return false
+        end
+        return nil
     end
 end
 
@@ -92,13 +107,39 @@ function spec.config()
         sorting = {
             comparators = {
                 no_detail_first,
-                deprio(types.lsp.CompletionItemKind.Snippet),
                 cmp.config.compare.offset,
                 cmp.config.compare.exact,
                 cmp.config.compare.score,
                 cmp.config.compare.recently_used,
                 cmp.config.compare.locality,
-                cmp.config.compare.kind,
+                kind_order({
+                    types.lsp.CompletionItemKind.Function,
+                    types.lsp.CompletionItemKind.Method,
+                    types.lsp.CompletionItemKind.Text,
+                    types.lsp.CompletionItemKind.Constructor,
+                    types.lsp.CompletionItemKind.Field,
+                    types.lsp.CompletionItemKind.Variable,
+                    types.lsp.CompletionItemKind.Class,
+                    types.lsp.CompletionItemKind.Interface,
+                    types.lsp.CompletionItemKind.Module,
+                    types.lsp.CompletionItemKind.Property,
+                    types.lsp.CompletionItemKind.Unit,
+                    types.lsp.CompletionItemKind.Value,
+                    types.lsp.CompletionItemKind.Enum,
+                    types.lsp.CompletionItemKind.Keyword,
+                    types.lsp.CompletionItemKind.Color,
+                    types.lsp.CompletionItemKind.File,
+                    types.lsp.CompletionItemKind.Reference,
+                    types.lsp.CompletionItemKind.Folder,
+                    types.lsp.CompletionItemKind.EnumMember,
+                    types.lsp.CompletionItemKind.Constant,
+                    types.lsp.CompletionItemKind.Struct,
+                    types.lsp.CompletionItemKind.Event,
+                    types.lsp.CompletionItemKind.Operator,
+                    types.lsp.CompletionItemKind.TypeParameter,
+                    types.lsp.CompletionItemKind.Snippet,
+                }),
+                -- cmp.config.compare.kind,
                 cmp.config.compare.length,
                 cmp.config.compare.order,
             }
