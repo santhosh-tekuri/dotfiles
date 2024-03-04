@@ -5,6 +5,7 @@ echo source `pwd`/.screenrc >> ~/.screenrc
 ln -s `pwd`/.inputrc ~
 ln -s `pwd`/.tmux.conf ~
 ln -s `pwd`/.gitconfig ~
+ln -s `pwd`/gitignore ~/.gitignore
 ln -s `pwd`/.wezterm.lua ~
 
 mkdir -p ~/.config
