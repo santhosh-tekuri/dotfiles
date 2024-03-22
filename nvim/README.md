@@ -59,3 +59,11 @@ use `s` for {char} to find surrounding char automatically
 ```java
 <alt>{j/k}  move current/selected line(s) up/down
 ```
+
+## autopairs
+
+```java
+<alt>e  fast wrap
+<alt>
+
+```
