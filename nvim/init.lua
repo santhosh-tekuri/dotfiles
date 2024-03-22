@@ -30,6 +30,7 @@ require("lazy").setup {
     require("specs.gitsigns"),
     -- require("specs.fzf"),
     require("specs.telescope"),
+    require("specs.todo"),
     require("specs.treesitter"),
     require("specs.treesitter_textobjs"),
     -- require("specs.lspsignature"),
