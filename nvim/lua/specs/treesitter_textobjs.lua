@@ -18,6 +18,9 @@ function spec.config()
                     ['l='] = { query = "@assignment.lhs" },
                     ['r='] = { query = "@assignment.rhs" },
 
+                    ['af'] = { query = "@call.outer" },
+                    ['if'] = { query = "@call.inner" },
+
                     ['aa'] = { query = "@parameter.outer" },
                     ['ia'] = { query = "@parameter.inner" },
                 }
