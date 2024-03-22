@@ -10,10 +10,8 @@ vim.opt.laststatus = 3        -- single statusline for all splits
 vim.opt.splitbelow = true     -- put new window below the split
 vim.opt.splitright = true     -- put new window right to the split
 vim.opt.inccommand = "split"  -- show substitute preview in split
-
--- Case-insensitive searching UNLESS \C or capital in search
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
+vim.opt.ignorecase = true     -- prefer case-insensitive search UNLESS \C prefix
+vim.opt.smartcase = true      -- override ignorecase when pattern has uppercase
 
 -- show whitespace using :set list
 vim.opt.listchars = { space = '.', tab = '>-', trail = '.' }
