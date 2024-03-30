@@ -1,9 +1,7 @@
-local spec = { "jiangmiao/auto-pairs" }
+local spec = { "altermo/ultimate-autopair.nvim" }
 
 function spec.config()
-    vim.g.AutoPairsCenterLine = 0
-    vim.g.AutoPairsShortcutJump = "<C-N>"
-    vim.g.AutoPairsFlyMode = 1
+    require("ultimate-autopair").setup()
 end
 
 return spec
