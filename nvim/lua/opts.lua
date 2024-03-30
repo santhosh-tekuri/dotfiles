@@ -15,3 +15,6 @@ vim.opt.smartcase = true      -- override ignorecase when pattern has uppercase
 
 -- show whitespace using :set list
 vim.opt.listchars = { space = '.', tab = '>-', trail = '.' }
+
+-- fill deleted lines with spaces in diff-mode
+vim.opt.fillchars:append { diff = " " }

@@ -46,4 +46,5 @@ require("lazy").setup {
     require("specs.textobj_line"),
     require("specs.textobj_entire"),
     require("specs.autopairs"),
+    require("specs.diffview"),
 }
