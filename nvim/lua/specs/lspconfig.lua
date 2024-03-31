@@ -56,6 +56,8 @@ function spec.config()
         "gopls",
         "rust_analyzer",
         "pyright",
+        "jsonls",
+        "yamlls",
     }
     -- install serve
     require("mason").setup()
