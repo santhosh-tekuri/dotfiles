@@ -1,7 +1,6 @@
 local spec = {
     "neovim/nvim-lspconfig",
     dependencies = {
-        "nvimtools/none-ls.nvim",
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
         "folke/neodev.nvim", -- for neovim plugin development
@@ -9,12 +8,6 @@ local spec = {
 }
 
 function spec.config()
-    local null_ls = require("null-ls")
-    null_ls.setup({
-        sources = {
-        },
-    })
-
     local cap1 = vim.lsp.protocol.make_client_capabilities()
     local cap2 = require("cmp_nvim_lsp").default_capabilities(cap1)
     local capabilities = vim.tbl_deep_extend("force", cap1, cap2)
@@ -54,11 +47,13 @@ function spec.config()
     local servers = {
         "lua_ls",
         "gopls",
+        "golangci_lint_ls",
         "rust_analyzer",
         "pyright",
         "jsonls",
         "yamlls",
     }
+
     -- install serve
     require("mason").setup()
     require("neodev").setup({})
