@@ -12,6 +12,7 @@ vim.opt.splitright = true     -- put new window right to the split
 vim.opt.inccommand = "split"  -- show substitute preview in split
 vim.opt.ignorecase = true     -- prefer case-insensitive search UNLESS \C prefix
 vim.opt.smartcase = true      -- override ignorecase when pattern has uppercase
+vim.opt.scrolloff = 3         -- min lines to keep above/below cursor
 
 -- show whitespace using :set list
 vim.opt.listchars = { space = '.', tab = '>-', trail = '.' }
