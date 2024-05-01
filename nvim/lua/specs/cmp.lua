@@ -109,6 +109,7 @@ function spec.config()
         }),
         sources = {
             { name = "nvim_lsp" },
+            { name = "path" },
         },
         matching = {
             disallow_fuzzy_matching = true,
