@@ -13,6 +13,7 @@ return {
         top = 0,
         bottom = 0,
     },
+    scrollback_lines = 99999,
     color_scheme = "Tango (terminal.sexy)",
     colors = {
         foreground = '#dcd7ba',
