@@ -10,7 +10,9 @@ local spec = {
 function spec.config()
     local builtin = require('telescope.builtin')
     vim.keymap.set('n', ' f', builtin.find_files, { desc = "Open file picker" })
-    vim.keymap.set('n', ' b', builtin.buffers, { desc = "Open buffer picker" })
+    vim.keymap.set('n', ' b', function()
+        builtin.buffers { ignore_current_buffer = true }
+    end, { desc = "Open buffer picker" })
     vim.keymap.set('n', ' /', builtin.live_grep, { desc = "Global search in workspace folder" })
 
     -- when LS attaches to the current buffer
