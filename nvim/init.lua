@@ -1,5 +1,6 @@
 require("opts")
 require("keymaps")
+require("commands")
 
 -- highlight selection on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
