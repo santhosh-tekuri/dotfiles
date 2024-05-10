@@ -46,6 +46,11 @@ require("lazy").setup {
     require("specs.whichkey"),
     require("specs.textobj_line"),
     require("specs.textobj_entire"),
+    require("specs.textobj_comment"),
+    require("specs.textobj_backticks"),
+    require("specs.textobj_quotes"),
+    require("specs.textobj_toplevel"),
+    require("specs.textobj_variable_segment"),
     require("specs.autopairs"),
     require("specs.diffview"),
 }
