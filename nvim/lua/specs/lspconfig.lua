@@ -95,3 +95,18 @@ function spec.config()
 end
 
 return spec
+
+--[[
+gd          goto definition
+gD          goto declaration
+gy          goto type definition
+gi          goto implemenation
+
+<space>r    rename
+<space>e    show error
+<space>k    show doc
+<ctrl>k     show signature
+
+]d          next diagnostic
+[d          prev diagnostic
+--]]

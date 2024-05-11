@@ -1,6 +1,6 @@
 local spec = {
     "nvim-telescope/telescope.nvim",
-    tag = "0.1.5",
+    tag = "0.1.6",
     dependencies = {
         "nvim-lua/plenary.nvim",
         "nvim-telescope/telescope-ui-select.nvim",
@@ -47,6 +47,7 @@ function spec.config()
             },
         },
         defaults = {
+            path_display = { "filename_first" },
             layout_strategy = "horizontal_fused",
             mappings = {
                 i = {
@@ -63,3 +64,15 @@ function spec.config()
 end
 
 return spec
+
+--[[
+<space>f    files
+<space>b    buffers
+<space>/    grep in workspace
+<space>a    code actions
+
+<space>s    document symbols
+<space>S    workspace symbols
+
+<space>w    enter window mode
+--]]

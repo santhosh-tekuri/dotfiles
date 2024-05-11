@@ -4,3 +4,8 @@ return {
         "kana/vim-textobj-user",
     }
 }
+
+--[[
+i`      text inside backticks
+a`      includes backticks
+--]]

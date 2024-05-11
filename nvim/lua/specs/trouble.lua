@@ -26,3 +26,10 @@ function spec.config()
 end
 
 return spec
+
+--[[
+gr          goto references
+
+<space>d    current diagnostics
+<space>D    workspace diagnotics
+--]]

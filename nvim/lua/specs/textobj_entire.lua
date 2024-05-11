@@ -4,3 +4,8 @@ return {
         "kana/vim-textobj-user",
     }
 }
+
+--[[
+ae      entire content of current buffer
+ie      excludes leading, trailing whitespcae
+--]]
