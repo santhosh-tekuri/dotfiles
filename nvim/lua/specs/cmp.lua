@@ -13,17 +13,6 @@ local spec = {
     },
 }
 
-local function deprio(kind)
-    return function(e1, e2)
-        if e1:get_kind() == kind then
-            return false
-        end
-        if e2:get_kind() == kind then
-            return true
-        end
-    end
-end
-
 local function no_detail_first(e1, e2)
     if e1:get_kind() == e2:get_kind() then
         local item1 = e1:get_completion_item();
