@@ -31,3 +31,8 @@ function spec.config()
 end
 
 return spec
+
+--[[
+<tab>           init/increment selection
+<shift-tab>     decrement selection
+--]]
