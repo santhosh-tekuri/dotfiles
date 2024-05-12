@@ -34,6 +34,7 @@ require("lazy").setup {
     require("specs.todo"),
     require("specs.treesitter"),
     require("specs.treesitter_textobjs"),
+    require("specs.autotag"),
     -- require("specs.lspsignature"),
     require("specs.lspconfig"),
     require("specs.cmp"),
