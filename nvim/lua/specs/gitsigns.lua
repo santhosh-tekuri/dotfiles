@@ -1,4 +1,7 @@
-local spec = { "lewis6991/gitsigns.nvim" }
+local spec = {
+    "lewis6991/gitsigns.nvim",
+    tag = "v0.8.1",
+}
 
 function spec.config()
     require("gitsigns").setup({
