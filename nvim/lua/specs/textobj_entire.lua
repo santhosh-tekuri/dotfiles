@@ -1,3 +1,5 @@
+-- textobject for entire buffer
+
 return {
     "kana/vim-textobj-entire",
     dependencies = {

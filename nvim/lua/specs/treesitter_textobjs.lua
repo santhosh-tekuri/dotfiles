@@ -1,3 +1,5 @@
+-- syntax aware text-objects, select, move, swap, and peek support
+
 local spec = {
     "nvim-treesitter/nvim-treesitter-textobjects",
     dependencies = {

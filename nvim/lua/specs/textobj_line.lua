@@ -1,3 +1,5 @@
+-- textobject for current line
+
 return {
     "kana/vim-textobj-line",
     dependencies = {

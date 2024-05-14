@@ -1,3 +1,5 @@
+-- treesitter configurations and abstraction layers
+
 local spec = {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",

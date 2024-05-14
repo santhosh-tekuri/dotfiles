@@ -1,3 +1,5 @@
+-- automatically close and rename html tag
+
 local spec = { "windwp/nvim-ts-autotag" }
 
 function spec.config()

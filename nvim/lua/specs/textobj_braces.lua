@@ -1,3 +1,5 @@
+-- textobject for closest inner () {} or []
+
 return {
     "Julian/vim-textobj-brace",
     dependencies = {
@@ -6,7 +8,7 @@ return {
 }
 
 --[[
-textobj surrounded by [], {} or ()
+textobject for closest inner (), {} or []
 
 aj      innermost braces
 ij      excludes braces
