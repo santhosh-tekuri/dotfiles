@@ -22,7 +22,7 @@ function spec.config()
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('FzfLspConfig', {}),
-        callback = function(ev)
+        callback = function(_ev)
             vim.keymap.set('n', ' s', fzf.lsp_document_symbols, { desc = "Open symbol picker" })
             vim.keymap.set('n', ' S', fzf.lsp_workspace_symbols, { desc = "Open workspace symbol picker" })
             vim.keymap.set({ 'n', 'v' }, ' a', fzf.lsp_code_actions, { desc = "Perform code action" })

@@ -17,7 +17,7 @@ function spec.config()
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('TelescopeLspConfig', {}),
-        callback = function(ev)
+        callback = function(_ev)
             vim.keymap.set('n', ' s', builtin.lsp_document_symbols, { desc = "Open symbol picker" })
             vim.keymap.set('n', ' S', builtin.lsp_dynamic_workspace_symbols, { desc = "Open workspace symbol picker" })
             vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, { desc = "Perform code action" })
