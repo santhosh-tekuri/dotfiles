@@ -56,4 +56,5 @@ require("lazy").setup {
     require("specs.textobj_variable_segment"),
     require("specs.autopairs"),
     require("specs.diffview"),
+    require("specs.urlopen"),
 }

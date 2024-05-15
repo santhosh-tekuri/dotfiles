@@ -29,6 +29,7 @@
   "todo-comments.nvim": { "branch": "main", "commit": "a7e39ae9e74f2c8c6dc4eea6d40c3971ae84752d" },
   "trouble.nvim": { "branch": "main", "commit": "b9cf677f20bb2faa2dacfa870b084e568dca9572" },
   "ultimate-autopair.nvim": { "branch": "v0.6", "commit": "042587c63b2b2776a83337748d53dba8b67ec545" },
+  "url-open": { "branch": "main", "commit": "9f8f4a56ac709f26aa17d8ef921b272bf2262a30" },
   "vim-textobj-backticks": { "branch": "master", "commit": "88cad8a6ed64a7696c8888e71fc8c351e84b84a5" },
   "vim-textobj-brace": { "branch": "master", "commit": "b936fbd99e16dcc6e4d62d5e81a73d9ad37fd576" },
   "vim-textobj-comment": { "branch": "master", "commit": "58ae4571b76a5bf74850698f23d235eef991dd4b" },
