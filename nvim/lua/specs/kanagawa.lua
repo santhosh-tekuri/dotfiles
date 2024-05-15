@@ -22,6 +22,8 @@ function spec.config()
                 TroubleTextWarning = { link = "DiagnosticWarn" },
                 TroubleTextHint = { link = "DiagnosticHint" },
                 TroubleTextError = { link = "DiagnosticError" },
+                MsgArea = { link = 'StatusLine' },
+                MsgSeparator = { bg = theme.ui.bg },
             }
         end,
     }
