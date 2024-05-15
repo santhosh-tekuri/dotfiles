@@ -1,3 +1,5 @@
+-- completion engine
+
 local spec = {
     "hrsh7th/nvim-cmp",
     dependencies = {

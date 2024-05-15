@@ -1,3 +1,5 @@
+-- show git changes in gutter
+
 local spec = { "lewis6991/gitsigns.nvim" }
 
 function spec.config()

@@ -1,3 +1,5 @@
+-- lsp servers installation and integration
+
 local spec = {
     "neovim/nvim-lspconfig",
     dependencies = {
@@ -23,7 +25,7 @@ function spec.config()
             vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts("Goto implementation"))
             vim.keymap.set('n', 'gy', vim.lsp.buf.type_definition, opts("Goto type definition"))
             vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
-            vim.keymap.set('n', ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
+            vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
             vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
             vim.keymap.set('n', ' e', vim.diagnostic.open_float, opts("Show error on current line"))
             vim.keymap.set('n', ']d', vim.diagnostic.goto_next)

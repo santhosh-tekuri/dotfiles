@@ -1,3 +1,5 @@
+-- ui for lsp progress messages
+
 return {
     "j-hui/fidget.nvim",
     opts = {

@@ -1,3 +1,5 @@
+-- fuzzy finder
+
 local spec = {
     "nvim-telescope/telescope.nvim",
     dependencies = {

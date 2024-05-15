@@ -1,3 +1,5 @@
+-- colorscheme
+
 local spec = {
     "rebelot/kanagawa.nvim",
 }

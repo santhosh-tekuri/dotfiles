@@ -1,3 +1,5 @@
+-- add/delete/change surrounding pairs
+
 return {
     "kylechui/nvim-surround",
     event = "VeryLazy",

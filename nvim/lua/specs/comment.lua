@@ -1,3 +1,5 @@
+-- commenting code
+
 local spec = {
     "numToStr/Comment.nvim",
     dependencies = {
