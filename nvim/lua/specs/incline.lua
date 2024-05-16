@@ -12,7 +12,7 @@ local function render(props)
     for _, name in ipairs({ "ERROR", "WARN", "INFO", "HINT" }) do
         local n = #vim.diagnostic.get(props.buf, { severity = vim.diagnostic.severity[name] })
         if n > 0 then
-            group = 'DiagnosticSign' .. string.lower(name)
+            group = 'DiagnosticVirtualText' .. string.lower(name)
             break
         end
     end
