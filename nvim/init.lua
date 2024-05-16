@@ -26,6 +26,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- load plugin specs
 require("lazy").setup {
+    require("specs.statuscol"),
     require("specs.kanagawa"),
     require("specs.oil"),
     require("specs.fidget"),
@@ -41,7 +42,6 @@ require("lazy").setup {
     require("specs.cmp"),
     require("specs.comment"),
     require("specs.surround"),
-    --require("specs.smarttab"),
     -- require("specs.lualine"),
     require("specs.incline"),
     require("specs.trouble"),
