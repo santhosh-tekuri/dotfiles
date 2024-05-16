@@ -20,6 +20,7 @@ function spec.config()
                 },
                 click = "v:lua.ScSa",
             },
+            { text = { " " } },
             { text = { builtin.lnumfunc }, click = "v:lua.ScLa" }, -- linenum
             { text = { " " } },
             {
