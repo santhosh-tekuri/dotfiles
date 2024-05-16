@@ -28,8 +28,6 @@ function spec.config()
             vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
             vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
             vim.keymap.set('n', ' e', vim.diagnostic.open_float, opts("Show error on current line"))
-            vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-            vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 
             local client = vim.lsp.get_client_by_id(ev.data.client_id)
             if client.supports_method("textDocument/formatting") then
@@ -108,7 +106,4 @@ gi          goto implemenation
 <space>e    show error
 <space>k    show doc
 <ctrl>k     show signature
-
-]d          next diagnostic
-[d          prev diagnostic
 --]]
