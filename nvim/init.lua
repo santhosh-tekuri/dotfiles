@@ -27,6 +27,7 @@ vim.opt.rtp:prepend(lazypath)
 -- load plugin specs
 require("lazy").setup {
     require("specs.kanagawa"),
+    require("specs.oil"),
     require("specs.fidget"),
     require("specs.gitsigns"),
     -- require("specs.fzf"),
