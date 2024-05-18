@@ -13,6 +13,9 @@ function spec.config()
                 horizontal = 'right:50%',
             }
         },
+        defaults = {
+            formatter = "path.filename_first",
+        },
     })
 
     vim.keymap.set('n', ' f', fzf.files, { desc = "Open file picker" })
@@ -24,7 +27,7 @@ function spec.config()
         group = vim.api.nvim_create_augroup('FzfLspConfig', {}),
         callback = function(_ev)
             vim.keymap.set('n', ' s', fzf.lsp_document_symbols, { desc = "Open symbol picker" })
-            vim.keymap.set('n', ' S', fzf.lsp_workspace_symbols, { desc = "Open workspace symbol picker" })
+            vim.keymap.set('n', ' S', fzf.lsp_live_workspace_symbols, { desc = "Open workspace symbol picker" })
             vim.keymap.set({ 'n', 'v' }, ' a', fzf.lsp_code_actions, { desc = "Perform code action" })
         end,
     })
