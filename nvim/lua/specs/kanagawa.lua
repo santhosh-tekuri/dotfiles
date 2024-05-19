@@ -1,8 +1,6 @@
 -- colorscheme
 
-local spec = {
-    "rebelot/kanagawa.nvim",
-}
+local spec = { "rebelot/kanagawa.nvim" }
 
 function spec.config()
     require("kanagawa").setup {
