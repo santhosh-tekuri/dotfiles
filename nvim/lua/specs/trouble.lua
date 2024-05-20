@@ -4,7 +4,6 @@
 local spec = { "folke/trouble.nvim", branch = "dev" }
 
 function spec.config()
-    local trouble = require("trouble")
     require("trouble").setup {
         focus = true,
         padding = false,
@@ -14,7 +13,7 @@ function spec.config()
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('TroubleLspAttach', {}),
-        callback = function(ev)
+        callback = function(_ev)
             vim.keymap.set('n', 'gr', "<cmd>Trouble lsp_references toggle<cr>",
                 { desc = "Goto references" })
             vim.keymap.set('n', ' d', "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
