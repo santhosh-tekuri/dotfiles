@@ -58,4 +58,5 @@ require("lazy").setup {
     require("specs.autopairs"),
     require("specs.diffview"),
     require("specs.urlopen"),
+    require("specs.coverage"),
 }

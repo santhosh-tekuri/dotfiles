@@ -11,6 +11,17 @@ function spec.config()
             { text = { "%C" },             click = "v:lua.ScFa" }, -- fold
             {
                 sign = {
+                    namespace = { "coverage" },
+                    maxwidth = 1,
+                    colwidth = 2,
+                    auto = false,
+                    fillchar = " ",
+                    fillcharhl = "StatusColumnSeparator",
+                },
+                click = "v:lua.ScSa",
+            },
+            {
+                sign = {
                     namespace = { "diagnostic" },
                     maxwidth = 1,
                     colwidth = 2,
