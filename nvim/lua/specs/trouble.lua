@@ -1,12 +1,12 @@
 -- pretty diagnostics, references, telescope results, quickfix and location list
 -- to help you solve allow the trouble your code is causing
 
-local spec = { "folke/trouble.nvim" }
+local spec = { "folke/trouble.nvim", branch = "dev" }
 
 function spec.config()
     local trouble = require("trouble")
     require("trouble").setup {
-        icons = false,
+        focus = true,
         padding = false,
         use_diagnostic_signs = true,
     }
@@ -15,15 +15,12 @@ function spec.config()
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('TroubleLspAttach', {}),
         callback = function(ev)
-            vim.keymap.set('n', 'gr', function()
-                trouble.toggle("lsp_references")
-            end, { desc = "Goto references" })
-            vim.keymap.set('n', ' d', function()
-                trouble.toggle("document_diagnostics")
-            end, { desc = "Open diagnostic picker" })
-            vim.keymap.set('n', ' D', function()
-                trouble.toggle("workspace_diagnostics")
-            end, { desc = "Open workspace diagnotic picker" })
+            vim.keymap.set('n', 'gr', "<cmd>Trouble lsp_references toggle<cr>",
+                { desc = "Goto references" })
+            vim.keymap.set('n', ' d', "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+                { desc = "Open diagnostic picker" })
+            vim.keymap.set('n', ' D', "<cmd>Trouble diagnostics toggle<cr>",
+                { desc = "Open workspace diagnotic picker" })
         end,
     })
 end
