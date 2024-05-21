@@ -26,6 +26,9 @@ function spec.config()
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('FzfLspConfig', {}),
         callback = function(_ev)
+            vim.keymap.set('n', 'gd', fzf.lsp_definitions, { desc = "Goto definition" })
+            vim.keymap.set('n', 'gi', fzf.lsp_implementations, { desc = "Goto implementation" })
+            vim.keymap.set('n', 'gy', fzf.lsp_definitions, { desc = "Goto type definition" })
             vim.keymap.set('n', ' s', fzf.lsp_document_symbols, { desc = "Open symbol picker" })
             vim.keymap.set('n', ' S', fzf.lsp_live_workspace_symbols, { desc = "Open workspace symbol picker" })
             vim.keymap.set({ 'n', 'v' }, ' a', fzf.lsp_code_actions, { desc = "Perform code action" })

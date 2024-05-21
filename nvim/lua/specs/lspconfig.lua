@@ -20,10 +20,7 @@ function spec.config()
             local function opts(desc)
                 return { buffer = ev.buf, desc = desc }
             end
-            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts("Goto definition"))
             vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Goto declaration"))
-            vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts("Goto implementation"))
-            vim.keymap.set('n', 'gy', vim.lsp.buf.type_definition, opts("Goto type definition"))
             vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
             vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
             vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
