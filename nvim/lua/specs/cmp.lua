@@ -3,10 +3,6 @@
 local spec = {
     "hrsh7th/nvim-cmp",
     dependencies = {
-        -- snippet engine
-        'L3MON4D3/LuaSnip',
-        'saadparwaiz1/cmp_luasnip',
-
         -- sources
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-path",
@@ -55,13 +51,11 @@ end
 function spec.config()
     local cmp = require "cmp"
     local types = require("cmp.types")
-    local luasnip = require "luasnip"
-    luasnip.config.setup {}
 
     cmp.setup {
         snippet = {
             expand = function(args)
-                luasnip.lsp_expand(args.body)
+                vim.snippet.expand(args.body)
             end,
         },
         mapping = cmp.mapping.preset.insert({
@@ -84,15 +78,15 @@ function spec.config()
             ['<Tab>'] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
-                elseif luasnip.expand_or_locally_jumpable() then
-                    luasnip.expand_or_jump()
+                elseif vim.snippet.active({ direction = 1 }) then
+                    vim.snippet.jump(1)
                 else
                     fallback()
                 end
             end, { 'i', 's' }),
             ['<S-Tab>'] = cmp.mapping(function(fallback)
-                if luasnip.locally_jumpable(-1) then
-                    luasnip.jump(-1)
+                if vim.snippet.active({ direction = -1 }) then
+                    vim.snippet.jump(-1)
                 else
                     fallback()
                 end
