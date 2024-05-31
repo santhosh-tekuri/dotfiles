@@ -1,7 +1,7 @@
 -- pretty diagnostics, references, telescope results, quickfix and location list
 -- to help you solve allow the trouble your code is causing
 
-local spec = { "folke/trouble.nvim", branch = "dev" }
+local spec = { "folke/trouble.nvim" }
 
 function spec.config()
     require("trouble").setup {
