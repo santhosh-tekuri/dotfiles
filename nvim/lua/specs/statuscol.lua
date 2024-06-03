@@ -8,29 +8,33 @@ function spec.config()
         setopt = true,
         relculright = true,
         segments = {
-            { text = { "%C" },             click = "v:lua.ScFa" }, -- fold
+            { -- fold
+                text = { "%C" },
+                condition = { false },
+                click = "v:lua.ScFa"
+            },
             {
                 sign = {
                     namespace = { "coverage" },
                     maxwidth = 1,
                     colwidth = 2,
-                    auto = false,
+                    auto = true,
                     fillchar = " ",
                     fillcharhl = "StatusColumnSeparator",
                 },
                 click = "v:lua.ScSa",
             },
-            {
-                sign = {
-                    namespace = { "diagnostic" },
-                    maxwidth = 1,
-                    colwidth = 2,
-                    auto = false,
-                    fillchar = " ",
-                    fillcharhl = "StatusColumnSeparator",
-                },
-                click = "v:lua.ScSa",
-            },
+            -- {
+            --     sign = {
+            --         namespace = { "diagnostic" },
+            --         maxwidth = 1,
+            --         colwidth = 2,
+            --         auto = false,
+            --         fillchar = " ",
+            --         fillcharhl = "StatusColumnSeparator",
+            --     },
+            --     click = "v:lua.ScSa",
+            -- },
             { text = { " " } },
             { text = { builtin.lnumfunc }, click = "v:lua.ScLa" }, -- linenum
             { text = { " " } },
@@ -38,10 +42,10 @@ function spec.config()
                 sign = {
                     namespace = { "gitsign" },
                     maxwidth = 1,
-                    colwidth = 2,
+                    colwidth = 1,
                     auto = false,
                     fillchar = " ",
-                    fillcharhl = "StatusColumnSeparator",
+                    fillcharhl = "Normal",
                 },
                 click = "v:lua.ScSa",
             },
