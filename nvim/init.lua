@@ -1,14 +1,7 @@
 require("opts")
 require("keymaps")
 require("commands")
-
--- highlight selection on yank
-vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = "Hightlight selection on yank",
-    callback = function()
-        vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 600 })
-    end,
-})
+require("misc")
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

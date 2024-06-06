@@ -68,27 +68,6 @@ function spec.config()
         end
         require("lspconfig")[server].setup(config)
     end
-
-    -- disable virtual text for diagnostics
-    vim.diagnostic.config({ virtual_text = false })
-
-    -- set diagnotic text
-    local signs = {
-        { name = 'DiagnosticSignError', text = '' },
-        { name = 'DiagnosticSignWarn', text = '' },
-        { name = 'DiagnosticSignHint', text = '' },
-        { name = 'DiagnosticSignInfo', text = '' },
-    }
-    for _, sign in ipairs(signs) do
-        vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = sign.name })
-    end
-
-    -- options for vim.lsp.hover floating window
-    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-        vim.lsp.handlers.hover, {
-            max_width = 80
-        }
-    )
 end
 
 return spec
