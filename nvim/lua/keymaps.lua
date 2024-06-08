@@ -1,3 +1,5 @@
+vim.g.mapleader = " "
+
 -- disable arrow kyes completely
 vim.keymap.set({ "", "!" }, "<Right>", "", {})
 vim.keymap.set({ "", "!" }, "<Left>", "", {})
