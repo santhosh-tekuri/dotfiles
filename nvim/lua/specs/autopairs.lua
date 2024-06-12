@@ -1,3 +1,5 @@
+-- auto close brackets, quotes etc
+
 local spec = { "altermo/ultimate-autopair.nvim" }
 
 function spec.config()

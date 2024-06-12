@@ -1,3 +1,5 @@
+-- highlight, list and search todo comments
+
 local spec = {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
