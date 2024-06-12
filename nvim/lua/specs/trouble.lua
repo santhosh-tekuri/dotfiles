@@ -8,6 +8,14 @@ function spec.config()
         focus = true,
         padding = false,
         use_diagnostic_signs = true,
+        modes = {
+            symbols = {
+                format = "{kind_icon} {symbol.name}",
+            },
+            lsp_document_symbols = {
+                format = "{kind_icon} {symbol.name}",
+            }
+        }
     }
 
     -- when LS attaches to the current buffer
