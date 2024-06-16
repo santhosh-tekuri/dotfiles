@@ -1,10 +1,11 @@
 local wezterm = require 'wezterm'
 local act = wezterm.action
+local font = wezterm.font 'Cascadia Code ExtraLight'
 
 return {
     term = "wezterm",
     window_frame = {
-        font = wezterm.font 'Cascadia Code Light',
+        font = font,
         font_size = 15,
     },
     window_padding = {
@@ -21,7 +22,7 @@ return {
         cursor_bg = "#dcd7ba",
         cursor_fg = "#1f1f28",
     },
-    font = wezterm.font 'Cascadia Code Light',
+    font = font,
     font_size = 18,
     line_height = 1.2,
     initial_rows = 35,
