@@ -9,6 +9,11 @@ fpath=(~/.zsh/completion $fpath)
 autoload -U compinit
 compinit -u -D
 
+if command -v fzf >/dev/null 2>&1; then
+    source <(fzf --zsh)
+    source $dir/fzf-tab/fzf-tab.plugin.zsh
+fi
+
 # case-insensitive tab completion for filenames (useful on Mac OS X)
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 

@@ -19,6 +19,7 @@ echo Include `pwd`/.ssh/config >> ~/.ssh/config
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git
 git clone https://github.com/zsh-users/zsh-autosuggestions.git
 git clone https://github.com/zsh-users/zsh-history-substring-search.git
+git clone https://github.com/Aloxaf/fzf-tab
 
 # install vim gitgutter
 mkdir -p ~/.vim/pack/airblade/start
