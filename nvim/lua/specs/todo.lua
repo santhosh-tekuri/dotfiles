@@ -13,7 +13,7 @@ function spec.config()
 
     local ok, _ = pcall(require, "trouble")
     if ok then
-        vim.keymap.set('n', ' t', function() vim.cmd("TodoTrouble") end)
+        vim.keymap.set('n', ' t', function() vim.cmd("TodoTrouble") end, { desc = "show todos" })
     end
 end
 
