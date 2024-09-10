@@ -9,7 +9,9 @@ end
 local black = "#0d0f18"
 local white = "#a5b6cf"
 local red = "#dd6777"
-local green = "#90ceaa"
+local dull = "#747d8c"
+local green = "#659239"
+local greenLight = "#90ceaa"
 
 local groups = {
     Default = { fg = white },
@@ -19,12 +21,15 @@ local groups = {
     Operator = { fg = "#ae8e57" },
     Type = { link = "Default" },
     Comment = { fg = "#747d8c", italic = true },
-    Visual = { bg = "#313131" },
+    Visual = { bg = "#292a2c" },
     Constant = { link = "String" },
     Function = { link = "Default" },
     Identifier = { link = "Default" },
     DiagnosticError = { fg = red },
-    NormalFloat = { bg = "#121213" },
+    NormalFloat = { bg = "#202830" },
+    WinSeparator = { fg = dull },
+    Search = { bg = "#202830" },
+    CurSearch = { bg = "#4c5063" },
     PMenu = { link = "NormalFloat" },
     PmenuSel = { bg = white, fg = black },
     CmpItemKind = { link = "Comment" },
@@ -32,7 +37,7 @@ local groups = {
     GitSignsAdd = { fg = green },
     GitSignsChange = { fg = "#946a37" },
     GitSignsDelete = { fg = red },
-    -- FloatBorder = { fg = "#000000" },
+    FloatBorder = { fg = dull },
     -- TelescopeNormal = { link = "NormalFloat" },
     -- TelescopeBorder = { link = "FloatBorder" },
     ["@constructor"] = { link = "Default" },
@@ -45,10 +50,7 @@ local groups = {
     ["@function.builtin"] = { link = "@keyword" },
     ["@constant.builtin"] = { link = "@keyword" },
     ["@punctuation"] = { link = "Operator" },
-    ["@lsp.type.parameter"] = { fg = "#ae8e57" },
 }
 for group, hl in pairs(groups) do
     vim.api.nvim_set_hl(0, group, hl)
 end
-
--- vim.api.nvim_set_hl(0, "@lsp.typemod.type.defaultLibrary", { link = "@keyword" })
