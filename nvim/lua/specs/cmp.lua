@@ -142,7 +142,7 @@ function spec.config()
         formatting = {
             fields = { "abbr", "menu", "kind" },
             format = function(entry, vim_item)
-                vim_item.menu = ""
+                vim_item.menu = " "
                 local item = entry:get_completion_item()
                 if item.labelDetails and item.labelDetails.detail then
                     vim_item.menu = item.labelDetails.detail
