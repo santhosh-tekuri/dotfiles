@@ -45,6 +45,7 @@ local groups = {
     ["@variable"] = { link = "Default" },
     ["@keyword"] = { fg = "#6699cc" },
     -- ["@keyword"] = { fg = "#6388c4" },
+    ["@type"] = { fg = "#7b9695" },
     ["@type.builtin"] = { link = "@keyword" },
     ["@variable.builtin"] = { link = "@keyword" },
     ["@function.builtin"] = { link = "@keyword" },
