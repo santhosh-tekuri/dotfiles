@@ -27,6 +27,7 @@ local groups = {
     Identifier = { link = "Default" },
     DiagnosticError = { fg = red },
     NormalFloat = { bg = "#202830" },
+    StatusLine = { bg = "#2c2e33" },
     WinSeparator = { fg = dull },
     Search = { bg = "#202830" },
     CurSearch = { bg = "#4c5063" },
