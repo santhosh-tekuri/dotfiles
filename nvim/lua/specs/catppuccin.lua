@@ -5,8 +5,7 @@ function spec.config()
         flavour = "mocha",
         color_overrides = {
             mocha = {
-                base = "#252525",
-                mantle = "#3b3e48",
+                base = "#000000",
             }
         },
         custom_highlights = function(colors)

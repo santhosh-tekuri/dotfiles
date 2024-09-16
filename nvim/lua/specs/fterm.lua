@@ -4,8 +4,8 @@ local spec = { "numToStr/FTerm.nvim" }
 
 function spec.config()
     require("FTerm").setup {
-        border     = "solid",
-        hl         = 'StatusLine',
+        -- border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+        border = none,
         dimensions = {
             height = 0.9,
             width = 0.9,

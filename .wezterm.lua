@@ -1,7 +1,11 @@
 local wezterm = require 'wezterm'
 local act = wezterm.action
 local font = wezterm.font 'Cascadia Code ExtraLight'
+-- local font = wezterm.font { family = 'Rec Mono Casual', weight = 300, harfbuzz_features = { "calt" } }
+local font = wezterm.font { family = '0xProto', weight = 100, harfbuzz_features = { "calt" } }
+-- local font = wezterm.font { family = 'hack', weight = 200, harfbuzz_features = { "calt" } }
 
+-- calmer
 return {
     term = "wezterm",
     window_frame = {

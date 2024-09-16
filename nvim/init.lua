@@ -17,10 +17,13 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
+vim.cmd "colorscheme santhosh"
+
 -- load plugin specs
 require("lazy").setup {
     require("specs.statuscol"),
-    require("specs.kanagawa"),
+    -- require("specs.kanagawa"),
+    -- require("specs.catppuccin"),
     require("specs.oil"),
     require("specs.fidget"),
     require("specs.gitsigns"),
