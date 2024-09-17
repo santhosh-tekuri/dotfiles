@@ -6,11 +6,11 @@ ln -s `pwd`/.inputrc ~
 ln -s `pwd`/.tmux.conf ~
 ln -s `pwd`/.gitconfig ~
 ln -s `pwd`/gitignore ~/.gitignore
-ln -s `pwd`/.wezterm.lua ~
 
 mkdir -p ~/.config
 ln -s `pwd`/helix ~/.config
 ln -s `pwd`/nvim ~/.config
+ln -s `pwd`/wezterm ~/.config
 
 mkdir -p ~/.ssh
 echo Include `pwd`/.ssh/config >> ~/.ssh/config
