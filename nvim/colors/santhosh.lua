@@ -21,6 +21,7 @@ local groups = {
     Operator = { fg = "#ae8e57" },
     Type = { link = "Default" },
     Comment = { fg = "#747d8c", italic = true },
+    Conceal = { fg = dull },
     Visual = { bg = "#1e293b" },
     -- Visual = { bg = "#292a2c" },
     Constant = { link = "String" },
