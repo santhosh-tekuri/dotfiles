@@ -21,10 +21,18 @@ return {
     scrollback_lines = 99999,
     color_scheme = "Tango (terminal.sexy)",
     colors = {
-        foreground = '#dcd7ba',
-        background = '#1f1f28',
+        foreground = '#a5b6cf',
+        background = '#0d0f18',
+        selection_bg = '#1e293b',
         cursor_bg = "#dcd7ba",
         cursor_fg = "#1f1f28",
+        tab_bar = {
+            background = '#2c2e33',
+            active_tab = {
+                bg_color = '#0d0f18',
+                fg_color = '#a5b6cf',
+            },
+        },
     },
     font = font,
     font_size = 18,
