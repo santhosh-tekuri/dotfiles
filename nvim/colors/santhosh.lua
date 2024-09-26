@@ -16,6 +16,7 @@ local greenLight = "#90ceaa"
 local groups = {
     Default = { fg = white },
     Normal = { bg = black, fg = white },
+    Special = { fg = "#379c9b" },
     String = { fg = green },
     -- Operator = { fg = "#e6b99d" },
     Operator = { fg = "#ae8e57" },
