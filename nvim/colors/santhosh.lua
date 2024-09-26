@@ -11,6 +11,7 @@ local white = "#a5b6cf"
 local red = "#dd6777"
 local dull = "#747d8c"
 local green = "#659239"
+local float = "#181820"
 local greenLight = "#90ceaa"
 
 local groups = {
@@ -29,9 +30,9 @@ local groups = {
     Function = { link = "Default" },
     Identifier = { link = "Default" },
     DiagnosticError = { fg = red },
-    NormalFloat = { bg = "#2c2e33" },
+    NormalFloat = { bg = float },
     -- NormalFloat = { bg = "#202830" },
-    StatusLine = { bg = "#2c2e33" },
+    StatusLine = { bg = float },
     WinSeparator = { fg = dull },
     Search = { bg = "#2c2e33" },
     -- Search = { bg = "#202830" },
