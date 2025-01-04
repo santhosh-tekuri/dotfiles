@@ -7,7 +7,7 @@ for _, group in ipairs(vim.fn.getcompletion("@lsp.", "highlight")) do
 end
 
 local black = "#0d0f18"
-local white = "#a5b6cf"
+local white = "#75869a"
 local red = "#dd6777"
 local dull = "#747d8c"
 local green = "#659239"
@@ -41,6 +41,7 @@ local groups = {
     PMenu = { link = "NormalFloat" },
     PmenuSel = { bg = white, fg = black },
     CmpItemKind = { link = "Comment" },
+    BlinkCmpKind = { link = "Comment" },
     MatchParen = { bg = "#4c5063", fg = "#FFFFFF" },
     GitSignsAdd = { fg = green },
     GitSignsChange = { fg = "#946a37" },

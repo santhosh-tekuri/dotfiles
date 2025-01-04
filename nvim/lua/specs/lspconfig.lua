@@ -11,7 +11,13 @@ local spec = {
 
 function spec.config()
     local cap1 = vim.lsp.protocol.make_client_capabilities()
-    local cap2 = require("cmp_nvim_lsp").default_capabilities(cap1)
+    local cap2
+    local ok, cmp = pcall(require, "cmp_nvim_lsp")
+    if ok then
+        cap2 = cmp.default_capabilities(cap1)
+    else
+        cap2 = require("blink.cmp").get_lsp_capabilities()
+    end
     local capabilities = vim.tbl_deep_extend("force", cap1, cap2)
 
     local servers = {
