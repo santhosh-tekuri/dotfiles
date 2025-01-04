@@ -1,0 +1,17 @@
+window-width = 140 
+window-height = 40
+
+font-family = 0xProto
+font-size = 18
+font-variation = wght=100
+adjust-cell-height = 20%
+
+
+background = 0d0f18
+foreground = 75869a
+selection-background = 1e293b
+cursor-color = dcd7ba
+
+shell-integration-features = no-cursor
+cursor-style = block
+

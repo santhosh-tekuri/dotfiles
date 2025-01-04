@@ -11,6 +11,7 @@ mkdir -p ~/.config
 ln -s `pwd`/helix ~/.config
 ln -s `pwd`/nvim ~/.config
 ln -s `pwd`/wezterm ~/.config
+ln -s `pwd`/ghostty ~/.config
 
 mkdir -p ~/.ssh
 echo Include `pwd`/.ssh/config >> ~/.ssh/config
