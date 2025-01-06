@@ -1,7 +1,6 @@
 local spec = {
     "saghen/blink.cmp",
-    version      = "*",
-    dependencies = "rafamadriz/friendly-snippets",
+    version = "*",
 }
 
 function spec.config()
