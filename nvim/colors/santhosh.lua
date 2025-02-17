@@ -9,7 +9,7 @@ end
 local black = "#0d0f18"
 local white = "#75869a"
 local red = "#dd6777"
-local dull = "#747d8c"
+local dull = "#424b56"
 local green = "#659239"
 local float = "#181820"
 local greenLight = "#90ceaa"
@@ -22,7 +22,7 @@ local groups = {
     -- Operator = { fg = "#e6b99d" },
     Operator = { fg = "#ae8e57" },
     Type = { link = "Default" },
-    Comment = { fg = "#747d8c", italic = true },
+    Comment = { fg = dull, italic = true },
     Conceal = { fg = dull },
     Visual = { bg = "#1e293b" },
     -- Visual = { bg = "#292a2c" },
