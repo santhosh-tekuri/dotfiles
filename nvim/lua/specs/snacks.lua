@@ -15,7 +15,7 @@ function spec.config()
                     winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator",
                 },
             }
-        }
+        },
     }
     vim.keymap.set('n', '<C-/>', function() Snacks.terminal() end)
     vim.keymap.set('t', '<C-/>', function() Snacks.terminal() end)

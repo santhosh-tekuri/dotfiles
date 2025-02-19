@@ -13,6 +13,7 @@ function spec.config()
         },
         completion = {
             menu = {
+                auto_show = false,
                 draw = {
                     columns = {
                         { "label", "label_detail", gap = 1 },
@@ -24,7 +25,7 @@ function spec.config()
                             highlight = 'BlinkCmpLabel',
                         },
                         label_detail = {
-                            width = { max = 30 },
+                            width = { min = 10, max = 30 },
                             text = function(ctx) return ctx.label_detail end,
                             highlight = 'BlinkCmpLabelDescription',
                         },
