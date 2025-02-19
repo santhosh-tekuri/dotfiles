@@ -14,4 +14,4 @@ cursor-color = dcd7ba
 
 shell-integration-features = no-cursor
 cursor-style = block
-
+macos-titlebar-style = native
