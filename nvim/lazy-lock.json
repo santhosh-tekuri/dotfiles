@@ -17,6 +17,7 @@
   "nvim-ts-autotag": { "branch": "main", "commit": "4c00b86bd1246ba9c4cd50a823d8296cd2eb9663" },
   "oil.nvim": { "branch": "master", "commit": "975a77cce3c8cb742bc1b3629f4328f5ca977dad" },
   "plenary.nvim": { "branch": "master", "commit": "857c5ac632080dba10aae49dba902ce3abf91b35" },
+  "smart-tab.nvim": { "branch": "main", "commit": "25b6686ddabd8503be1c24b578d7831e9ac8fb6c" },
   "snacks.nvim": { "branch": "main", "commit": "f346d297dd588cba7b75d8a549ae63f7e306d855" },
   "telescope-ui-select.nvim": { "branch": "master", "commit": "6e51d7da30bd139a6950adf2a47fda6df9fa06d2" },
   "telescope.nvim": { "branch": "master", "commit": "78857db9e8d819d3cc1a9a7bdc1d39d127a36495" },
