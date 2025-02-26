@@ -35,11 +35,13 @@ function spec.config()
         local layout = layout_strategies.horizontal(picker, max_columns, max_lines, layout_config)
         layout.prompt.title = ""
         layout.results.title = ""
-        layout.preview.title = ""
         layout.results.height = layout.results.height + 1
         layout.results.borderchars = { "─", "│", "─", "│", "╭", "┬", "┤", "├" }
-        layout.preview.borderchars = { "─", "│", "─", " ", "─", "╮", "╯", "─" }
         layout.prompt.borderchars = { "─", "│", "─", "│", "╭", "╮", "┴", "╰" }
+        if layout.preview then
+            layout.preview.title = ""
+            layout.preview.borderchars = { "─", "│", "─", " ", "─", "╮", "╯", "─" }
+        end
         return layout
     end
 
