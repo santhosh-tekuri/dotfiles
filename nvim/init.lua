@@ -27,7 +27,7 @@ require("lazy").setup {
     require("specs.fidget"),
     require("specs.gitsigns"),
     -- require("specs.fzf"),
-    require("specs.telescope"),
+    -- require("specs.telescope"),
     require("specs.todo"),
     require("specs.treesitter"),
     require("specs.treesitter_textobjs"),

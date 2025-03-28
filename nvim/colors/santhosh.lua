@@ -60,6 +60,8 @@ local groups = {
     ["@function.builtin"] = { link = "@keyword" },
     ["@constant.builtin"] = { link = "@keyword" },
     ["@punctuation"] = { link = "Operator" },
+    SnacksPicker = { link = "Normal" },
+    NormalNC = { link = "Normal" },
 }
 for group, hl in pairs(groups) do
     vim.api.nvim_set_hl(0, group, hl)
