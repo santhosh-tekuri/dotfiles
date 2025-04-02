@@ -12,6 +12,5 @@ foreground = 75869a
 selection-background = 1e293b
 cursor-color = dcd7ba
 
-shell-integration-features = no-cursor
-cursor-style = block
 macos-titlebar-style = native
+
