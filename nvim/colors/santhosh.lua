@@ -11,7 +11,7 @@ local white = "#75869a"
 local red = "#dd6777"
 local dull = "#424b56"
 local green = "#659239"
-local float = "#181820"
+local float = "#0f191f" --"#181820"
 local greenLight = "#90ceaa"
 
 local groups = {
@@ -46,7 +46,7 @@ local groups = {
     GitSignsAdd = { fg = green },
     GitSignsChange = { fg = "#946a37" },
     GitSignsDelete = { fg = red },
-    FloatBorder = { fg = dull },
+    FloatBorder = { fg = dull, bg = float },
     -- TelescopeNormal = { link = "NormalFloat" },
     -- TelescopeBorder = { link = "FloatBorder" },
     ["@constructor"] = { link = "Default" },
@@ -61,6 +61,7 @@ local groups = {
     ["@constant.builtin"] = { link = "@keyword" },
     ["@punctuation"] = { link = "Operator" },
     SnacksPicker = { link = "Normal" },
+    SnacksPickerBorder = { fg = dull },
     NormalNC = { link = "Normal" },
 }
 for group, hl in pairs(groups) do
