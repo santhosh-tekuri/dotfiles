@@ -21,24 +21,20 @@ vim.cmd "colorscheme santhosh"
 
 -- load plugin specs
 require("lazy").setup {
+    -- require("specs.fzf"),
+    -- require("specs.telescope"),
     require("specs.snacks"),
-    -- require("specs.statuscol"),
     require("specs.oil"),
     require("specs.fidget"),
     require("specs.gitsigns"),
-    -- require("specs.fzf"),
-    -- require("specs.telescope"),
     require("specs.todo"),
     require("specs.treesitter"),
     require("specs.treesitter_textobjs"),
     require("specs.autotag"),
-    -- require("specs.lspsignature"),
     require("specs.lspconfig"),
     -- require("specs.cmp"),
     require("specs.blink"),
-    -- require("specs.comment"),
     require("specs.surround"),
-    -- require("specs.lualine"),
     require("specs.incline"),
     require("specs.trouble"),
     require("specs.colorizer"),
@@ -55,6 +51,5 @@ require("lazy").setup {
     require("specs.diffview"),
     require("specs.urlopen"),
     require("specs.coverage"),
-    -- require("specs.fterm"),
     require("specs.smarttab"),
 }
