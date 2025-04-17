@@ -13,7 +13,6 @@ function spec.config()
         },
         completion = {
             menu = {
-                auto_show = false,
                 draw = {
                     columns = {
                         { "label", "label_detail", gap = 1 },

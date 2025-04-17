@@ -2,6 +2,8 @@ require("opts")
 require("keymaps")
 require("commands")
 require("misc")
+require('smartjump')
+require('filename')
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -35,7 +37,6 @@ require("lazy").setup {
     -- require("specs.cmp"),
     require("specs.blink"),
     require("specs.surround"),
-    require("specs.incline"),
     require("specs.trouble"),
     require("specs.colorizer"),
     require("specs.whichkey"),
@@ -51,5 +52,4 @@ require("lazy").setup {
     require("specs.diffview"),
     require("specs.urlopen"),
     require("specs.coverage"),
-    require("specs.smarttab"),
 }

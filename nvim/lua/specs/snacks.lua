@@ -2,6 +2,7 @@ local spec = { "folke/snacks.nvim" }
 
 function spec.config()
     require("snacks").setup {
+        scroll = {},
         statuscolumn = {
             left = { "mark" },
             right = { "git" },
