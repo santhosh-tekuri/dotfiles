@@ -1,4 +1,4 @@
--- smart jump in insert mode
+-- use <C-L> in insert mode to jump to end of current treesitter node
 
 vim.keymap.set("i", "<C-L>", function()
     local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -9,4 +9,4 @@ vim.keymap.set("i", "<C-L>", function()
         row, col = node:end_()
         vim.api.nvim_win_set_cursor(0, { row + 1, col })
     end
-end, { desc = "smart tab" })
+end, { desc = "insjump" })

@@ -2,8 +2,8 @@ require("opts")
 require("keymaps")
 require("commands")
 require("misc")
-require('smartjump')
-require('filename')
+require('insjump')
+require('winline')
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
