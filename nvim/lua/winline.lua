@@ -5,17 +5,18 @@ local function virt_text()
     local modified = vim.bo[0].modified
     filename = filename .. (modified and '*' or ' ') .. ' '
 
-    -- fetch priority diagnostic type
-    local group = "Text"
-    for _, name in ipairs({ "ERROR", "WARN", "INFO", "HINT" }) do
-        local n = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity[name] })
-        if n > 0 then
-            group = 'DiagnosticVirtualText' .. string.lower(name)
-            break
+    local function group(bufnr)
+        for _, name in ipairs({ "ERROR", "WARN", "INFO", "HINT" }) do
+            local n = #vim.diagnostic.count(bufnr, { severity = vim.diagnostic.severity[name] })
+            if n > 0 then
+                return 'DiagnosticVirtualText' .. string.lower(name)
+            end
         end
+        return "Text"
     end
 
-    return { { filename, group } }
+
+    return { { ' ', group(nil) }, { filename, group(0) } }
 end
 
 local function show()
