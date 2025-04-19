@@ -43,6 +43,9 @@ function spec.config()
             },
             keymap = {
                 preset = 'super-tab',
+                ['<C-p>'] = { 'select_prev', 'fallback' },
+                ['<C-n>'] = { 'select_next', 'fallback' },
+
             }
         }
     }
