@@ -34,6 +34,16 @@ function spec.config()
             documentation = {
                 auto_show = true,
             }
+        },
+        cmdline = {
+            completion = {
+                menu = {
+                    auto_show = true,
+                },
+            },
+            keymap = {
+                preset = 'super-tab',
+            }
         }
     }
 end
