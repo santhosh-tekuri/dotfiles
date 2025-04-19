@@ -10,6 +10,7 @@ adjust-cell-height = 20%
 background = 0d0f18
 foreground = 75869a
 selection-background = 1e293b
+selection-foreground = 75869a
 cursor-color = dcd7ba
 
 macos-titlebar-style = native

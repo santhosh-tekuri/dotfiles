@@ -19,7 +19,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-vim.cmd "colorscheme santhosh"
+vim.cmd.colorscheme("santhosh")
 
 -- load plugin specs
 require("lazy").setup {

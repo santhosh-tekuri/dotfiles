@@ -11,7 +11,7 @@ local white = "#75869a"
 local red = "#dd6777"
 local dull = "#424b56"
 local green = "#659239"
-local float = "#0f191f" --"#181820"
+local float = "#181825" -- "#0f191f" --"#181820"
 local greenLight = "#90ceaa"
 
 local groups = {
