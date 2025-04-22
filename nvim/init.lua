@@ -33,7 +33,7 @@ require("lazy").setup {
     require("specs.treesitter"),
     require("specs.treesitter_textobjs"),
     require("specs.autotag"),
-    require("specs.lspconfig"),
+    require("specs.lsp"),
     -- require("specs.cmp"),
     require("specs.blink"),
     require("specs.surround"),
