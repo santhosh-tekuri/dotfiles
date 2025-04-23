@@ -19,6 +19,9 @@ local function virt_text()
 end
 
 local function show()
+    if vim.api.nvim_get_option_value('buftype', { buf = 0 }) ~= '' then
+        return
+    end
     vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
     local wininfo = vim.fn.getwininfo(vim.fn.win_getid())[1]
     vim.api.nvim_buf_set_extmark(0, ns, wininfo.topline - 1, 0, {
