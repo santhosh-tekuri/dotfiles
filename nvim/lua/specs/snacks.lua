@@ -59,20 +59,21 @@ function spec.config()
         }
     end, { desc = "Open buffer picker" })
     vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
-
-    vim.keymap.set('n', '<C-/>', function() Snacks.terminal() end)
-    vim.keymap.set('t', '<C-/>', function() Snacks.terminal() end)
+    vim.keymap.set({ 'n', 't' }, '<C-/>', function() Snacks.terminal() end)
 
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('TelescopeLspConfig', {}),
-        callback = function(_ev)
-            vim.keymap.set('n', 'gd', Snacks.picker.lsp_definitions, { desc = "Goto definition" })
-            vim.keymap.set('n', 'gi', Snacks.picker.lsp_implementations, { desc = "Goto implementation" })
-            vim.keymap.set('n', 'gy', Snacks.picker.lsp_type_definitions, { desc = "Goto type definition" })
-            vim.keymap.set('n', ' s', Snacks.picker.lsp_symbols, { desc = "Open symbol picker" })
-            vim.keymap.set('n', ' S', Snacks.picker.lsp_workspace_symbols, { desc = "Open workspace symbol picker" })
-            vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, { desc = "Perform code action" })
+        callback = function(ev)
+            local function opts(desc)
+                return { buffer = ev.buf, desc = desc }
+            end
+            vim.keymap.set('n', 'gd', Snacks.picker.lsp_definitions, opts("Goto definition"))
+            vim.keymap.set('n', 'gi', Snacks.picker.lsp_implementations, opts("Goto implementation"))
+            vim.keymap.set('n', 'gy', Snacks.picker.lsp_type_definitions, opts("Goto type definition"))
+            vim.keymap.set('n', ' s', Snacks.picker.lsp_symbols, opts("Open symbol picker"))
+            vim.keymap.set('n', ' S', Snacks.picker.lsp_workspace_symbols, opts("Open workspace symbol picker"))
+            vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, opts("Perform code action"))
         end,
     });
 end
