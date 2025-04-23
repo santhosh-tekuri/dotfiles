@@ -1,7 +1,11 @@
 local ns = vim.api.nvim_create_namespace("winline")
 
 local function virt_text()
-    local file = string.format('%s%s ', vim.fn.expand('%:t'), vim.bo[0].modified and '*' or ' ')
+    local file = vim.fn.expand('%:t')
+    if file == '' then
+        file = '[No Name]'
+    end
+    file = string.format('%s%s ', file, vim.bo[0].modified and '*' or ' ')
     local function group(bufnr)
         for _, name in ipairs({ "ERROR", "WARN", "INFO", "HINT" }) do
             local n = #vim.diagnostic.count(bufnr, { severity = vim.diagnostic.severity[name] })
