@@ -1,5 +1,6 @@
 if ! command -v nvim &> /dev/null; then
     export EDITOR=nvim
+    export MANPAGER='nvim +Man!'
 fi
 export CLICOLOR=true
 export LSCOLORS=cxFxCxDxBxegedabagacad # to get colors in ls output
