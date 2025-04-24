@@ -2,7 +2,7 @@
   "blink.cmp": { "branch": "main", "commit": "cb5e346d9e0efa7a3eee7fd4da0b690c48d2a98e" },
   "diffview.nvim": { "branch": "main", "commit": "4516612fe98ff56ae0415a259ff6361a89419b0a" },
   "fidget.nvim": { "branch": "main", "commit": "d9ba6b7bfe29b3119a610892af67602641da778e" },
-  "gitsigns.nvim": { "branch": "main", "commit": "b79047e81f645875e500b4f433d8133bc421446c" },
+  "gitsigns.nvim": { "branch": "main", "commit": "140ac646db125904e456e42ab8b538d28f9607d7" },
   "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
   "mason.nvim": { "branch": "main", "commit": "fc98833b6da5de5a9c5b1446ac541577059555be" },
   "nvim-colorizer.lua": { "branch": "master", "commit": "a065833f35a3a7cc3ef137ac88b5381da2ba302e" },
@@ -26,6 +26,5 @@
   "vim-textobj-quotes": { "branch": "master", "commit": "cca9686acf7b21d930ced1801120ecf23fb2f995" },
   "vim-textobj-toplevel": { "branch": "master", "commit": "5a0bb5fe489df213538efb9bab6cae5f7e3052f0" },
   "vim-textobj-user": { "branch": "master", "commit": "41a675ddbeefd6a93664a4dc52f302fe3086a933" },
-  "vim-textobj-variable-segment": { "branch": "main", "commit": "12e07590db6c90586ae5b750d6123c0779f6b35b" },
-  "which-key.nvim": { "branch": "main", "commit": "370ec46f710e058c9c1646273e6b225acf47cbed" }
+  "vim-textobj-variable-segment": { "branch": "main", "commit": "12e07590db6c90586ae5b750d6123c0779f6b35b" }
 }

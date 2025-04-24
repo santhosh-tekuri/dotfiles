@@ -11,7 +11,7 @@ compinit -u -D
 
 if command -v fzf >/dev/null 2>&1; then
     source <(fzf --zsh)
-    source $dir/fzf-tab/fzf-tab.plugin.zsh
+    source ~/.local/share/zsh/fzf-tab/fzf-tab.plugin.zsh
 fi
 
 # case-insensitive tab completion for filenames (useful on Mac OS X)
@@ -59,10 +59,10 @@ alias -s txt=vi
 #export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 #source /Users/santhosh/.rvm/scripts/rvm
 
-source $dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-source $dir/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.local/share/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+source ~/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-source $dir/zsh-history-substring-search/zsh-history-substring-search.zsh
+source ~/.local/share/zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 

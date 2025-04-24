@@ -39,10 +39,23 @@ require("lazy").setup {
     require("specs.surround"),
     require("specs.trouble"),
     require("specs.colorizer"),
-    require("specs.whichkey"),
+    -- require("specs.whichkey"),
     require("specs.textobj"),
     require("specs.autopairs"),
     require("specs.diffview"),
     require("specs.urlopen"),
     require("specs.coverage"),
+    -- "srt0/codescope.nvim",
+    -- {
+    --     "metalelf0/black-metal-theme-neovim",
+    --     lazy = false,
+    --     priority = 1000,
+    --     config = function()
+    --         require("black-metal").setup({
+    --             -- optional configuration here
+    --         })
+    --         require("black-metal").load()
+    --     end,
+    -- }
+    -- "OXY2DEV/ui.nvim",
 }
