@@ -2,6 +2,8 @@ dir=$(cd $(dirname $BASH_SOURCE) && pwd)
 
 source $dir/.shrc
 
+bind 'set completion-ignore-case on'
+
 function exit_color() {
     if [ $? -ne 0 ]; then
         echo -n -e "\033[31m"

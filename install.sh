@@ -8,8 +8,6 @@ echo source-file `pwd`/.tmux.conf >> ~/.tmux.conf
 mkdir -p ~/.ssh
 echo Include `pwd`/.ssh/config >> ~/.ssh/config
 
-ln -s `pwd`/.inputrc ~
-
 mkdir -p ~/.config
 for dir in `pwd`/.config/*; do
     ln -s $dir ~/.config
