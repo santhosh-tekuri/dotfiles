@@ -4,7 +4,6 @@ echo source `pwd`/.bashrc >> ~/.bashrc
 echo source `pwd`/.zshrc >> ~/.zshrc
 echo source `pwd`/.vimrc >> ~/.vimrc
 echo source `pwd`/.screenrc >> ~/.screenrc
-echo source-file `pwd`/.tmux.conf >> ~/.tmux.conf
 mkdir -p ~/.ssh
 echo Include `pwd`/.ssh/config >> ~/.ssh/config
 
