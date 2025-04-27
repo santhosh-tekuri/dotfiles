@@ -14,4 +14,19 @@ selection-foreground = 75869a
 cursor-color = dcd7ba
 
 macos-titlebar-style = native
-
+palette = 0=#2E3436
+palette = 1=#CC0000
+palette = 2=#4E9A06
+palette = 3=#C4A000
+palette = 4=#3465A4
+palette = 5=#75507B
+palette = 6=#06989A
+palette = 7=#D3D7CF
+palette = 8=#555753
+palette = 9=#EF2929
+palette = 10=#8AE234
+palette = 11=#FCE94F
+palette = 12=#729FCF
+palette = 13=#AD7FA8
+palette = 14=#34E2E2
+palette = 15=#EEEEEC
