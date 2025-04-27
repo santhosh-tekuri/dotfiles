@@ -9,8 +9,6 @@ mkdir -p ~/.ssh
 echo Include `pwd`/.ssh/config >> ~/.ssh/config
 
 ln -s `pwd`/.inputrc ~
-ln -s `pwd`/.gitconfig ~
-ln -s `pwd`/.gitignore ~
 
 mkdir -p ~/.config
 for dir in `pwd`/.config/*; do
