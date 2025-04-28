@@ -12,6 +12,7 @@ compinit -u -D
 if command -v fzf >/dev/null 2>&1; then
     source <(fzf --zsh)
     source ~/.local/share/zsh/fzf-tab/fzf-tab.plugin.zsh
+    zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept
 fi
 
 # case-insensitive tab completion for filenames (useful on Mac OS X)
