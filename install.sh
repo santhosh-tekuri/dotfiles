@@ -7,6 +7,7 @@ echo source `pwd`/.screenrc >> ~/.screenrc
 mkdir -p ~/.ssh
 echo Include `pwd`/.ssh/config >> ~/.ssh/config
 
+# link .config subfolders
 mkdir -p ~/.config
 for dir in `pwd`/.config/*; do
     ln -s $dir ~/.config
