@@ -11,11 +11,14 @@ function spec.config()
         terminal = {
             win = {
                 position = "float",
-                border = "single",
                 backdrop = false,
                 wo = {
                     winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator",
                 },
+                width = 0,
+                height = function()
+                    return vim.fn.winheight(0)
+                end,
             }
         },
         picker = {
