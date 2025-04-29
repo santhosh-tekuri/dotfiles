@@ -17,7 +17,13 @@ function spec.config()
                 },
                 width = 0,
                 height = 0,
-            }
+                on_win = function()
+                    vim.o.cmdheight = 0
+                end,
+                on_close = function()
+                    vim.o.cmdheight = 1
+                end
+            },
         },
         picker = {
             formatters = {
@@ -62,13 +68,11 @@ function spec.config()
     vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
 
     -- keymap for terminal
-    vim.keymap.set('n', '<C-/>', function()
-        vim.o.cmdheight = 0
+    vim.keymap.set({ 'n', 't' }, '<C-/>', function()
         Snacks.terminal()
     end)
-    vim.keymap.set('t', '<C-/>', function()
-        Snacks.terminal()
-        vim.o.cmdheight = 1
+    vim.keymap.set('n', ' g', function()
+        Snacks.terminal('tig status')
     end)
 
     -- when LS attaches to the current buffer
