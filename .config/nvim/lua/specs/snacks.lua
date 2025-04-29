@@ -16,9 +16,7 @@ function spec.config()
                     winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator",
                 },
                 width = 0,
-                height = function()
-                    return vim.fn.winheight(0)
-                end,
+                height = 0,
             }
         },
         picker = {
@@ -62,7 +60,16 @@ function spec.config()
         }
     end, { desc = "Open buffer picker" })
     vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
-    vim.keymap.set({ 'n', 't' }, '<C-/>', function() Snacks.terminal() end)
+
+    -- keymap for terminal
+    vim.keymap.set('n', '<C-/>', function()
+        vim.o.cmdheight = 0
+        Snacks.terminal()
+    end)
+    vim.keymap.set('t', '<C-/>', function()
+        Snacks.terminal()
+        vim.o.cmdheight = 1
+    end)
 
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
