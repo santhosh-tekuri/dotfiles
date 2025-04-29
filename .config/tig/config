@@ -1,0 +1,3 @@
+bind status C !git commit -v
+
+color default                       white         default
