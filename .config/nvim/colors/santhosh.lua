@@ -27,7 +27,7 @@ local groups = {
     Comment = { fg = dull, italic = true },
     Conceal = { fg = dull },
     Visual = { bg = "#1e293b" },
-    QuickFixLine = { bg = "#1e293b" },
+    QuickFixLine = { link = "Visual" },
     qfFileName = { link = "@keyword" },
     -- Visual = { bg = "#292a2c" },
     Constant = { link = "String" },
