@@ -1,3 +1,31 @@
-bind status C !git commit -v
+set show-changes = no
+set tab-size = 4
+
+bind generic    v           none
+bind generic    m           none
+bind generic    s           none
+bind generic    c           none
+bind generic    R           none
+bind status	    u           none
+bind stage	    u           none
+
+bind generic    V           show-version
+bind generic    vm          view-main
+bind generic    vs          view-status
+bind generic    vS          view-stash
+bind generic    <C-R>       refresh
+bind main       <Enter>     view-diff
+bind main       o           enter
+bind status     <Enter>     view-stage
+bind status	    uu          status-update
+bind status     cc          !git commit -v
+bind status     ca          !git commit -v --amend
+bind status     R           status-revert
+bind stage      uu          status-update
+bind stage      ul          stage-update-line
+bind stage      up          stage-update-part
+bind stage      s           stage-split-chunk
+bind stage	    R           status-revert
+
 
 color default                       white         default
