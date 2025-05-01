@@ -42,7 +42,6 @@ require("lazy").setup {
     -- require("specs.whichkey"),
     require("specs.textobj"),
     require("specs.autopairs"),
-    require("specs.diffview"),
     require("specs.urlopen"),
     require("specs.coverage"),
     -- "srt0/codescope.nvim",
