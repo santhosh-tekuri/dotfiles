@@ -12,6 +12,11 @@ function spec.config()
             enabled = true,
         },
         completion = {
+            list = {
+                selection = {
+                    auto_insert = false,
+                },
+            },
             menu = {
                 draw = {
                     columns = {
