@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-echo source `pwd`/.bashrc >> ~/.bashrc
-echo source `pwd`/.zshrc >> ~/.zshrc
-echo source `pwd`/.vimrc >> ~/.vimrc
-echo source `pwd`/.screenrc >> ~/.screenrc
+echo source $PWD/.bashrc >> ~/.bashrc
+echo source $PWD/.zshrc >> ~/.zshrc
+echo source $PWD/.vimrc >> ~/.vimrc
+echo source $PWD/.screenrc >> ~/.screenrc
 mkdir -p ~/.ssh
-echo Include `pwd`/.ssh/config >> ~/.ssh/config
+echo Include $PWD/.ssh/config >> ~/.ssh/config
 
 # link .config subfolders
 mkdir -p ~/.config
-for dir in `pwd`/.config/*; do
+for dir in $PWD/.config/*; do
     ln -s $dir ~/.config
 done
 
