@@ -8,7 +8,8 @@ font-size = 18
 font-variation = wght=100
 adjust-cell-height = 20%
 
-keybind = cmd+l=text:\x02
+keybind = cmd+k=text:\x02
+keybind = cmd+shift+k=clear_screen
 
 background = 0d0f18
 foreground = 75869a
