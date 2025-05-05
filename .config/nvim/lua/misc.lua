@@ -49,7 +49,8 @@ vim.diagnostic.config({
             [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
             [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
         },
-    }
+    },
+    severity_sort = true,
 })
 
 -- options for vim.lsp.hover floating window (for golang popup is too wide)
