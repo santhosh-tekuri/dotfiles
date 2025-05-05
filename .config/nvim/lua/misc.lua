@@ -9,7 +9,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
         vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
         vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
-        vim.keymap.set('n', ' e', vim.diagnostic.open_float, opts("Show error on current line"))
+        vim.keymap.set('n', ' e', function()
+            if vim.diagnostic.config().virtual_lines then
+                vim.diagnostic.config({ virtual_lines = false })
+            else
+                vim.diagnostic.config({ virtual_lines = { current_line = true } })
+            end
+        end, opts("toggle diagnotic for current line"))
 
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
         if client ~= nil and client:supports_method("textDocument/formatting", ev.buf) then
