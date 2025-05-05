@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# opens vim to edit input and print changes to output
+# usage: edit [suffix]
+
+tmp=$(mktemp -d)
+trap 'rm -rf $tmp' EXIT
+if [ $# -eq 0 ]; then
+    file=tmp
+else
+    file=tmp.$1 
+fi
+cat > $tmp/$file
+nvim $tmp/$file < /dev/tty > /dev/tty
+cat $tmp/$file
