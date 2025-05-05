@@ -3,11 +3,7 @@ local spec = { "folke/snacks.nvim" }
 function spec.config()
     require("snacks").setup {
         scroll = {},
-        statuscolumn = {
-            left = { "mark" },
-            right = { "git" },
-            refresh = 50,
-        },
+        statuscolumn = {},
         terminal = {
             win = {
                 position = "float",
