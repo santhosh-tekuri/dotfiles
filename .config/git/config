@@ -5,7 +5,6 @@
     root = rev-parse --show-toplevel # print directory that has .git folder
     vi = !vi -p $(git diff --name-only) # open modified files in vim
 [core]
-    excludesfile = ~/.gitignore
     pager = delta
 [push]
     default = current # push current branch to a remote branch of the same name
