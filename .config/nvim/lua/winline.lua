@@ -24,6 +24,9 @@ local function show()
     end
     vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
     local wininfo = vim.fn.getwininfo(vim.fn.win_getid())[1]
+    if wininfo.topline == 0 then
+        return
+    end
     vim.api.nvim_buf_set_extmark(0, ns, wininfo.topline - 1, 0, {
         virt_text = virt_text(),
         virt_text_pos = "right_align",
