@@ -11,9 +11,5 @@
 
 while read; do
     sec=$SECONDS
-    min=$(expr $sec / 60)
-    sec=$(expr $sec % 60)
-    hour=$(expr $min / 60)
-    min=$(expr $min % 60)
-    printf '%02d:%02d:%02d | %s\n' $hour $min $sec "$REPLY"
+    printf '%02d:%02d:%02d | %s\n' $(($sec/3600)) $(($sec%3600/60)) $(($sec%60)) "$REPLY"
 done
