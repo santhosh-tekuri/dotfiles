@@ -13,6 +13,15 @@ function spec.config()
             vim.cmd("MasonInstall " .. name)
         end
         vim.lsp.enable(name)
+
+        local packages = {
+            black = "black"
+        }
+        for cmd, pkg in pairs(packages) do
+            if vim.fn.executable(cmd) == 0 then
+                vim.cmd("MasonInstall " .. pkg)
+            end
+        end
     end
 end
 

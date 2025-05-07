@@ -16,19 +16,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
                 vim.diagnostic.config({ virtual_lines = { current_line = true } })
             end
         end, opts("toggle diagnotic for current line"))
-
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        if client ~= nil and client:supports_method("textDocument/formatting", ev.buf) then
-            local group = vim.api.nvim_create_augroup("LspFormatting", { clear = false })
-            vim.api.nvim_clear_autocmds({ group = group, buffer = ev.buf })
-            vim.api.nvim_create_autocmd("BufWritePre", {
-                group = group,
-                buffer = ev.buf,
-                callback = function()
-                    vim.lsp.buf.format()
-                end,
-            })
-        end
     end,
 })
 
