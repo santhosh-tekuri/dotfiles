@@ -67,9 +67,6 @@ function spec.config()
     vim.keymap.set({ 'n', 't' }, '<C-/>', function()
         Snacks.terminal()
     end)
-    vim.keymap.set('n', ' g', function()
-        Snacks.terminal('tig status')
-    end)
 
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
