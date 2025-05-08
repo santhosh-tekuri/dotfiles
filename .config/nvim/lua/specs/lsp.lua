@@ -1,7 +1,7 @@
 -- lsp setup
 
 local spec = {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
 }
 
 function spec.config()
