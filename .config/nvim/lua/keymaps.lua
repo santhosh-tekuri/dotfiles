@@ -36,3 +36,15 @@ local function close_floats()
     end
 end
 vim.keymap.set('n', '<esc>', close_floats, { desc = "close floating windows" })
+
+-- `<leader>'{char}` opens file containing mark upper({char})
+vim.keymap.set('n', "<leader>'", function()
+    local char = vim.fn.getcharstr(-1)
+    if char == "\27" then
+        return -- got <esc>
+    end
+    local m = vim.api.nvim_get_mark(char:upper(), {})
+    if m[4] ~= "" then
+        vim.cmd.edit(m[4])
+    end
+end)
