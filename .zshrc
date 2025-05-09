@@ -85,7 +85,8 @@ function setup_ps1() {
 setup_ps1
 
 function setup_history() {
-    HISTFILE=~/.zsh_history # history file name
+    mkdir -p ~/.local/state/zsh
+    HISTFILE=~/.local/state/zsh/history # history file name
     SAVEHIST=1000 # number of lines in histoty
     HISTSIZE=1200 # number of lines the shell will keep within one session
     setopt APPEND_HISTORY # append the new history to the old
