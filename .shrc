@@ -6,6 +6,7 @@ export CLICOLOR=true
 export LSCOLORS=cxFxCxDxBxegedabagacad # to get colors in ls output
 export XDG_CONFIG_HOME="$HOME/.config"
 export SCREENRC=$XDG_CONFIG_HOME/screen/screenrc
+export NPM_CONFIG_CACHE=~/.cache/npm
 
 if [ -f /usr/local/bin/bash ]; then
     alias bash=/usr/local/bin/bash
