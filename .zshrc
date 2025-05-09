@@ -15,6 +15,9 @@ if command -v fzf >/dev/null 2>&1; then
     zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept
 fi
 
+mkdir -p ~/.cache/zsh
+zstyle ':completion:*' cache-path ~/.cache/zsh/zcompcache
+
 # case-insensitive tab completion for filenames (useful on Mac OS X)
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
