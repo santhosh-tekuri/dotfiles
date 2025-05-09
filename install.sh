@@ -11,7 +11,6 @@ function addline() {
 addline "source $PWD/.bashrc" ~/.bashrc
 addline "source $PWD/.zshrc" ~/.zshrc
 addline "source $PWD/.vimrc" ~/.vimrc
-addline "source $PWD/.screenrc" ~/.screenrc
 mkdir -p ~/.ssh
 addline "Include $PWD/.ssh/config" ~/.ssh/config
 
