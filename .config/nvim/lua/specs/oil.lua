@@ -7,6 +7,9 @@ function spec.config()
         float = {
             max_width = 70,
             max_height = 20,
+            win_options = {
+                winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator",
+            }
         }
     }
     vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
