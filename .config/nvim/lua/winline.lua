@@ -37,7 +37,6 @@ local function show()
     vim.api.nvim_buf_set_extmark(0, ns, wininfo.topline - 1, 0, {
         virt_text = text,
         virt_text_pos = "right_align",
-        virt_lines_above = true,
         strict = false,
     })
 end
