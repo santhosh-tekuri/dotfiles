@@ -29,6 +29,8 @@ local groups = {
     Visual = { bg = "#1e293b" },
     QuickFixLine = { link = "Visual" },
     qfFileName = { link = "@keyword" },
+    qfLineNr = { link = "Operator" },
+    qfText = { link = "Default" },
     -- Visual = { bg = "#292a2c" },
     Constant = { link = "String" },
     Function = { link = "Default" },

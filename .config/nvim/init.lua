@@ -4,6 +4,7 @@ require("commands")
 require("misc")
 require('insjump')
 require('winline')
+require('quickfix')
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
