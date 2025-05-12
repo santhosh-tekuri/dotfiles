@@ -24,12 +24,17 @@ function M.quickfix_text(info)
     local lines = {}
     local highlights = {}
     for i, item in ipairs(list.items) do
-        local line = '  ' .. item.lnum .. ': '
-        local end_col = #line
-        table.insert(highlights, { group = "qfLineNr", line = i - 1, col = 0, end_col = end_col })
-        line = line .. item.text:match "^%s*(.-)%s*$" -- trim item.text
-        table.insert(highlights, { group = "qfText", line = i - 1, col = end_col, end_col = #line })
-        table.insert(lines, line)
+        if item.bufnr == 0 then
+            table.insert(highlights, { group = "qfText", line = i - 1, col = 0, end_col = #item.text })
+            table.insert(lines, item.text)
+        else
+            local line = '  ' .. item.lnum .. ': '
+            local end_col = #line
+            table.insert(highlights, { group = "qfLineNr", line = i - 1, col = 0, end_col = end_col })
+            line = line .. item.text:match "^%s*(.-)%s*$" -- trim item.text
+            table.insert(highlights, { group = "qfText", line = i - 1, col = end_col, end_col = #line })
+            table.insert(lines, line)
+        end
     end
 
     vim.schedule(function()
@@ -47,13 +52,12 @@ local function add_virt_lines()
         return
     end
     local list = vim.fn.getqflist({ id = 0, winid = 1, qfbufnr = 1, items = 1 })
-    vim.print(list.qfbufnr)
     vim.api.nvim_buf_clear_namespace(list.qfbufnr, ns, 0, -1)
     local lastfname = ''
     for i, item in ipairs(list.items) do
         local fname = vim.fn.bufname(item.bufnr)
         fname = vim.fn.fnamemodify(fname, ':p:.')
-        if fname ~= lastfname then
+        if fname ~= "" and fname ~= lastfname then
             lastfname = fname
             vim.api.nvim_buf_set_extmark(list.qfbufnr, ns, i - 1, 0, {
                 virt_lines = { { { fname .. ":", "qfFilename" } } },
