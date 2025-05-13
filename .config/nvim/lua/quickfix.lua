@@ -25,8 +25,9 @@ function M.quickfix_text(info)
     local highlights = {}
     for i, item in ipairs(list.items) do
         if item.bufnr == 0 then
-            table.insert(highlights, { group = "qfText", line = i - 1, col = 0, end_col = #item.text })
-            table.insert(lines, item.text)
+            local line = '  ' .. item.text
+            table.insert(highlights, { group = "qfText", line = i - 1, col = 0, end_col = #line })
+            table.insert(lines, line)
         else
             local line = '  ' .. item.lnum .. ': '
             local end_col = #line
