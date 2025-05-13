@@ -48,3 +48,5 @@ vim.keymap.set('n', "<leader>'", function()
         vim.cmd.edit(m[4])
     end
 end)
+
+vim.keymap.set('n', ' d', vim.diagnostic.setqflist, { desc = "show diagnostics" })

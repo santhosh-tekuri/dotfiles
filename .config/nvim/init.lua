@@ -40,7 +40,7 @@ require("lazy").setup {
     -- require("specs.cmp"),
     require("specs.blink"),
     require("specs.surround"),
-    require("specs.trouble"),
+    -- require("specs.trouble"),
     require("specs.colorizer"),
     -- require("specs.whichkey"),
     require("specs.textobj"),
