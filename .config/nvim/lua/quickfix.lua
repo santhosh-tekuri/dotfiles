@@ -13,6 +13,14 @@ local function apply_highlights(bufnr, highlights)
     end
 end
 
+local typeHilights = {
+    E = 'DiagnosticSignError',
+    W = 'DiagnosticSignWarn',
+    I = 'DiagnosticSignInfo',
+    N = 'DiagnosticSignHint',
+    H = 'DiagnosticSignHint',
+}
+
 function M.quickfix_text(info)
     local list
     if info.quickfix == 1 then
@@ -29,12 +37,23 @@ function M.quickfix_text(info)
             table.insert(highlights, { group = "qfText", line = i - 1, col = 0, end_col = #line })
             table.insert(lines, line)
         else
-            local line = '  ' .. item.lnum .. ': '
-            local end_col = #line
-            table.insert(highlights, { group = "qfLineNr", line = i - 1, col = 0, end_col = end_col })
-            line = line .. item.text:match "^%s*(.-)%s*$" -- trim item.text
-            table.insert(highlights, { group = "qfText", line = i - 1, col = end_col, end_col = #line })
-            table.insert(lines, line)
+            local prefix = ' '
+            local type = '  '
+            if #item.type > 0 then
+                type = item.type .. ' '
+            end
+            local lnum = '' .. item.lnum .. ': '
+            local text = item.text:match "^%s*(.-)%s*$" -- trim item.text
+            local col = 0
+            table.insert(highlights, { group = "qfText", line = i - 1, col = col, end_col = col + #prefix })
+            col = col + #prefix
+            local typeHl = typeHilights[item.type] or 'qfText'
+            table.insert(highlights, { group = typeHl, line = i - 1, col = col, end_col = col + #type })
+            col = col + #type
+            table.insert(highlights, { group = "qfLineNr", line = i - 1, col = col, end_col = col + #lnum })
+            col = col + #lnum
+            table.insert(highlights, { group = "qfText", line = i - 1, col = col, end_col = col + #text })
+            table.insert(lines, prefix .. type .. lnum .. text)
         end
     end
 
