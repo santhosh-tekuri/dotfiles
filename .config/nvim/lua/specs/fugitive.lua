@@ -17,6 +17,21 @@ function spec.config()
     vim.keymap.set('n', ' g', function()
         vim.cmd("G | only")
     end)
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "fugitive",
+        callback = function()
+            vim.keymap.set('n', '?', function()
+                vim.fn.feedkeys("g?")
+            end, {})
+            vim.keymap.set('n', 'q', function()
+                vim.fn.feedkeys("gq")
+            end, {})
+            vim.keymap.set('n', '<tab>', function()
+                vim.fn.feedkeys("=")
+            end, {})
+        end
+    })
 end
 
 return spec
