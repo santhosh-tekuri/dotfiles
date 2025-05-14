@@ -53,6 +53,10 @@ local groups = {
     BlinkCmpLabelMatch = { link = "@keyword" },
     MatchParen = { bg = "#4c5063", fg = "#FFFFFF" },
     GitSignsAdd = { fg = green },
+    diffAdd = { bg = "#364937" },
+    diffAdded = { link = "GitSignsAdd" },
+    diffDelete = { bg = "#493636" },
+    diffDeleted = { link = "GitSignsDelete" },
     GitSignsChange = { fg = "#946a37" },
     GitSignsDelete = { fg = red },
     FloatBorder = { fg = dull, bg = float },
@@ -72,6 +76,11 @@ local groups = {
     SnacksPicker = { link = "Normal" },
     SnacksPickerBorder = { fg = dull },
     NormalNC = { link = "Normal" },
+
+    fugitiveHeading = { link = "@keyword" },
+    fugitiveUntrackedHeading = { link = "@keyword" },
+    fugitiveStagedHeading = { link = "@keyword" },
+    fugitiveUnstagedHeading = { link = "@keyword" },
 }
 for group, hl in pairs(groups) do
     vim.api.nvim_set_hl(0, group, hl)
