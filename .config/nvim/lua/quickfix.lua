@@ -34,10 +34,11 @@ local typeHilights = {
 
 function M.quickfix_text(info)
     local list
+    local what = { id = info.id, items = 1, qfbufnr = 1 }
     if info.quickfix == 1 then
-        list = vim.fn.getqflist({ id = info.id, items = 1, qfbufnr = 1 })
+        list = vim.fn.getqflist(what)
     else
-        list = vim.fn.getloclist(info.winid, { id = info.id, items = 1, qfbufnr = 1 })
+        list = vim.fn.getloclist(info.winid, what)
     end
 
     local ttt = {}
