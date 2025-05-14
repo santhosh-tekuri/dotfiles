@@ -1,11 +1,3 @@
-vim.cmd("hi clear")
-vim.o.termguicolors = true
-vim.g.colors_name = "santhosh"
--- disable all semantic highlights by clearing all the groups
-for _, group in ipairs(vim.fn.getcompletion("@lsp.", "highlight")) do
-    vim.api.nvim_set_hl(0, group, {})
-end
-
 local black = "#0d0f18"
 local white = "#75869a"
 local red = "#dd6777"
@@ -82,6 +74,19 @@ local groups = {
     fugitiveStagedHeading = { link = "@keyword" },
     fugitiveUnstagedHeading = { link = "@keyword" },
 }
+
+vim.o.termguicolors = true
+vim.o.background = 'dark'
+vim.cmd("hi clear")
+vim.g.colors_name = "santhosh"
+if vim.fn.exists('syntax_on') then
+    vim.cmd('syntax reset')
+end
+-- disable all semantic highlights by clearing all the groups
+for _, group in ipairs(vim.fn.getcompletion("@lsp.", "highlight")) do
+    vim.api.nvim_set_hl(0, group, {})
+end
+
 for group, hl in pairs(groups) do
     vim.api.nvim_set_hl(0, group, hl)
 end
