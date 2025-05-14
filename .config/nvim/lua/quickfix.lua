@@ -1,15 +1,26 @@
 local M = {}
 
 local ns = vim.api.nvim_create_namespace("qflist")
-local function apply_highlights(bufnr, highlights)
-    for _, hl in ipairs(highlights) do
-        vim.hl.range(
-            bufnr,
-            ns,
-            hl.group,
-            { hl.line, hl.col },
-            { hl.line, hl.end_col }
-        )
+
+local function get_lines(ttt)
+    local lines = {}
+    for _, tt in ipairs(ttt) do
+        local line = ''
+        for _, t in ipairs(tt) do
+            line = line .. t[1]
+        end
+        table.insert(lines, line)
+    end
+    return lines
+end
+
+local function apply_highlights(bufnr, ttt)
+    for i, tt in ipairs(ttt) do
+        local col = 0
+        for _, t in ipairs(tt) do
+            vim.hl.range(bufnr, ns, t[2], { i - 1, col }, { i - 1, col + #t[1] })
+            col = col + #t[1]
+        end
     end
 end
 
@@ -29,38 +40,24 @@ function M.quickfix_text(info)
         list = vim.fn.getloclist(info.winid, { id = info.id, items = 1, qfbufnr = 1 })
     end
 
-    local lines = {}
-    local highlights = {}
-    for i, item in ipairs(list.items) do
+    local ttt = {}
+    for _, item in ipairs(list.items) do
+        local tt = { { '  ', 'qfText' } }
         if item.bufnr == 0 then
-            local line = '  ' .. item.text
-            table.insert(highlights, { group = "qfText", line = i - 1, col = 0, end_col = #line })
-            table.insert(lines, line)
+            table.insert(tt, { item.text, 'qfText' })
         else
-            local prefix = ' '
-            local type = '  '
-            if #item.type > 0 then
-                type = item.type .. ' '
-            end
-            local lnum = '' .. item.lnum .. ': '
+            table.insert(tt, { '' .. item.lnum .. ': ', 'qfLineNr' })
             local text = item.text:match "^%s*(.-)%s*$" -- trim item.text
-            local col = 0
-            table.insert(highlights, { group = "qfText", line = i - 1, col = col, end_col = col + #prefix })
-            col = col + #prefix
-            local typeHl = typeHilights[item.type] or 'qfText'
-            table.insert(highlights, { group = typeHl, line = i - 1, col = col, end_col = col + #type })
-            col = col + #type
-            table.insert(highlights, { group = "qfLineNr", line = i - 1, col = col, end_col = col + #lnum })
-            col = col + #lnum
-            table.insert(highlights, { group = "qfText", line = i - 1, col = col, end_col = col + #text })
-            table.insert(lines, prefix .. type .. lnum .. text)
+            local hl = typeHilights[item.type] or 'qfText'
+            table.insert(tt, { text, hl })
         end
+        table.insert(ttt, tt)
     end
 
     vim.schedule(function()
-        apply_highlights(list.qfbufnr, highlights)
+        apply_highlights(list.qfbufnr, ttt)
     end)
-    return lines
+    return get_lines(ttt)
 end
 
 vim.o.quickfixtextfunc = "v:lua.require'quickfix'.quickfix_text"
