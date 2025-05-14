@@ -50,3 +50,9 @@ vim.keymap.set('n', "<leader>'", function()
 end)
 
 vim.keymap.set('n', ' d', vim.diagnostic.setqflist, { desc = "show diagnostics" })
+vim.keymap.set('n', 'dq', function()
+    if vim.wo.diff then
+        vim.cmd('q')
+        vim.cmd('q')
+    end
+end, {})
