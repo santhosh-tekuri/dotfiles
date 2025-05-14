@@ -16,6 +16,9 @@ vim.opt.scrolloff = 3         -- min lines to keep above/below cursor
 vim.opt.confirm = true        -- show dialog for confirmation
 vim.opt.undofile = true       -- save undo history to undo file
 
+-- use vertical split for diff
+vim.opt.diffopt:append 'vertical'
+
 -- show whitespace using :set list
 vim.opt.listchars = { space = '.', tab = '>-', trail = '.' }
 
