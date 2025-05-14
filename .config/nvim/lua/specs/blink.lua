@@ -26,7 +26,16 @@ function spec.config()
                     components = {
                         label = {
                             text = function(ctx) return ctx.label end,
-                            highlight = 'BlinkCmpLabel',
+                            highlight = function(ctx)
+                                local highlights = {
+                                    { 0, #ctx.label, group = 'BlinkCmpLabel' },
+                                }
+                                -- highlight fuzzy match characters
+                                for _, idx in ipairs(ctx.label_matched_indices) do
+                                    table.insert(highlights, { idx, idx + 1, group = 'BlinkCmpLabelMatch' })
+                                end
+                                return highlights
+                            end
                         },
                         label_detail = {
                             width = { min = 10, max = 30 },
