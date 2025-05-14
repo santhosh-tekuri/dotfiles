@@ -16,6 +16,7 @@ function spec.config()
 
     vim.keymap.set('n', ' g', function()
         vim.cmd("G | only")
+        vim.fn.search("^M ")
     end)
 
     vim.api.nvim_create_autocmd("FileType", {
