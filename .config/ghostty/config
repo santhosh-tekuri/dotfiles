@@ -1,5 +1,5 @@
-window-width = 140 
-window-height = 40
+window-width = 1400
+window-height = 400
 window-padding-x = 0,0
 window-padding-y = 0,0
 
@@ -34,3 +34,5 @@ palette = 12=#729FCF
 palette = 13=#AD7FA8
 palette = 14=#34E2E2
 palette = 15=#EEEEEC
+
+window-decoration = none
