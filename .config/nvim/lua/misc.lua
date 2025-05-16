@@ -1,25 +1,3 @@
--- lsp related keymaps and config
-vim.api.nvim_create_autocmd('LspAttach', {
-    group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-    callback = function(ev)
-        local function opts(desc)
-            return { buffer = ev.buf, desc = desc }
-        end
-        vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, opts("Perform code action"))
-        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Goto declaration"))
-        vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
-        vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
-        vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
-        vim.keymap.set('n', ' e', function()
-            if vim.diagnostic.config().virtual_lines then
-                vim.diagnostic.config({ virtual_lines = false })
-            else
-                vim.diagnostic.config({ virtual_lines = { current_line = true } })
-            end
-        end, opts("toggle diagnotic for current line"))
-    end,
-})
-
 -- highlight selection on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = "Hightlight selection on yank",

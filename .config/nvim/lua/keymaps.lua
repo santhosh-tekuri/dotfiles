@@ -27,15 +27,16 @@ vim.keymap.set('n', ' w', '<c-w>', { remap = false })
 vim.keymap.set('v', '>', '>gv', { remap = false })
 vim.keymap.set('v', '<', '<gv', { remap = false })
 
-local function close_floats()
+vim.keymap.set('n', ' d', vim.diagnostic.setqflist, { desc = "show diagnostics" })
+
+vim.keymap.set('n', '<esc>', function()
     for _, win in ipairs(vim.api.nvim_list_wins()) do
         local config = vim.api.nvim_win_get_config(win)
         if config.relative ~= "" then          -- is_floating_window?
             vim.api.nvim_win_close(win, false) -- do not force
         end
     end
-end
-vim.keymap.set('n', '<esc>', close_floats, { desc = "close floating windows" })
+end, { desc = "close floating windows" })
 
 -- `<leader>'{char}` opens file containing mark upper({char})
 vim.keymap.set('n', "<leader>'", function()
@@ -47,12 +48,33 @@ vim.keymap.set('n', "<leader>'", function()
     if m[4] ~= "" then
         vim.cmd.edit(m[4])
     end
-end)
+end, { desc = "open buffer with mark" })
 
-vim.keymap.set('n', ' d', vim.diagnostic.setqflist, { desc = "show diagnostics" })
 vim.keymap.set('n', 'dq', function()
     if vim.wo.diff then
         vim.cmd('q')
         vim.cmd('q')
     end
-end, {})
+end, { desc = "close buffers in diff split" })
+
+-- lsp related keymaps and config
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+    callback = function(ev)
+        local function opts(desc)
+            return { buffer = ev.buf, desc = desc }
+        end
+        vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, opts("Perform code action"))
+        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Goto declaration"))
+        vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
+        vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
+        vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
+        vim.keymap.set('n', ' e', function()
+            if vim.diagnostic.config().virtual_lines then
+                vim.diagnostic.config({ virtual_lines = false })
+            else
+                vim.diagnostic.config({ virtual_lines = { current_line = true } })
+            end
+        end, opts("toggle diagnotic for current line"))
+    end,
+})
