@@ -9,3 +9,5 @@ gui:
     inactiveViewSelectedLineBgColor:
       - '#2c2e33'
       - 'default'
+git:
+  autoFetch: false
