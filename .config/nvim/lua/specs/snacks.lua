@@ -84,7 +84,6 @@ function spec.config()
             vim.keymap.set('n', 'gy', Snacks.picker.lsp_type_definitions, opts("Goto type definition"))
             vim.keymap.set('n', ' s', Snacks.picker.lsp_symbols, opts("Open symbol picker"))
             vim.keymap.set('n', ' S', Snacks.picker.lsp_workspace_symbols, opts("Open workspace symbol picker"))
-            vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, opts("Perform code action"))
         end,
     });
 end

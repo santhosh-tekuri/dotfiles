@@ -5,6 +5,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local function opts(desc)
             return { buffer = ev.buf, desc = desc }
         end
+        vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, opts("Perform code action"))
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Goto declaration"))
         vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
         vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
