@@ -68,6 +68,10 @@ function spec.config()
         Snacks.terminal()
     end)
 
+    vim.keymap.set('n', ' g', function()
+        Snacks.terminal('lazygit')
+    end)
+
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('TelescopeLspConfig', {}),

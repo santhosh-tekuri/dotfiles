@@ -30,7 +30,7 @@ require("lazy").setup {
     require("specs.oil"),
     require("specs.fidget"),
     require("specs.gitsigns"),
-    require("specs.fugitive"),
+    -- require("specs.fugitive"),
     require("specs.treesitter"),
     require("specs.treesitter_textobjs"),
     require("specs.autotag"),
