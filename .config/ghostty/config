@@ -1,5 +1,5 @@
-window-width = 1400
-window-height = 400
+window-width = 140
+window-height = 40
 window-padding-x = 0,0
 window-padding-y = 0,0
 
@@ -17,7 +17,6 @@ selection-background = 1e293b
 selection-foreground = 75869a
 cursor-color = dcd7ba
 
-macos-titlebar-style = native
 palette = 0=#2E3436
 palette = 1=#b00400
 palette = 2=#4d6e2a
@@ -35,4 +34,6 @@ palette = 13=#AD7FA8
 palette = 14=#34E2E2
 palette = 15=#EEEEEC
 
-window-decoration = none
+macos-titlebar-style = native
+macos-non-native-fullscreen = visible-menu
+fullscreen = true
