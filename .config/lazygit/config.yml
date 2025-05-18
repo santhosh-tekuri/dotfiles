@@ -1,6 +1,8 @@
 gui:
   showFileTree: false
   theme:
+    activeBorderColor:
+      - '#ae8e57'
     inactiveBorderColor:
       - '#424b56'
     selectedLineBgColor:
