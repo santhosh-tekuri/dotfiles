@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
+function projects() {
+    printf "%s\n" ~/gh/santhosh-tekuri/*
+    printf "%s\n" ~/dotfiles/.config/*
+    echo ~/dotfiles/bin
+}
+
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
-    selected=$(echo \
-        ~/dotfiles/.config/*/ \
-        ~/dotfiles/bin/ \
-        ~/gh/santhosh-tekuri/*/ \
-        | sed 's#/ #\n#g' | fzf)
+    selected=$(projects | fzf)
 fi
 
 if [[ -z $selected ]]; then

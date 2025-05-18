@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+sessions=$(tmux list-sessions -F '#{session_name}')
+if [[ -n "$TMUX" ]]; then
+    cur=$(tmux display-message -p '#{session_name}')
+    sessions=$(echo "$sessions" | grep -vxF "$cur")
+fi
+
+selected=$(echo "$sessions" | fzf)
+if [[ $? -ne 0 ]]; then
+    exit 0
+fi
+
+if [[ -z $TMUX ]]; then
+    tmux attach -t $selected
+else
+    tmux switch-client -t $selected
+fi
