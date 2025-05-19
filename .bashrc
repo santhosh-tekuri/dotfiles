@@ -1,6 +1,6 @@
 dir=$(cd $(dirname $BASH_SOURCE) && pwd)
 
-source $dir/.shrc
+source $dir/.profile
 
 bind 'set completion-ignore-case on'
 

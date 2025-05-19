@@ -1,6 +1,6 @@
 dir=~/dotfiles
 
-source $dir/.shrc
+source $dir/.profile
 
 # add custom completion scripts
 fpath=(~/.zsh/completion $fpath)
