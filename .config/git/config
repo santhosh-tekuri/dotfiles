@@ -3,7 +3,7 @@
     email = santhosh.tekuri@gmail.com
 [alias]
     root = rev-parse --show-toplevel # print directory that has .git folder
-    vi = !vi -p $(git diff --name-only) # open modified files in vim
+    edit = !$EDITOR $(git diff --name-only) # open modified files in vim
 [core]
     pager = delta
 [commit]
