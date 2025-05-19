@@ -8,6 +8,8 @@
     pager = delta
 [commit]
     verbose = true
+[pull]
+    rebase = true
 [push]
     default = current # push current branch to a remote branch of the same name
 [interactive]
