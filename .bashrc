@@ -18,6 +18,7 @@ if [ "$(uname -s)" == "Darwin" ]; then
     [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 fi
 
+export HISTFILE=${XDG_STATE_HOME}/bash/history
 export HISTCONTROL=erasedups:ignorespace
 
 # append current session history to .bash_history, rather than overwriting it

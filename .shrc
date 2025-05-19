@@ -6,6 +6,7 @@ export CLICOLOR=true
 export LSCOLORS=cxFxCxDxBxegedabagacad # to get colors in ls output
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
 export SCREENRC=$XDG_CONFIG_HOME/screen/screenrc
 export NPM_CONFIG_CACHE=~/.cache/npm
 export RUSTUP_HOME=$XDG_DATA_HOME/rustup
