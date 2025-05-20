@@ -42,7 +42,6 @@ require("lazy").setup {
     require("specs.colorizer"),
     -- require("specs.whichkey"),
     require("specs.textobj"),
-    require("specs.autopairs"),
     require("specs.urlopen"),
     require("specs.coverage"),
 }
