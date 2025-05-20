@@ -43,4 +43,5 @@ require("lazy").setup {
     require("specs.textobj"),
     require("specs.urlopen"),
     require("specs.coverage"),
+    require("specs.autopairs"),
 }
