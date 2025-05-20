@@ -97,6 +97,9 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 --      cannot scroll to see virtual line before first line
 --      see https://github.com/neovim/neovim/issues/16166
 local function scrollup()
+    if vim.bo[0].buftype ~= 'quickfix' then
+        return
+    end
     local row = unpack(vim.api.nvim_win_get_cursor(0))
     if row == 1 then
         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-u>', true, false, true), 'm', true)
