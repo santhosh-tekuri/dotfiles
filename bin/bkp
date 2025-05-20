@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+for arg in "$@"; do
+    cp "$arg" "$arg.$(date +%Y%m%dT%H%M%S)"
+done
