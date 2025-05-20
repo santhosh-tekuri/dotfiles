@@ -6,6 +6,7 @@ local green = "#659239"
 local float = "#181825" -- "#0f191f" --"#181820"
 local greenLight = "#90ceaa"
 
+---@type table<string, vim.api.keyset.highlight>
 local groups = {
     Default = { fg = white },
     Normal = { bg = black, fg = white },
