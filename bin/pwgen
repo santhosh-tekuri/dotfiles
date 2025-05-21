@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+# usage: openssl rand -hex 20 | ./pwgen
+
+import sys
+
+line = sys.stdin.readline().strip()
+input = list(bytes.fromhex(line))
+
+spec = "15:aAds" if len(sys.argv) == 1 else sys.argv[1]
+n, allowed = spec.split(":", 1)
+n = int(n)
+
+map = {
+    "a": "abcdefghijklmnopqrstuvwxyz",
+    "A": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "d": "0123456789",
+    "s": "`~!@#$%^&*()-_=+[{}]\\|;:'\",<.>/?",
+}
+arr = list((allowed * ((n // len(allowed)) + 1))[:n])
+
+for b in input[n:]:
+    for i in range(n):
+        input[i] = (input[i] + b) % 256
+input = input[:n]
+
+# shuffle
+for i in range(n - 1, 0, -1):
+    j = input[i] % i
+    arr[i], arr[j] = arr[j], arr[i]
+
+for i, c in enumerate(arr):
+    chars = map[c]
+    arr[i] = chars[input[i] % len(chars)]
+
+print("".join(arr))
