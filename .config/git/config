@@ -21,6 +21,8 @@
     rebase = true
 [merge]
     conflictstyle = diff3
+    ff = no
+    commit = no
 [rebase]
     autoaquash = true
 [push]
