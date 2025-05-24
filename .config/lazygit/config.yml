@@ -1,5 +1,7 @@
 gui:
   showFileTree: false
+  commitHashLength: 7
+  statusPanelView: allBranchesLog
   theme:
     activeBorderColor:
       - '#ae8e57'
