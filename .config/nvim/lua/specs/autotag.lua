@@ -4,8 +4,15 @@ local spec = {
     "windwp/nvim-ts-autotag",
     dependencies = {
         "nvim-treesitter/nvim-treesitter",
-    },
-    opts = {},
+    }
 }
+
+function spec.config()
+    require("nvim-treesitter.configs").setup {
+        autotag = {
+            enable = true
+        }
+    }
+end
 
 return spec

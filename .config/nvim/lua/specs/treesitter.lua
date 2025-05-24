@@ -2,12 +2,11 @@
 
 local spec = {
     "nvim-treesitter/nvim-treesitter",
-    branch = "main",
     build = ":TSUpdate",
 }
 
 function spec.config()
-    require("nvim-treesitter").setup {
+    require("nvim-treesitter.configs").setup {
         ensure_installed = {
             "c", "lua", "vim", "vimdoc", "query",           -- should always be installed
             "regex", "bash", "markdown", "markdown_inline", -- for lsp docs
