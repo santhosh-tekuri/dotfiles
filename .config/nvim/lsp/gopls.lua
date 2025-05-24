@@ -7,6 +7,9 @@ return {
         gopls = {
             usePlaceholders = true,
             staticcheck = true,
+            codelenses = {
+                test = true,
+            },
         },
     },
 }

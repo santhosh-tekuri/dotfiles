@@ -61,6 +61,7 @@ end, { desc = "close buffers in diff split" })
 vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('UserLspConfig', {}),
     callback = function(ev)
+        vim.lsp.codelens.refresh()
         local function opts(desc)
             return { buffer = ev.buf, desc = desc }
         end
@@ -69,6 +70,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
         vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
         vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
+        vim.keymap.set('n', ' l', vim.lsp.codelens.run, opts("Perform codelens"))
         vim.keymap.set('n', ' e', function()
             if vim.diagnostic.config().virtual_lines then
                 vim.diagnostic.config({ virtual_lines = false })
