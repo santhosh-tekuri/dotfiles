@@ -65,7 +65,7 @@ function spec.config()
     vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
 
     -- keymap for terminal
-    vim.keymap.set({ 'n', 't' }, '<C-/>', function()
+    vim.keymap.set({ 'n', 't' }, '<C-\\>', function()
         Snacks.terminal()
     end)
 
