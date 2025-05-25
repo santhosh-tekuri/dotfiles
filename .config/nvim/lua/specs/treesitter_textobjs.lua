@@ -2,33 +2,30 @@
 
 local spec = {
     "nvim-treesitter/nvim-treesitter-textobjects",
-    dependencies = {
-        "nvim-treesitter/nvim-treesitter",
-    }
+    branch = "main",
 }
 
 function spec.config()
-    require("nvim-treesitter.configs").setup {
-        textobjects = {
-            select = {
-                enable = true,
-                lookahead = true,
-
-                keymaps = {
-                    ['a='] = { query = "@assignment.outer" },
-                    ['i='] = { query = "@assignment.inner" },
-                    ['l='] = { query = "@assignment.lhs" },
-                    ['r='] = { query = "@assignment.rhs" },
-
-                    ['af'] = { query = "@call.outer" },
-                    ['if'] = { query = "@call.inner" },
-
-                    ['aa'] = { query = "@parameter.outer" },
-                    ['ia'] = { query = "@parameter.inner" },
-                }
-            }
+    require("nvim-treesitter-textobjects").setup {
+        select = {
+            lookahead = true,
         }
     }
+    local keymap = {
+        ['i='] = "@assignment.inner",
+        ['l='] = "@assignment.lhs",
+        ['r='] = "@assignment.rhs",
+        ['af'] = "@call.outer",
+        ['if'] = "@call.inner",
+        ['aa'] = "@parameter.outer",
+        ['ia'] = "@parameter.inner",
+    }
+    local select = require("nvim-treesitter-textobjects.select")
+    for key, query in pairs(keymap) do
+        vim.keymap.set({ "x", "o" }, key, function()
+            select.select_textobject(query, "textobjects")
+        end)
+    end
 end
 
 return spec
