@@ -55,6 +55,7 @@ function spec.config()
             }
         }
     }
+    vim.keymap.set('n', ' h', Snacks.picker.help, { desc = "Open help picker" })
     vim.keymap.set('n', ' f', Snacks.picker.files, { desc = "Open file picker" })
     vim.keymap.set('n', ' b', function()
         Snacks.picker.buffers {
