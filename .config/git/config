@@ -7,12 +7,8 @@
     root = rev-parse --show-toplevel # print directory that has .git folder
     edit = !$EDITOR $(git diff --name-only) # open modified files in vim
     unstage = restore --staged
-[core]
-    pager = diff-highlight
 [pager]
-    diff = diff-highlight | less
-    log = diff-highlight | less
-    show = diff-highlight | less
+    diff = diff-highlight | less --tabs 4
 [diff]
     algorighm = histogram
     colorMoved = default
@@ -30,3 +26,5 @@
     default = current # push current branch to a remote branch of the same name
 [interactive]
     diffFilter = diff-highlight
+[color "diff"]
+	meta = "#424b56"
