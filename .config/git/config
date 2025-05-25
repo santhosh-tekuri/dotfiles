@@ -7,6 +7,8 @@
     root = rev-parse --show-toplevel # print directory that has .git folder
     edit = !$EDITOR $(git diff --name-only) # open modified files in vim
     unstage = restore --staged
+    amend = commit --amend
+    fixup = commit --fixup
 [pager]
     diff = diff-highlight | less --tabs 4
 [diff]
