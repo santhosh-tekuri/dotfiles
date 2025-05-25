@@ -61,7 +61,6 @@ end, { desc = "close buffers in diff split" })
 vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('UserLspConfig', {}),
     callback = function(ev)
-        vim.lsp.codelens.refresh()
         local function opts(desc)
             return { buffer = ev.buf, desc = desc }
         end
@@ -78,5 +77,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
                 vim.diagnostic.config({ virtual_lines = { current_line = true } })
             end
         end, opts("toggle diagnotic for current line"))
+
+        -- setup codelens
+        vim.lsp.codelens.refresh({ bufnr = 0 })
+        vim.api.nvim_create_autocmd('InsertLeave', {
+            desc = "refresh codelens",
+            callback = function()
+                vim.lsp.codelens.refresh({ bufnr = 0 })
+            end,
+        })
     end,
 })
