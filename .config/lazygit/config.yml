@@ -2,6 +2,7 @@ gui:
   showFileTree: false
   commitHashLength: 7
   statusPanelView: allBranchesLog
+  commitAuthorLongLength: 2
   theme:
     activeBorderColor:
       - '#ae8e57'
