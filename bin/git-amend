@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+    git commit --amend
+else
+    git commit --fixup amend:$1
+fi

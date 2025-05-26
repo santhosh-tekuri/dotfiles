@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+    git commit --amend --only
+else
+    git commit --fixup reword:$1
+fi
