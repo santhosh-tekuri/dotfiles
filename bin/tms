@@ -3,6 +3,9 @@
 # select tmux session to attach/switch
 
 sessions=$(tmux list-sessions -F '#{session_name}')
+if [ $? -ne 0 ]; then
+    exit 0
+fi
 if [[ -n "$TMUX" ]]; then
     cur=$(tmux display-message -p '#{session_name}')
     sessions=$(echo "$sessions" | grep -vxF "$cur")
