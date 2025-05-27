@@ -4,25 +4,23 @@ function escape_dot(){
     echo "$1" | sed 's|\.|\\\.|g'
 }
 
-curr_branch=$(git describe --contains --all HEAD 2> /dev/null);
+branch=$(git describe --contains --all HEAD 2> /dev/null);
 if [ $? -ne 0 ]; then
     exit
 fi
 
-curr_remote=$(git config branch.$curr_branch.remote);
-if git config branch.$curr_branch.merge > /dev/null; then
-    curr_merge_branch=$(git config branch.$curr_branch.merge | cut -d / -f 3);
-    ahead=$(git rev-list --left-only --count $(escape_dot $curr_branch)...$(escape_dot $curr_remote/$curr_merge_branch) 2> /dev/null);
+if git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null; then
+    ahead=$(git rev-list --left-only --count $(escape_dot $branch)...@{upstream} 2> /dev/null);
     if [ ! -z "$ahead" ] && [ "$ahead" -ne 0 ]; then
         echo -n "+$ahead "
     fi
-    behind=$(git rev-list --right-only --count $(escape_dot $curr_branch)...$(escape_dot $curr_remote/$curr_merge_branch) 2> /dev/null);
+    behind=$(git rev-list --right-only --count $(escape_dot $branch)...@{upstream} 2> /dev/null);
     if [ ! -z "$behind" ] && [ "$behind" -ne 0 ]; then
         echo -n "-$behind "
     fi
 fi
 
-echo -n $curr_branch
+echo -n $branch
 
 if [ -z "$(git status --porcelain)" ]; then
     echo -n " "
