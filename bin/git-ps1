@@ -28,3 +28,14 @@ if [ -z "$(git status --porcelain)" ]; then
 else
     echo -n "* "
 fi
+
+gitdir="$(git rev-parse --git-dir)"
+if [ -f "${gitdir}/CHERRY_PICK_HEAD" ]; then
+    echo -n "(cherry-pick) "
+elif [ -f "${gitdir}/merge_HEAD" ]; then
+    echo -n "(merge) "
+elif [ -f "${gitdir}/REBASE_HEAD" ]; then
+    echo -n "(rebase) "
+elif [ -f "${gitdir}/REVERT_HEAD" ]; then
+    echo -n "(revert) "
+fi
