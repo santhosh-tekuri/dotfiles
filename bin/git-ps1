@@ -4,7 +4,7 @@ function escape_dot(){
     echo "$1" | sed 's|\.|\\\.|g'
 }
 
-curr_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null);
+curr_branch=$(git describe --contains --all HEAD 2> /dev/null);
 if [ $? -ne 0 ]; then
     exit
 fi
