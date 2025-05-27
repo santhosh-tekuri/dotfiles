@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+gitdir="$(git rev-parse --git-dir)"
+
+if [ -f "${gitdir}/CHERRY_PICK_HEAD" ]; then
+    git cherry-pick --abort
+elif [ -f "${gitdir}/merge_HEAD" ]; then
+    git merge --abort
+elif [ -f "${gitdir}/REBASE_HEAD" ]; then
+    git rebase --abort
+elif [ -f "${gitdir}/REVERT_HEAD" ]; then
+    git revert --abort
+fi
