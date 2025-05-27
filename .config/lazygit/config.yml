@@ -1,4 +1,5 @@
 gui:
+  showCommandLog: false
   showFileTree: false
   commitHashLength: 7
   statusPanelView: allBranchesLog
