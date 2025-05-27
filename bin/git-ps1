@@ -9,13 +9,14 @@ if [ $? -ne 0 ]; then
     exit
 fi
 
-if git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2> /dev/null; then
-    ahead=$(git rev-list --left-only --count $(escape_dot $branch)...@{upstream} 2> /dev/null);
-    if [ ! -z "$ahead" ] && [ "$ahead" -ne 0 ]; then
+if git rev-parse --abbrev-ref --symbolic-full-name @{upstream} &> /dev/null; then
+    count=$(git rev-list --left-right --count $(escape_dot $branch)...@{upstream});
+    ahead=$(printf %s "$count" | cut -d $'\t' -f1)
+    behind=$(printf %s "$count" | cut -d $'\t' -f2)
+    if [ "$ahead" -ne 0 ]; then
         echo -n "+$ahead "
     fi
-    behind=$(git rev-list --right-only --count $(escape_dot $branch)...@{upstream} 2> /dev/null);
-    if [ ! -z "$behind" ] && [ "$behind" -ne 0 ]; then
+    if [ "$behind" -ne 0 ]; then
         echo -n "-$behind "
     fi
 fi
