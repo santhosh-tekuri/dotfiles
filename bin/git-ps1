@@ -4,9 +4,18 @@ function escape_dot(){
     echo "$1" | sed 's|\.|\\\.|g'
 }
 
-branch=$(git describe --contains --all HEAD 2> /dev/null);
+gitdir="$(git rev-parse --git-dir 2>/dev/null)"
 if [ $? -ne 0 ]; then
     exit
+fi
+
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+if [ "$branch" = "HEAD" ]; then
+    # check if we are in a rebase
+    head_name_file="${gitdir}/rebase-merge/head-name"
+    if [ -f "${head_name_file}" ]; then
+        branch=$(cut -f3- -d/ $head_name_file)
+    fi
 fi
 
 if git rev-parse --abbrev-ref --symbolic-full-name @{upstream} &> /dev/null; then
@@ -29,7 +38,6 @@ else
     echo -n "* "
 fi
 
-gitdir="$(git rev-parse --git-dir)"
 if [ -f "${gitdir}/CHERRY_PICK_HEAD" ]; then
     echo -n "(cherry-pick) "
 elif [ -f "${gitdir}/merge_HEAD" ]; then
