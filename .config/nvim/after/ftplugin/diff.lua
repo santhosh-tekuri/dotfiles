@@ -1,37 +1,5 @@
-function Select_change()
-    local function is_change()
-        local type = vim.treesitter.get_node():type()
-        return type == "addition" or type == "deletion"
-    end
-
-    local last = vim.fn.line('$')
-    if is_change() then
-        while vim.fn.line('.') > 1 do
-            vim.cmd("-")
-            if not is_change() then
-                vim.cmd("+")
-                break
-            end
-        end
-    else
-        while vim.fn.line(".") ~= last do
-            vim.cmd("+")
-            if is_change() then
-                break
-            end
-        end
-    end
-    if not is_change() then
-        return
-    end
-    vim.cmd('normal! 0V')
-    while vim.fn.line(".") ~= last do
-        vim.cmd("+")
-        if not is_change() then
-            vim.cmd("-")
-            break
-        end
-    end
+local function node_at(line)
+    return vim.treesitter.get_node { pos = { line - 1, 0 } }
 end
 
 local function select_lines(from, to)
@@ -42,9 +10,47 @@ local function select_lines(from, to)
     end
 end
 
+function Select_change()
+    local line = vim.fn.line('.')
+    local function is_change()
+        local type = node_at(line):type()
+        return type == "addition" or type == "deletion"
+    end
+
+    local last = vim.fn.line('$')
+    if is_change() then
+        while line > 1 do
+            line = line - 1
+            if not is_change() then
+                line = line + 1
+                break
+            end
+        end
+    else
+        while line ~= last do
+            line = line + 1
+            if is_change() then
+                break
+            end
+        end
+    end
+    if not is_change() then
+        return
+    end
+    local from = line
+    while line ~= last do
+        line = line + 1
+        if not is_change() then
+            select_lines(from, line - 1)
+            break
+        end
+    end
+end
+
 function Select_node(type)
-    local function get_node()
-        local node = vim.treesitter.get_node()
+    local line = vim.fn.line('.')
+    local function ancestor()
+        local node = node_at(line)
         while node ~= nil and node:type() ~= type do
             node = node:parent()
         end
@@ -52,17 +58,17 @@ function Select_node(type)
     end
     local last = vim.fn.line('$')
     while true do
-        local hunk = get_node()
+        local hunk = ancestor()
         if hunk ~= nil then
             local srow = hunk:start()
             local frow = hunk:end_()
             select_lines(srow + 1, frow)
             break
         end
-        if vim.fn.line('.') == last then
+        if line == last then
             break
         end
-        vim.cmd('+')
+        line = line + 1
     end
 end
 
