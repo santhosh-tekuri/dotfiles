@@ -6,7 +6,7 @@ function spec.config()
             lsp_format = "prefer",
         },
         formatters_by_ft = {
-            python = { "black" },
+            -- python = { "black" },
         },
     }
 end
