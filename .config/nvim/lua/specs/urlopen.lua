@@ -15,7 +15,7 @@ function spec.config()
             },
         },
     }
-    vim.keymap.set("n", "gx", "<esc>:URLOpenUnderCursor<cr>")
+    vim.keymap.set("n", "gx", "<CMD>URLOpenUnderCursor<CR>")
 end
 
 return spec
