@@ -6,6 +6,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end,
 })
 
+vim.api.nvim_create_autocmd('FocusLost', {
+    desc = "Copy to clipboard on FocusLost",
+    callback = function()
+        vim.fn.setreg("+", vim.fn.getreg("0"))
+    end,
+})
+
 -- set diagnotic signs
 vim.diagnostic.config({
     signs = {
