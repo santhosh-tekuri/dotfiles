@@ -15,8 +15,6 @@ vim.keymap.set("v", "<M-j>", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "<M-k>", ":m '<-2<CR>gv=gv")
 
 -- system clipboard
-vim.keymap.set({ 'n', 'v' }, ' y', '"+y', { desc = "Copy to system clipboard" })
-vim.keymap.set('n', ' Y', '"+y$', { desc = "Copy to system clipboard" })
 vim.keymap.set({ 'n', 'v' }, ' p', '"+p', { desc = "Paste clipboard after cursor" })
 vim.keymap.set({ 'n', 'v' }, ' P', '"+P', { desc = "Paste clipboard before cursor" })
 

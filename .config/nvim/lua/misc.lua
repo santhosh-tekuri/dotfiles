@@ -1,15 +1,31 @@
--- highlight selection on yank
-vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = "Hightlight selection on yank",
+vim.api.nvim_create_autocmd("BufWritePre", {
+    desc = "Format on save",
     callback = function()
-        vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 600 })
+        if #vim.lsp.get_clients({ bufnr = 0 }) > 0 then
+            vim.lsp.buf.format({})
+        end
+    end
+})
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = "Hilight & copy on yank",
+    callback = function()
+        vim.fn.setreg("+", vim.fn.getreg("0"))
+        vim.hl.on_yank({ higroup = 'IncSearch', timeout = 600 })
     end,
 })
 
-vim.api.nvim_create_autocmd('FocusLost', {
-    desc = "Copy to clipboard on FocusLost",
+vim.api.nvim_create_autocmd('InsertEnter', {
+    desc = "No relativenumber in insert",
     callback = function()
-        vim.fn.setreg("+", vim.fn.getreg("0"))
+        vim.opt.relativenumber = false
+    end,
+})
+
+vim.api.nvim_create_autocmd('InsertLeave', {
+    desc = "relativenumber in non-insert",
+    callback = function()
+        vim.opt.relativenumber = true
     end,
 })
 
