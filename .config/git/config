@@ -3,6 +3,10 @@
     email = santhosh.tekuri@gmail.com
 [url "git@github.com:"]
     pushInsteadOf = "https://github.com/"
+[url "git@github.com:santhosh-tekuri/"]
+    insteadOf = "me:"
+[url "git@github.com"]
+    insteadOf = "gh:"
 [alias]
     root = rev-parse --show-toplevel # print directory that has .git folder
     edit = !$EDITOR $(git diff --name-only) # open modified files in vim
@@ -10,22 +14,25 @@
     touch = add --intent-to-add
 [pager]
     diff = diff-highlight | less --tabs 4
+    branch = false
+    tag = false
 [diff]
     algorighm = histogram
-    colorMoved = default
+    colorMoved = default # highlight moved blocks
 [commit]
-    verbose = true
+    verbose = true # show diff that will be committed at bottom
 [pull]
     rebase = true
 [merge]
     conflictstyle = diff3
-    ff = no
-    commit = no
+    ff = no # no fast forward. always create merge commit
 [rebase]
     autoaquash = true
 [push]
+    autoSetupRemote = true
     default = current # push current branch to a remote branch of the same name
 [interactive]
     diffFilter = diff-highlight
+    singlekey = true
 [color "diff"]
 	meta = "#424b56"
