@@ -1,0 +1,35 @@
+(defcfg
+    process-unmapped-keys yes
+)
+
+(defsrc)
+
+(defvar
+    tt 300
+    ht 300
+)
+
+(deftemplate mod (orig new)
+    $orig (tap-hold-release $tt $ht $orig $new)
+)
+
+(deflayermap (base)
+    (t! mod f lctrl)
+    (t! mod j rctrl)
+    (t! mod s lalt)
+    (t! mod l ralt)
+    (t! mod d lsft)
+    (t! mod k rsft)
+    caps (tap-hold-press $tt $ht
+        (caps-word 5000)
+        (layer-while-held arrows)
+    )
+    lmet (tap-hold $tt $ht C-b lmet)
+)
+
+(deflayermap (arrows)
+    h left
+    j down
+    k up
+    l right
+)
