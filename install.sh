@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 function addline() {
     if [ -f "$2" ]; then
         grep -qxF "$1" "$2" || echo "$2" >> "$1"
