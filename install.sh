@@ -15,13 +15,13 @@ function link() {
     local src=$1
     local tgt=$2
     local tgtfile=$tgt/$(basename $src)
-    if [ -e $tgtfile ]; then
-        if [ $(readlink $tgtfile) == $src ]; then
+    if [ -e "$tgtfile" ]; then
+        if [ $(readlink "$tgtfile") == $src ]; then
             return 0
         fi
     fi
     echo linking $src
-    ln -s $src $tgt
+    ln -s "$src" "$tgt"
 }
 
 function gitclone() {
