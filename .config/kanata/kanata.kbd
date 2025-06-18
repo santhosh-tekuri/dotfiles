@@ -25,6 +25,7 @@
         (layer-while-held arrows)
     )
     lmet (tap-hold $tt $ht C-b lmet)
+    fn (tap-hold 250 250 fn (layer-toggle fn))
 )
 
 (deflayermap (arrows)
@@ -32,4 +33,19 @@
     j down
     k up
     l right
+)
+
+(deflayermap (fnkeys)
+    f1 brup
+    f2 brdn
+    f3 mctl
+    f4 sls
+    f5 dtn
+    f6 dnd
+    f7 prev
+    f8 pp
+    f9 next
+    f10 mute
+    f11 voldwn
+    f12 volu
 )
