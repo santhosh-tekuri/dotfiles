@@ -2,7 +2,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     desc = "Format on save",
     callback = function()
         if #vim.lsp.get_clients({ bufnr = 0 }) > 0 then
-            vim.lsp.buf.format({})
+            vim.lsp.buf.format()
         end
     end
 })
@@ -20,14 +20,18 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.api.nvim_create_autocmd('InsertEnter', {
     desc = "No relativenumber in insert",
     callback = function()
-        vim.opt.relativenumber = false
+        if vim.o.number then
+            vim.opt.relativenumber = false
+        end
     end,
 })
 
 vim.api.nvim_create_autocmd('InsertLeave', {
     desc = "relativenumber in non-insert",
     callback = function()
-        vim.opt.relativenumber = true
+        if vim.o.number then
+            vim.opt.relativenumber = true
+        end
     end,
 })
 
