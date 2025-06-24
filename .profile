@@ -1,3 +1,6 @@
+alias karabiner="sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon'"
+alias kanata='sudo kanata -c ~/.config/kanata/kanata.kbd'
+
 if ! command -v nvim &> /dev/null; then
     export EDITOR=nvim
     export MANPAGER='nvim +Man!'
