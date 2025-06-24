@@ -35,9 +35,9 @@
     l right
 )
 
-(deflayermap (fnkeys)
-    f1 brup
-    f2 brdn
+(deflayermap (fn)
+    f1 brdn
+    f2 brup
     f3 mctl
     f4 sls
     f5 dtn
