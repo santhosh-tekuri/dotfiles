@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+
+lang=english
+n=50
+f=100
+caps=none
+
+usage=$(cat <<EOF
+USAGE: typist [options...]
+
+-l language default english
+-n numwords default 50
+-c captalize words randomly
+-C capitalize all words
+EOF
+)
+
+args=$(getopt l:n:cC $*)
+if [ $? -ne 0 ]; then
+    >&2 echo "$usage"
+    exit 2
+fi
+set -- $args
+while :; do
+    case "$1" in
+    -l)
+        lang=$2
+        shift; shift
+        ;;
+    -n)
+        n=$2
+        shift; shift
+        ;;
+    -c)
+        caps=rand
+        shift
+        ;;
+    -C)
+        caps=all
+        shift
+        ;;
+    --)
+        shift; break
+        ;;
+    esac
+done
+
+file=~/.local/share/typist/languages/$lang
+if [ ! -f $file ]; then
+    >&2 echo downloading $lang
+    mkdir -p $(dirname $file)
+    curl -s https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
+fi
+
+text=""
+while IFS='' read -r word; do
+    if [ $caps == "all" ] || ( [ $caps == "rand" ] && (( $RANDOM % 2 == 1 ))); then
+        word=$(echo ${word:0:1} | tr '[:lower:]' '[:upper:]')${word:1}
+    fi
+    text+=" $word"
+done < <(shuf -n $n $file)
+text=${text:1}
+
+if [ ! -t 1 ]; then
+    echo "$text"
+    exit
+fi
+
+chars=$(echo "$text" | wc -c)
+text=$(echo "$text" | fold -s -w $f)
+lines=$(echo "$text" | wc -l)
+
+w=$(tput cols)
+h=$(tput lines)
+xx=$(( ( $w - $f ) / 2))
+yy=$(( ( $h - $lines ) / 2 ))
+
+stty -echo
+printf '\e[?1049h' # start altscreen
+printf '\e[2J' # clear screen
+printf '\e[?25h' # show cursor
+
+cleanup() {
+    printf '\e[?1049l' # end altscreen
+    stty echo
+}
+trap cleanup EXIT
+
+y=$yy
+while IFS='' read -r line; do
+    printf '\e[%d;%dH' $y $xx # set cursor pos
+    echo -n $line
+    ((y++))
+done <<< "$text"
+printf '\e[%d;%dH' $yy $xx # set cursor pos
+i=0
+while IFS='' read -rsn1 char; do
+    # printf "%d" "'$char"
+    if [[ $char == $'\0' ]]; then
+        # on enter break
+        break
+    fi
+
+    if [[ $char == $'\x7f' ]]; then
+        ((i--))
+    else
+        ((i++))
+    fi
+
+    if (( $i == $chars-1 )); then
+        break
+    fi
+
+    # update cursor pos
+    y=0
+    x=$i
+    while IFS='' read -r line; do
+        if (( $x < ${#line} )); then
+            break
+        fi
+        ((y++))
+        x=$(( $x - ${#line} )) 
+    done <<< "$text"
+    ((x+=xx))
+    ((y+=yy))
+    printf '\e[%d;%dH' $y $x # set cursor pos
+done
+
