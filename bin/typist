@@ -68,12 +68,12 @@ fi
 
 chars=$(echo "$text" | wc -c)
 text=$(echo "$text" | fold -s -w $f)
-lines=$(echo "$text" | wc -l)
+IFS=$'\n' read -d '' -r -a lines <<< "$text"
 
 w=$(tput cols)
 h=$(tput lines)
 xx=$(( ( $w - $f ) / 2))
-yy=$(( ( $h - $lines ) / 2 ))
+yy=$(( ( $h - ${#lines[@]} ) / 2 ))
 
 stty -echo
 printf '\e[?1049h' # start altscreen
@@ -114,13 +114,13 @@ while IFS='' read -rsn1 char; do
     # update cursor pos
     y=0
     x=$i
-    while IFS='' read -r line; do
+    for line in "${lines[@]}"; do
         if (( $x < ${#line} )); then
             break
         fi
         ((y++))
         x=$(( $x - ${#line} )) 
-    done <<< "$text"
+    done
     ((x+=xx))
     ((y+=yy))
     printf '\e[%d;%dH' $y $x # set cursor pos
