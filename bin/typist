@@ -66,32 +66,31 @@ if [ ! -t 1 ]; then
     exit
 fi
 
-chars=$(echo "$text" | wc -c)
-text=$(echo "$text" | fold -s -w $f)
-IFS=$'\n' read -d '' -r -a lines <<< "$text"
+chars=${#text}
+IFS=$'\n' read -d '' -r -a lines < <(echo "$text" | fold -s -w $f)
 
 w=$(tput cols)
 h=$(tput lines)
 xx=$(( ( $w - $f ) / 2))
 yy=$(( ( $h - ${#lines[@]} ) / 2 ))
 
-stty -echo
+stty -echo # diable echo
 printf '\e[?1049h' # start altscreen
 printf '\e[2J' # clear screen
 printf '\e[?25h' # show cursor
 
 cleanup() {
     printf '\e[?1049l' # end altscreen
-    stty echo
+    stty echo # enable echo
 }
 trap cleanup EXIT
 
 y=$yy
-while IFS='' read -r line; do
+for line in "${lines[@]}"; do
     printf '\e[%d;%dH' $y $xx # set cursor pos
     echo -n $line
     ((y++))
-done <<< "$text"
+done
 printf '\e[%d;%dH' $yy $xx # set cursor pos
 i=0
 while IFS='' read -rsn1 char; do
@@ -107,7 +106,7 @@ while IFS='' read -rsn1 char; do
         ((i++))
     fi
 
-    if (( $i == $chars-1 )); then
+    if (( $i == $chars )); then
         break
     fi
 
