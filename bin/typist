@@ -8,14 +8,18 @@ caps=none
 usage=$(cat <<EOF
 USAGE: typist [options...]
 
--l language default english
--n numwords default 50
--c captalize words randomly
--C capitalize all words
+-l <language>       monkeytype language
+                    default english
+-n <words>          number of words
+                    default 50
+-c                  captalize words randomly
+-C                  capitalize all words
+-f <num>            fold after num chars
+-h                  show this help
 EOF
 )
 
-args=$(getopt l:n:cC $*)
+args=$(getopt hl:n:cC $*)
 if [ $? -ne 0 ]; then
     >&2 echo "$usage"
     exit 2
@@ -23,6 +27,10 @@ fi
 set -- $args
 while :; do
     case "$1" in
+    -h)
+        echo "$usage"
+        exit 0
+        ;;
     -l)
         lang=$2
         shift; shift
@@ -94,15 +102,22 @@ done
 printf '\e[%d;%dH' $yy $xx # set cursor pos
 i=0
 while IFS='' read -rsn1 char; do
-    # printf "%d" "'$char"
-    if [[ $char == $'\0' ]]; then
+    if [[ "$char" == $'\0' ]]; then
         # on enter break
         break
     fi
 
-    if [[ $char == $'\x7f' ]]; then
+    if [[ "$char" == $'\x7f' ]]; then
+        if [[ $i == 0 ]]; then
+            continue
+        fi
         ((i--))
     else
+        if [[ "$char" == "${text:i:1}" ]]; then
+            printf '\e[32m%c\e[m' "$char"
+        else
+            printf '\e[31m%c\e[m' "$char"
+        fi
         ((i++))
     fi
 
@@ -123,5 +138,10 @@ while IFS='' read -rsn1 char; do
     ((x+=xx))
     ((y+=yy))
     printf '\e[%d;%dH' $y $x # set cursor pos
+
+    if [[ "$char" == $'\x7f' ]]; then
+        printf '%c' "${text:i:1}"
+        printf '\e[%d;%dH' $y $x # set cursor pos
+    fi
 done
 
