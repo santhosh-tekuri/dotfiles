@@ -10,6 +10,7 @@ USAGE: typist [options...]
 
 -l <language>       monkeytype language
                     default english
+-q <size>           quote of size (short, medium, long, thick)
 -n <words>          number of words
                     default 50
 -c                  captalize words randomly
@@ -19,7 +20,7 @@ USAGE: typist [options...]
 EOF
 )
 
-args=$(getopt hl:n:cC $*)
+args=$(getopt hq:l:n:cC $*)
 if [ $? -ne 0 ]; then
     >&2 echo "$usage"
     exit 2
@@ -30,6 +31,10 @@ while :; do
     -h)
         echo "$usage"
         exit 0
+        ;;
+    -q)
+        qsize=$2
+        shift; shift
         ;;
     -l)
         lang=$2
@@ -53,30 +58,56 @@ while :; do
     esac
 done
 
-file=~/.local/share/typist/languages/$lang
-if [ ! -f $file ]; then
-    >&2 echo downloading $lang
-    mkdir -p $(dirname $file)
-    curl -s https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
-fi
-
-text=""
-while IFS='' read -r word; do
-    if [ $caps == "all" ] || ( [ $caps == "rand" ] && (( $RANDOM % 2 == 1 ))); then
-        word=$(echo ${word:0:1} | tr '[:lower:]' '[:upper:]')${word:1}
+if [ ! -t 0 ]; then
+    text=$(cat | tr '\n' ' ' | awk '{$1=$1};1')
+    exec 0<>/dev/tty
+elif [ "$qsize" != "" ]; then
+    case "$qsize" in
+        short)
+            qsize='length >= 1 && length <= 100'
+            ;;
+        medium)
+            qsize='length >= 101 && length <= 300'
+            ;;
+        long)
+            qsize='length >= 301 && length <= 600'
+            ;;
+        thick)
+            qsize='length >= 601'
+            ;;
+        *)
+            >&2 echo invalid quote size. valid are short, medium, long, thick
+            exit 2
+            ;;
+    esac
+    file=~/.local/share/typist/quotes
+    if [ ! -f $file ]; then
+        >&2 echo downloading quotes
+        mkdir -p $(dirname $file)
+        curl -s https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > $file
     fi
-    text+=" $word"
-done < <(shuf -n $n $file)
-text=${text:1}
+    text=$(awk "$qsize" $file | shuf -n1)
+else
+    file=~/.local/share/typist/languages/$lang
+    if [ ! -f $file ]; then
+        >&2 echo downloading $lang
+        mkdir -p $(dirname $file)
+        curl -s https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
+    fi
+
+    text=""
+    while IFS='' read -r word; do
+        if [ $caps == "all" ] || ( [ $caps == "rand" ] && (( $RANDOM % 2 == 1 ))); then
+            word=$(echo ${word:0:1} | tr '[:lower:]' '[:upper:]')${word:1}
+        fi
+        text+=" $word"
+    done < <(shuf -n $n $file)
+    text=${text:1}
+fi
 
 if [ ! -t 1 ]; then
     echo "$text"
     exit
-fi
-
-if [ ! -t 0 ]; then
-    text=$(cat | tr '\n' ' ' | awk '{$1=$1};1')
-    exec 0<>/dev/tty
 fi
 
 chars=${#text}
