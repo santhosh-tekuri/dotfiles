@@ -74,6 +74,11 @@ if [ ! -t 1 ]; then
     exit
 fi
 
+if [ ! -t 0 ]; then
+    text=$(cat | tr '\n' ' ' | awk '{$1=$1};1')
+    exec 0<>/dev/tty
+fi
+
 chars=${#text}
 IFS=$'\n' read -d '' -r -a lines < <(echo "$text" | fold -s -w $f)
 
