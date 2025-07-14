@@ -99,6 +99,7 @@ for line in "${lines[@]}"; do
 done
 printf '\e[%d;%dH' $yy $xx # set cursor pos
 i=0
+typed=""
 while IFS='' read -rsn1 char; do
     if [[ "$char" == $'\0' ]]; then
         # on enter break
@@ -109,8 +110,10 @@ while IFS='' read -rsn1 char; do
         if [[ $i == 0 ]]; then
             continue
         fi
+        typed=${typed:0:${#typed}-1}
         ((i--))
     else
+        typed+="$char"
         if [[ "$char" == "${text:i:1}" ]]; then
             printf '\e[32m%c\e[m' "$char"
         else
@@ -119,7 +122,7 @@ while IFS='' read -rsn1 char; do
         ((i++))
     fi
 
-    if (( $i == $chars )); then
+    if (( $i == $chars )) && [[ "$typed" == "$text" ]]; then
         break
     fi
 
@@ -133,12 +136,20 @@ while IFS='' read -rsn1 char; do
         ((y++))
         x=$(( $x - ${#line} )) 
     done
+    while (( x > f )); do
+        ((x-=f))
+        ((y++))
+    done
     ((x+=xx))
     ((y+=yy))
     printf '\e[%d;%dH' $y $x # set cursor pos
 
     if [[ "$char" == $'\x7f' ]]; then
-        printf '%c' "${text:i:1}"
+        if (( $i < ${#text} )); then
+            printf '%c' "${text:i:1}"
+        else
+            printf ' '
+        fi
         printf '\e[%d;%dH' $y $x # set cursor pos
     fi
 done
