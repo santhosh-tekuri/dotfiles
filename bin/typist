@@ -120,6 +120,7 @@ stty -echo # diable echo
 printf '\e[?1049h' # start altscreen
 printf '\e[2J' # clear screen
 printf '\e[?25h' # show cursor
+printf '\033[6 q' # change cursor to I-beam
 
 cleanup() {
     printf '\e[?1049l' # end altscreen
