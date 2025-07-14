@@ -88,6 +88,10 @@ printf '\e[?25h' # show cursor
 cleanup() {
     printf '\e[?1049l' # end altscreen
     stty echo # enable echo
+    if [[ "$time" -ne "" ]]; then
+        printf "WPM %s\n" $(bc <<< "scale=2; $chars * 60 / 5 / $time" )
+        printf "ACC %s\n" $(bc <<< "scale=2; $chars * 100 / $keys")
+    fi
 }
 trap cleanup EXIT
 
@@ -100,7 +104,12 @@ done
 printf '\e[%d;%dH' $yy $xx # set cursor pos
 i=0
 typed=""
+keys=0
 while IFS='' read -rsn1 char; do
+    ((keys++))
+    if (( keys == 1 )); then
+        SECONDS=0
+    fi 
     if [[ "$char" == $'\0' ]]; then
         # on enter break
         break
@@ -123,6 +132,7 @@ while IFS='' read -rsn1 char; do
     fi
 
     if (( $i == $chars )) && [[ "$typed" == "$text" ]]; then
+        time=$SECONDS
         break
     fi
 
@@ -153,4 +163,3 @@ while IFS='' read -rsn1 char; do
         printf '\e[%d;%dH' $y $x # set cursor pos
     fi
 done
-
