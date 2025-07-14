@@ -88,11 +88,15 @@ elif [ "$qsize" != "" ]; then
     fi
     text=$(awk "$qsize" $file | shuf -n1)
 else
-    file=~/.local/share/typist/languages/$lang
-    if [ ! -f $file ]; then
-        >&2 echo downloading $lang
-        mkdir -p $(dirname $file)
-        curl -s https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
+    if [ "$lang" == "os" ]; then
+        file="/usr/share/dict/words"
+    else
+        file=~/.local/share/typist/languages/$lang
+        if [ ! -f $file ]; then
+            >&2 echo downloading $lang
+            mkdir -p $(dirname $file)
+            curl -s https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
+        fi
     fi
 
     text=""
