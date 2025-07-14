@@ -13,14 +13,18 @@ USAGE: typist [options...]
 -q <size>           quote of size (short, medium, long, thick)
 -n <words>          number of words
                     default 50
+-f <num>            fold after num chars
 -c                  captalize words randomly
 -C                  capitalize all words
--f <num>            fold after num chars
+-p                  add punctuation
+-P <punctuation>    add given punctuation
+-s                  add symbols
+-s <symbols>        add given symbols
 -h                  show this help
 EOF
 )
 
-args=$(getopt hq:l:n:cC $*)
+args=$(getopt hq:l:n:cCpP:sS: $*)
 if [ $? -ne 0 ]; then
     >&2 echo "$usage"
     exit 2
@@ -51,6 +55,18 @@ while :; do
     -C)
         caps=all
         shift
+        ;;
+    -p)
+        symbols=",.-?!:;'\"()"
+        shift
+        ;;
+    -s)
+        symbols='`~!@#$%^&*()-_=+[{}];":,<.>/?\\|'\'
+        shift
+        ;;
+    -P|-S)
+        symbols="$2"
+        shift; shift
         ;;
     --)
         shift; break
@@ -104,7 +120,26 @@ else
         if [ $caps == "all" ] || ( [ $caps == "rand" ] && (( $RANDOM % 2 == 1 ))); then
             word=$(echo ${word:0:1} | tr '[:lower:]' '[:upper:]')${word:1}
         fi
-        text+=" $word"
+        if [ "$symbols" != "" ] && (( $RANDOM % 2 == 1)); then
+            i=$(( $RANDOM % ${#symbols} ))
+            ch="${symbols:i:1}"
+            case "$ch" in
+                "&"|"@"|"#"|"("|"{"|'['|'<')
+                    text+=" $ch$word"
+                    ;;
+                "-")
+                    text+=" - $word"
+                    ;;
+                \`|"'"|"\"")
+                    text+=" $ch$word$ch"
+                    ;;
+                *)
+                    text+=" $word$ch"
+                    ;;
+            esac
+        else 
+            text+=" $word"
+        fi
     done < <(shuf -n $n $file)
     text=${text:1}
 fi
