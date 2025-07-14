@@ -77,10 +77,8 @@ fi
 chars=${#text}
 IFS=$'\n' read -d '' -r -a lines < <(echo "$text" | fold -s -w $f)
 
-w=$(tput cols)
-h=$(tput lines)
-xx=$(( ( $w - $f ) / 2))
-yy=$(( ( $h - ${#lines[@]} ) / 2 ))
+xx=$(( ( $(tput cols) - $f ) / 2))
+yy=$(( ( $(tput lines) - ${#lines[@]} ) / 2 ))
 
 stty -echo # diable echo
 printf '\e[?1049h' # start altscreen
