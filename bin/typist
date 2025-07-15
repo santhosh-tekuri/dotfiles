@@ -186,11 +186,15 @@ while IFS='' read -rsn1 char; do
     if (( keys == 1 )); then
         SECONDS=0
     fi 
-    if [[ "$char" == $'\0' ]]; then
-        # on enter break
-        break
-    fi
-
+    case "$char" in
+        $'\0') # ener
+            break ;;
+        $'\x1b') # arrow keys
+            read -rsn2 ignore
+            continue ;;
+        $'\x09') # tab
+            continue ;;
+    esac
     if [[ "$char" == $'\x7f' ]]; then
         if [[ $i == 0 ]]; then
             continue
