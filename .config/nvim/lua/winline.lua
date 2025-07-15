@@ -1,5 +1,27 @@
 local ns = vim.api.nvim_create_namespace("winline")
 
+local function lsp_progress()
+    local percentage = nil
+    for _, client in ipairs(vim.lsp.get_clients()) do
+        --- @diagnostic disable-next-line:no-unknown
+        for progress in client.progress do
+            --- @cast progress {token: lsp.ProgressToken, value: lsp.LSPAny}
+            local value = progress.value
+            if type(value) == 'table' and value.kind then
+                local message = value.message and (value.title .. ': ' .. value.message) or value.title
+                if value.percentage then
+                    percentage = math.max(percentage or 0, value.percentage)
+                end
+            end
+        end
+    end
+    if percentage then
+        return { string.format('%3d%% ', percentage), "Normal" }
+    else
+        return { "", "Normal" }
+    end
+end
+
 local function virt_text()
     local file = vim.fn.expand('%:t')
     if file == '' then
@@ -18,7 +40,7 @@ local function virt_text()
         end
         return "NormalFloat"
     end
-    return { { ' ', group(nil) }, { file, group(0) } }
+    return { lsp_progress(), { ' ', group(nil) }, { file, group(0) } }
 end
 
 local function show()
@@ -41,7 +63,7 @@ local function show()
     })
 end
 
-vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufModifiedSet', 'WinScrolled', 'DiagnosticChanged' }, {
+vim.api.nvim_create_autocmd({ 'LspProgress', 'BufWinEnter', 'BufModifiedSet', 'WinScrolled', 'DiagnosticChanged' }, {
     desc = "show winline",
     callback = show,
 })

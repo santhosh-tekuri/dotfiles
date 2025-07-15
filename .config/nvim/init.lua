@@ -29,7 +29,7 @@ require("lazy").setup {
     require("specs.cmdline"),
     require("specs.snacks"),
     require("specs.oil"),
-    require("specs.fidget"),
+    -- require("specs.fidget"),
     require("specs.gitsigns"),
     require("specs.treesitter"),
     require("specs.treesitter_textobjs"),

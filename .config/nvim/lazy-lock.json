@@ -1,7 +1,7 @@
 {
-  "blink.cmp": { "branch": "main", "commit": "9bcb14b43852a6f2bfd5ac9ef29cb5cf09b1b39b" },
-  "fidget.nvim": { "branch": "main", "commit": "d9ba6b7bfe29b3119a610892af67602641da778e" },
-  "gitsigns.nvim": { "branch": "main", "commit": "7bbc674278f22376850576dfdddf43bbc17e62b5" },
+  "blink.cmp": { "branch": "main", "commit": "3536ce464e82843b00c76718d9bfe1994647d686" },
+  "ed-cmd.nvim": { "branch": "master", "commit": "0ec9d3df51739c48c800c15a600396b785c346fb" },
+  "gitsigns.nvim": { "branch": "main", "commit": "d20209a154a8d11710607899b24a0698085b35cf" },
   "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
   "mason.nvim": { "branch": "main", "commit": "8024d64e1330b86044fed4c8494ef3dcd483a67c" },
   "nvim-autopairs": { "branch": "master", "commit": "23320e75953ac82e559c610bec5a90d9c6dfa743" },
