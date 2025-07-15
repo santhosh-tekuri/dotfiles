@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+set -o pipefail
+
 lang=english
 n=50
 f=100
@@ -100,7 +103,7 @@ elif [ "$qsize" != "" ]; then
     if [ ! -f $file ]; then
         >&2 echo downloading quotes
         mkdir -p $(dirname $file)
-        curl -s https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > $file
+        curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > $file
     fi
     text=$(awk "$qsize" $file | shuf -n1)
 else
@@ -111,7 +114,7 @@ else
         if [ ! -f $file ]; then
             >&2 echo downloading $lang
             mkdir -p $(dirname $file)
-            curl -s https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
+            curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
         fi
     fi
 
@@ -126,6 +129,9 @@ else
             case "$ch" in
                 "&"|"@"|"#"|"("|"{"|'['|'<')
                     text+=" $ch$word"
+                    ;;
+                "_")
+                    text+="_$word"
                     ;;
                 "-")
                     text+=" - $word"
