@@ -189,10 +189,10 @@ while IFS='' read -rsn1 char; do
     case "$char" in
         $'\0') # ener
             break ;;
-        $'\x1b') # arrow keys
+        $'\e') # arrow keys
             read -rsn2 ignore
             continue ;;
-        $'\x09') # tab
+        $'\t') # tab
             continue ;;
     esac
     if [[ "$char" == $'\x7f' ]]; then
