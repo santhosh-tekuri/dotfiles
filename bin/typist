@@ -156,7 +156,10 @@ if [ ! -t 1 ]; then
 fi
 
 chars=${#text}
-IFS=$'\n' read -d '' -r -a lines < <(echo "$text" | fold -s -w $f)
+lines=()
+while IFS='' read -r line; do
+    lines+=("$line")
+done < <(echo "$text" | fold -s -w $f)
 
 xx=$(( ( $(tput cols) - $f ) / 2))
 yy=$(( ( $(tput lines) - ${#lines[@]} ) / 2 ))
