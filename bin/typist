@@ -33,6 +33,10 @@ to practice some random words:
     typist -l english_5k -n 100
     typist -l code_rust -n 50
 
+to practice capitals:
+    typist -c # capitalizes words randomly
+    typist -C # capitalizes all words
+
 to practice punctuations:
     typist -p
     typist -P '.,!' # to practice specific punctuations
