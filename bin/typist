@@ -57,7 +57,7 @@ favorite typing site:
 EOF
 )
 
-args=$(getopt hLQq:l:n:cCpP:sS: $*)
+args=$(getopt hLQq:l:n:cCpP:sS:f: $*)
 if [ $? -ne 0 ]; then
     >&2 echo "$usage"
     exit 2
@@ -87,6 +87,10 @@ while :; do
         ;;
     -n)
         n=$2
+        shift; shift
+        ;;
+    -f)
+        f=$2
         shift; shift
         ;;
     -c)
