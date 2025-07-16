@@ -11,7 +11,7 @@ caps=none
 usage=$(cat <<EOF
 USAGE: typist [options...]
 
--l <language>       monkeytype language
+-l <language>       monkeytype language or 'os'
                     default english
 -q <size>           quote of size (short, medium, long, thick)
 -n <words>          number of words
@@ -24,6 +24,17 @@ USAGE: typist [options...]
 -s                  add symbols
 -s <symbols>        add given symbols
 -h                  show this help
+
+shortcuts:
+    <tab> to restart
+    <enter> to quit
+
+you can just copy the text generated and use it in your
+favorite typing site:
+        typist -C | pbcopy
+
+you can provide your own text to type
+        cat readme | typist
 EOF
 )
 
