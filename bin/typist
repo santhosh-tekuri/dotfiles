@@ -3,6 +3,7 @@
 set -e
 set -o pipefail
 
+newline_char=↩
 newline=' '
 lang=english
 n=50
@@ -77,7 +78,7 @@ while :; do
         shift
         ;;
     -N)
-        newline=↩
+        newline=$newline_char
         shift
         ;;
     -q)
@@ -317,6 +318,8 @@ while IFS='' read -rsn1 char; do
             ((errors++))
             if [[ "$char" == " " ]]; then
                 printf '\e[41m%c\e[m' "$char"
+            elif [[ "$char" == $'\n' ]]; then
+                printf '\e[31m%s\e[m' "$newline_char"
             else
                 printf '\e[31m%c\e[m' "$char"
             fi
