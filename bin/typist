@@ -16,7 +16,7 @@ USAGE: typist [options...]
 -q <size>           quote of size (short, medium, long, thick)
 -n <words>          number of words
                     default 50
--f <num>            fold after num chars
+-f <num>            text width
 -c                  captalize words randomly
 -C                  capitalize all words
 -p                  add punctuation
@@ -173,7 +173,15 @@ while IFS='' read -r line; do
 done < <(echo "$text" | fold -s -w $f)
 
 xx=$(( ( $(tput cols) - $f ) / 2))
+if ((xx<0)); then
+    >&2 echo text width too long
+    exit 1
+fi
 yy=$(( ( $(tput lines) - ${#lines[@]} ) / 2 ))
+if ((yy<0)); then
+    >&2 echo text height too long
+    exit 1
+fi
 
 stty -echo # diable echo
 printf '\e[?1049h' # start altscreen
