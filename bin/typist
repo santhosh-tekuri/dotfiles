@@ -228,7 +228,11 @@ while IFS='' read -rsn1 char; do
             printf '\e[32m%c\e[m' "$char"
         else
             ((errors++))
-            printf '\e[31m%c\e[m' "$char"
+            if [[ "$char" == " " ]]; then
+                printf '\e[41m%c\e[m' "$char"
+            else
+                printf '\e[31m%c\e[m' "$char"
+            fi
         fi
         ((i++))
     fi
