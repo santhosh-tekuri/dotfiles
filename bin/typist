@@ -57,7 +57,7 @@ favorite typing site:
 EOF
 )
 
-args=$(getopt hq:l:n:cCpP:sS: $*)
+args=$(getopt hLQq:l:n:cCpP:sS: $*)
 if [ $? -ne 0 ]; then
     >&2 echo "$usage"
     exit 2
@@ -68,6 +68,14 @@ while :; do
     -h)
         echo "$usage"
         exit 0
+        ;;
+    -L)
+        stdin=lang
+        shift
+        ;;
+    -Q)
+        stdin=quote
+        shift
         ;;
     -q)
         qsize=$2
@@ -108,8 +116,8 @@ while :; do
 done
 
 if [ ! -t 0 ]; then
-    text=$(cat | tr '\n' ' ' | awk '{$1=$1};1')
-    exec 0<>/dev/tty
+    text=$(cat)
+    # exec 0<>/dev/tty
 elif [ "$qsize" != "" ]; then
     case "$qsize" in
         short)
@@ -185,11 +193,32 @@ if [ ! -t 1 ]; then
     exit
 fi
 
+if [ -t 0 ]; then
+    lines=()
+    while IFS='' read -r line; do
+        lines+=(${#line})
+    done < <(echo "$text" | fold -s -w $f)
+else
+    case "$stdin" in
+        "lang"|"quote")
+            text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
+            lines=()
+            while IFS='' read -r line; do
+                lines+=(${#line})
+            done < <(echo "$text" | fold -s -w $f)
+            ;;
+        *)
+            lines=()
+            while IFS='' read -r line; do
+                len=$((${#line}+1))
+                lines+=($len)
+            done <<< "$text"
+            last=$(( ${#lines[@]} - 1 ))
+            ((lines[$last]--))
+            ;;
+    esac
+fi
 chars=${#text}
-lines=()
-while IFS='' read -r line; do
-    lines+=(${#line})
-done < <(echo "$text" | fold -s -w $f)
 
 xx=$(( ( $(tput cols) - $f ) / 2))
 if ((xx<0)); then
@@ -202,6 +231,9 @@ if ((yy<0)); then
     exit 1
 fi
 
+if [ ! -t 0 ]; then
+    exec 0<>/dev/tty
+fi
 stty -echo # diable echo
 printf '\e[?1049h' # start altscreen
 printf '\e[2J' # clear screen
@@ -246,7 +278,8 @@ while IFS='' read -rsn1 char; do
     fi 
     case "$char" in
         $'\0') # ener
-            break ;;
+            char=$'\n'
+            ;;
         $'\e') # arrow keys
             read -rsn2 ignore
             continue ;;
@@ -299,11 +332,14 @@ while IFS='' read -rsn1 char; do
     printf '\e[%d;%dH' $y $x # set cursor pos
 
     if [[ "$char" == $'\x7f' ]]; then
+        ch=' '
         if (( $i < ${#text} )); then
-            printf '%c' "${text:i:1}"
-        else
-            printf ' '
+            ch="${text:i:1}"
         fi
+        if [[ "$ch" == $'\n' ]]; then
+            ch=' '
+        fi
+        printf '%c' "$ch"
         printf '\e[%d;%dH' $y $x # set cursor pos
     fi
 done
