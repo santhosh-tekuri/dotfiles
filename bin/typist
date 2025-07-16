@@ -3,6 +3,7 @@
 set -e
 set -o pipefail
 
+newline=' '
 lang=english
 n=50
 f=100
@@ -23,6 +24,8 @@ USAGE: typist [options...]
 -P <punctuation>    add given punctuation
 -s                  add symbols
 -s <symbols>        add given symbols
+-L                  treat stdin as language
+-N                  show newline
 -h                  show this help
 
 shortcuts:
@@ -57,7 +60,7 @@ favorite typing site:
 EOF
 )
 
-args=$(getopt hLQq:l:n:cCpP:sS:f: $*)
+args=$(getopt hLNq:l:n:cCpP:sS:f: $*)
 if [ $? -ne 0 ]; then
     >&2 echo "$usage"
     exit 2
@@ -73,8 +76,8 @@ while :; do
         stdin=lang
         shift
         ;;
-    -Q)
-        stdin=quote
+    -N)
+        newline=↩
         shift
         ;;
     -q)
@@ -204,7 +207,7 @@ if [ -t 0 ]; then
     done < <(echo "$text" | fold -s -w $f)
 else
     case "$stdin" in
-        "lang"|"quote")
+        "lang")
             text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
             lines=()
             while IFS='' read -r line; do
@@ -224,7 +227,6 @@ else
             last=${#lines[@]}
             ((last--))
             ((lines[$last]--))
-            echo "${lines[@]}"
             ;;
     esac
 fi
@@ -271,6 +273,10 @@ redraw() {
         printf '\e[%d;%dH' $y $xx # set cursor pos
         echo -n "${text:i:line}"
         ((i+=line))
+        if [[ "${text:i-1:1}" == $'\n' ]]; then
+            printf '\e[%d;%dH' $y $(($xx+line-1)) # set cursor pos
+            echo -n $newline
+        fi
         ((y++))
     done
     printf '\e[%d;%dH' $yy $xx # set cursor pos
@@ -347,9 +353,9 @@ while IFS='' read -rsn1 char; do
             ch="${text:i:1}"
         fi
         if [[ "$ch" == $'\n' ]]; then
-            ch=' '
+            ch=$newline
         fi
-        printf '%c' "$ch"
+        printf '%s' "$ch"
         printf '\e[%d;%dH' $y $x # set cursor pos
     fi
 done
