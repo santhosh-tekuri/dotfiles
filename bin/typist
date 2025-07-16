@@ -234,11 +234,13 @@ fi
 chars=${#text}
 
 xx=$(( ( $(tput cols) - $f ) / 2))
+((xx++))
 if ((xx<0)); then
     >&2 echo text width too long
     exit 1
 fi
 yy=$(( ( $(tput lines) - ${#lines[@]} ) / 2 ))
+((yy++))
 if ((yy<0)); then
     >&2 echo text height too long
     exit 1
