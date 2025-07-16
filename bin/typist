@@ -29,12 +29,27 @@ shortcuts:
     <tab> to restart
     <enter> to quit
 
-you can just copy the text generated and use it in your
-favorite typing site:
-        typist -C | pbcopy
+to practice some random words:
+    typist -l english_5k -n 100
+    typist -l code_rust -n 50
+
+to practice punctuations:
+    typist -p
+    typist -P '.,!' # to practice specific punctuations
+
+to practice symbols:
+    typist -s
+    typist -S '&^^' # to practice specific symbols
+
+to practice quotes:
+    typist -q medium
 
 you can provide your own text to type
-        cat readme | typist
+    yes however | head -n 50 | typist
+
+you can just copy the text generated and use it in your
+favorite typing site:
+    typist -C | pbcopy
 EOF
 )
 
