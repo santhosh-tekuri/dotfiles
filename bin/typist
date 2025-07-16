@@ -174,24 +174,33 @@ cleanup() {
     printf '\e[?1049l' # end altscreen
     stty echo # enable echo
     if [[ "$time" -ne "" ]]; then
-        printf "WPM %s\n" $(bc <<< "scale=2; $chars * 60 / 5 / $time" )
-        printf "ACC %s\n" $(bc <<< "scale=2; $chars * 100 / $keys")
+        printf "WPM   %s\n" $(bc <<< "scale=2; $chars * 60 / 5 / $time" )
+        printf "ACC   %s\n" $(bc <<< "scale=2; $chars * 100 / $keys")
+        printf "ERR   %s\n" $errors
+        printf "CHARS %s\n" $chars
+        printf "TIME  %s sec\n" $time
     fi
 }
 trap cleanup EXIT
 
-i=0
-y=$yy
-for line in "${lines[@]}"; do
-    printf '\e[%d;%dH' $y $xx # set cursor pos
-    echo -n "${text:i:line}"
-    ((i+=line))
-    ((y++))
-done
-printf '\e[%d;%dH' $yy $xx # set cursor pos
-i=0
-typed=""
-keys=0
+redraw() {
+    clear
+    i=0
+    y=$yy
+    for line in "${lines[@]}"; do
+        printf '\e[%d;%dH' $y $xx # set cursor pos
+        echo -n "${text:i:line}"
+        ((i+=line))
+        ((y++))
+    done
+    printf '\e[%d;%dH' $yy $xx # set cursor pos
+    i=0
+    typed=""
+    keys=0
+    errors=0
+}
+redraw
+
 while IFS='' read -rsn1 char; do
     ((keys++))
     if (( keys == 1 )); then
@@ -203,7 +212,8 @@ while IFS='' read -rsn1 char; do
         $'\e') # arrow keys
             read -rsn2 ignore
             continue ;;
-        $'\t') # tab
+        $'\t') # tab -> reset
+            redraw
             continue ;;
     esac
     if [[ "$char" == $'\x7f' ]]; then
@@ -217,6 +227,7 @@ while IFS='' read -rsn1 char; do
         if [[ "$char" == "${text:i:1}" ]]; then
             printf '\e[32m%c\e[m' "$char"
         else
+            ((errors++))
             printf '\e[31m%c\e[m' "$char"
         fi
         ((i++))
