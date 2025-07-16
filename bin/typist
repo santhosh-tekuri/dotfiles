@@ -214,11 +214,17 @@ else
         *)
             lines=()
             while IFS='' read -r line; do
-                len=$((${#line}+1))
-                lines+=($len)
+                while IFS='' read -r ln; do
+                    lines+=(${#ln})
+                done < <(echo "$line" | fold -s -w $f)
+                last=${#lines[@]}
+                ((last--))
+                ((lines[$last]++))
             done <<< "$text"
-            last=$(( ${#lines[@]} - 1 ))
+            last=${#lines[@]}
+            ((last--))
             ((lines[$last]--))
+            echo "${lines[@]}"
             ;;
     esac
 fi
