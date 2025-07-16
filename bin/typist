@@ -310,6 +310,23 @@ while IFS='' read -rsn1 char; do
         fi
         typed=${typed:0:${#typed}-1}
         ((i--))
+        # skip indent backward
+        if [[ "${text:i:1}" == ' ' ]]; then
+            while true; do
+                if ((i == 0 )); then
+                    break
+                fi
+                ch="${text:i-1:1}"
+                if [[ "$ch" != ' ' ]] && [[ "$ch" != $'\n' ]]; then
+                    break
+                fi
+                ((i--))
+                typed=${typed:0:${#typed}-1}
+                if [[ "$ch" == $'\n' ]]; then
+                    break
+                fi
+            done
+        fi
     else
         typed+="$char"
         if [[ "$char" == "${text:i:1}" ]]; then
@@ -325,6 +342,19 @@ while IFS='' read -rsn1 char; do
             fi
         fi
         ((i++))
+        # skip indent forward
+        if [[ "${text:i-1:1}" == $'\n' ]]; then
+            while true; do
+                if ((i >= chars)); then
+                    break
+                fi
+                if [[ "${text:i:1}" != ' ' ]]; then
+                    break
+                fi
+                ((i++))
+                typed+=' '
+            done
+        fi
     fi
 
     if (( $i == $chars )) && [[ "$typed" == "$text" ]]; then
