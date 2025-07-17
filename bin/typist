@@ -4,6 +4,7 @@ set -e
 set -o pipefail
 
 newline_char=↲
+space_char=␣
 newline=' '
 lang=english
 n=50
@@ -124,21 +125,16 @@ done
 
 if [ ! -t 0 ]; then
     text=$(cat)
-    # exec 0<>/dev/tty
 elif [ "$qsize" != "" ]; then
     case "$qsize" in
         short)
-            qsize='length >= 1 && length <= 100'
-            ;;
+            qsize='length >= 1 && length <= 100' ;;
         medium)
-            qsize='length >= 101 && length <= 300'
-            ;;
+            qsize='length >= 101 && length <= 300' ;;
         long)
-            qsize='length >= 301 && length <= 600'
-            ;;
+            qsize='length >= 301 && length <= 600' ;;
         thick)
-            qsize='length >= 601'
-            ;;
+            qsize='length >= 601' ;;
         *)
             >&2 echo invalid quote size. valid are short, medium, long, thick
             exit 2
@@ -292,7 +288,7 @@ redraw() {
 }
 redraw
 
-while IFS='' read -rsn1 char; do
+while IFS='' read -d '' -rsn1 char; do
     ((keys++))
     if (( keys == 1 )); then
         SECONDS=0
@@ -342,7 +338,7 @@ while IFS='' read -rsn1 char; do
         else
             ((errors++))
             if [[ "$char" == " " ]]; then
-                printf '\e[41m%c\e[m' "$char"
+                printf '\e[31m%s\e[m' "$space_char"
             elif [[ "$char" == $'\n' ]]; then
                 printf '\e[31m%s\e[m' "$newline_char"
             else
