@@ -124,7 +124,7 @@ while :; do
 done
 
 if [ ! -t 0 ]; then
-    text=$(cat)
+    text=$(cat | tr "’“”" "'\"\"")
 elif [ "$qsize" != "" ]; then
     case "$qsize" in
         short)
@@ -144,7 +144,7 @@ elif [ "$qsize" != "" ]; then
     if [ ! -f $file ]; then
         >&2 echo downloading quotes
         mkdir -p $(dirname $file)
-        curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > $file
+        curl -s --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > $file
     fi
     text=$(awk "$qsize" $file | shuf -n1)
 else
@@ -155,7 +155,7 @@ else
         if [ ! -f $file ]; then
             >&2 echo downloading $lang
             mkdir -p $(dirname $file)
-            curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
+            curl -s --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
         fi
     fi
 
