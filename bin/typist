@@ -10,6 +10,7 @@ lang=english
 n=50
 f=100
 caps=none
+h=10
 
 usage=$(cat <<EOF
 USAGE: typist [options...]
@@ -229,6 +230,7 @@ else
     esac
 fi
 chars=${#text}
+lcount=${#lines[@]}
 
 xx=$(( ( $(tput cols) - $f ) / 2))
 ((xx++))
@@ -236,7 +238,11 @@ if ((xx<0)); then
     >&2 echo text width too long
     exit 1
 fi
-yy=$(( ( $(tput lines) - ${#lines[@]} ) / 2 ))
+ht=${#lines[@]}
+if ((ht>h)); then
+    ht=h
+fi
+yy=$(( ( $(tput lines) - ht ) / 2 ))
 ((yy++))
 if ((yy<0)); then
     >&2 echo text height too long
@@ -268,25 +274,37 @@ trap cleanup EXIT
 
 redraw() {
     clear
-    i=0
-    y=$yy
-    for line in "${lines[@]}"; do
-        printf '\e[%d;%dH' $y $xx # set cursor pos
+    local i=0
+    local y=0
+    for line in "${lines[@]:0:$vline}"; do
+        ((i+=line))
+    done
+    for line in "${lines[@]:$vline:$h}"; do
+        printf '\e[%d;%dH' $((y+yy)) $xx # set cursor pos
         echo -n "${text:i:line}"
         ((i+=line))
         if [[ "${text:i-1:1}" == $'\n' ]]; then
-            printf '\e[%d;%dH' $y $(($xx+line-1)) # set cursor pos
+            printf '\e[%d;%dH' $((y+yy)) $(($xx+line-1)) # set cursor pos
             echo -n $newline
         fi
         ((y++))
     done
+    if ((vline+h<lcount)); then
+        printf '\e[%d;%dH' $((y+yy+1)) $((xx+f/2)) # set cursor pos
+        printf "⌄"
+    fi
     printf '\e[%d;%dH' $yy $xx # set cursor pos
+}
+
+reset() {
+    vline=0
     i=0
     typed=""
     keys=0
     errors=0
+    redraw
 }
-redraw
+reset
 
 while IFS='' read -d '' -rsn1 char; do
     ((keys++))
@@ -305,7 +323,7 @@ while IFS='' read -d '' -rsn1 char; do
             read -rsn1 ignore # arrow keys
             continue ;;
         $'\t') # tab -> reset
-            redraw
+            reset
             continue ;;
     esac
     if [[ "$char" == $'\x7f' ]]; then
@@ -380,6 +398,24 @@ while IFS='' read -d '' -rsn1 char; do
         ((x-=f))
         ((y++))
     done
+    ((y-=vline))
+    if ((y==h)); then
+        up=0
+        while ((vline+up+1+h<=lcount && y-up-1>=0)); do
+            ((up++))
+        done
+        if ((up>0)); then
+            ((vline+=up))
+            ((y-=up))
+            redraw
+        fi
+    elif ((y<0)); then
+        if ((vline>0)); then
+            ((vline--))
+            ((y++))
+            redraw
+        fi
+    fi
     ((x+=xx))
     ((y+=yy))
     printf '\e[%d;%dH' $y $x # set cursor pos
