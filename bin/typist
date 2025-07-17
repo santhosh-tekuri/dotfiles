@@ -217,7 +217,9 @@ else
             ;;
         *)
             lines=()
+            indent=0
             while IFS='' read -r line; do
+                ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
                 while IFS='' read -r ln; do
                     lines+=(${#ln})
                 done < <(echo "$line" | fold -s -w $f)
@@ -259,6 +261,7 @@ cleanup() {
     printf '\e[?1049l' # end altscreen
     stty echo # enable echo
     if [[ "$time" -ne "" ]]; then
+        ((chars-=indent))
         printf "WPM   %s\n" $(bc <<< "scale=2; $chars * 60 / 5 / $time" )
         printf "ACC   %s\n" $(bc <<< "scale=2; $chars * 100 / $keys")
         printf "ERR   %s\n" $errors
