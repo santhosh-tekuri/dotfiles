@@ -124,7 +124,7 @@ while :; do
 done
 
 if [ ! -t 0 ]; then
-    text=$(cat | tr "’“”" "'\"\"")
+    text=$(cat | tr "’“”—" "'\"\"-")
 elif [ "$qsize" != "" ]; then
     case "$qsize" in
         short)
