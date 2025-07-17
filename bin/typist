@@ -22,16 +22,16 @@ USAGE: typist [options...]
 -c                  captalize words randomly
 -C                  capitalize all words
 -p                  add punctuation
--P <punctuation>    add given punctuation
+-P <punctuations>    add given punctuations
 -s                  add symbols
--s <symbols>        add given symbols
+-S <symbols>        add given symbols
 -L                  treat stdin as language
--N                  show newline
+-N                  show newlines
 -h                  show this help
 
 shortcuts:
     <tab> to restart
-    <enter> to quit
+    <ctrl+c> to quit
 
 to practice some random words:
     typist -l english_5k -n 100
