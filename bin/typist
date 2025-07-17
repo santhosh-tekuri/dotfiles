@@ -61,8 +61,7 @@ favorite typing site:
 EOF
 )
 
-args=$(getopt hLNq:l:n:cCpP:sS:f: $*)
-if [ $? -ne 0 ]; then
+if ! args=$(getopt hLNq:l:n:cCpP:sS:f: $*); then
     >&2 echo "$usage"
     exit 2
 fi
