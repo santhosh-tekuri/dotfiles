@@ -31,7 +31,7 @@ USAGE: typist [options...]
 
 shortcuts:
     <tab> to restart
-    <ctrl+c> to quit
+    <esc> twice to quit
 
 to practice some random words:
     typist -l english_5k -n 100
@@ -302,8 +302,12 @@ while IFS='' read -rsn1 char; do
         $'\0') # ener
             char=$'\n'
             ;;
-        $'\e') # arrow keys
-            read -rsn2 ignore
+        $'\e') # escape
+            read -rsn1 ignore
+            if [[ "$ignore" == $'\e' ]]; then
+                break # double escape
+            fi
+            read -rsn1 ignore # arrow keys
             continue ;;
         $'\t') # tab -> reset
             redraw
