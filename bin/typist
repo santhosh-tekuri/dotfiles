@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-newline_char=↩
+newline_char=↲
 newline=' '
 lang=english
 n=50
