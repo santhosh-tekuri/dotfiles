@@ -12,7 +12,7 @@ space_char=␣
 newline=' '
 lang=english
 n=50
-f=100
+w=100
 caps=none
 h=10
 
@@ -24,7 +24,7 @@ USAGE: typist [options...]
 -q <size>           quote of size (short, medium, long, thick)
 -n <words>          number of words
                     default 50
--f <num>            text width
+-W <num>            text width
 -H <num>            text height
 -c                  captalize words randomly
 -C                  capitalize all words
@@ -68,7 +68,7 @@ favorite typing site:
 EOF
 )
 
-if ! args=$(getopt hLNq:l:n:cCpP:sS:f:H: $*); then
+if ! args=$(getopt hLNq:l:n:cCpP:sS:W:H: $*); then
     >&2 echo "$usage"
     exit 2
 fi
@@ -99,8 +99,8 @@ while :; do
         n=$2
         shift; shift
         ;;
-    -f)
-        f=$2
+    -W)
+        w=$2
         shift; shift
         ;;
     -H)
@@ -210,7 +210,7 @@ if [ -t 0 ]; then
     lines=()
     while IFS='' read -r line; do
         lines+=(${#line})
-    done < <(echo "$text" | fold -s -w $f)
+    done < <(echo "$text" | fold -s -w $w)
 else
     case "$stdin" in
         "lang")
@@ -218,7 +218,7 @@ else
             lines=()
             while IFS='' read -r line; do
                 lines+=(${#line})
-            done < <(echo "$text" | fold -s -w $f)
+            done < <(echo "$text" | fold -s -w $w)
             ;;
         *)
             lines=()
@@ -227,7 +227,7 @@ else
                 ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
                 while IFS='' read -r ln; do
                     lines+=(${#ln})
-                done < <(echo "$line" | fold -s -w $f)
+                done < <(echo "$line" | fold -s -w $w)
                 last=${#lines[@]}
                 ((last--))
                 ((lines[$last]++))
@@ -241,7 +241,7 @@ fi
 chars=${#text}
 lcount=${#lines[@]}
 
-xx=$(( ( $(tput cols) - $f ) / 2))
+xx=$(( ( $(tput cols) - $w ) / 2))
 ((xx++))
 if ((xx<0)); then
     >&2 echo text width too long
@@ -339,7 +339,7 @@ redraw() {
         ((y++))
     done
     if ((vline+h<lcount)); then
-        pos $((y+yy+1)) $((xx+f/2))
+        pos $((y+yy+1)) $((xx+w/2))
         printf "⌄"
     fi
     pos $yy $xx
@@ -446,8 +446,8 @@ while IFS='' read -d '' -rsn1 char; do
         ((y++))
         x=$(( $x - $line )) 
     done
-    while (( x > f )); do
-        ((x-=f))
+    while (( x > w )); do
+        ((x-=w))
         ((y++))
     done
     ((y-=vline))
