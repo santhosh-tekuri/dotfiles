@@ -261,11 +261,12 @@ fi
 printf '\e[?1049h' # start altscreen
 printf '\e[2J' # clear screen
 printf '\e[?25h' # show cursor
-printf '\033[6 q' # change cursor to I-beam
+printf '\033[4 q' # change cursor to underline
 
 cleanup() {
     printf '\e[?1049l' # end altscreen
     # stty echo # enable echo
+    printf '\033[0 q' # change cursor to default
     if [[ "$time" -ne "" ]]; then
         ((chars-=indent))
         printf "WPM   %s\n" $(bc <<< "scale=2; $chars * 60 / 5 / $time" )
@@ -304,6 +305,7 @@ redraw() {
 reset() {
     vline=0
     i=0
+    typo=-1
     typed=""
     keys=0
     errors=0
@@ -337,6 +339,9 @@ while IFS='' read -d '' -rsn1 char; do
         fi
         typed=${typed:0:${#typed}-1}
         ((i--))
+        if ((typo==i)); then
+            typo=-1
+        fi
         # skip indent backward
         if [[ "${text:i:1}" == ' ' ]]; then
             while true; do
@@ -356,10 +361,15 @@ while IFS='' read -d '' -rsn1 char; do
         fi
     else
         typed+="$char"
-        if [[ "$char" == "${text:i:1}" ]]; then
+        if [[ "$char" != "${text:i:1}" ]]; then
+            ((errors++))
+            if ((typo<0)); then
+                typo=$i
+            fi
+        fi
+        if ((typo<0)); then
             printf '\e[32m%c\e[m' "$char"
         else
-            ((errors++))
             if [[ "$char" == " " ]]; then
                 printf '\e[31m%s\e[m' "$space_char"
             elif [[ "$char" == $'\n' ]]; then
@@ -384,7 +394,7 @@ while IFS='' read -d '' -rsn1 char; do
         fi
     fi
 
-    if (( $i == $chars )) && [[ "$typed" == "$text" ]]; then
+    if (( $i == $chars )) && ((typo<0)); then
         time=$SECONDS
         break
     fi
