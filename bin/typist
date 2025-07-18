@@ -257,15 +257,13 @@ fi
 if [ ! -t 0 ]; then
     exec 0<>/dev/tty
 fi
-# stty -echo # diable echo
-printf '\e[?1049h' # start altscreen
-printf '\e[2J' # clear screen
-printf '\e[?25h' # show cursor
+
+tput smcup # start altscreen
+tput cnorm # show cursor
 printf '\033[4 q' # change cursor to underline
 
 cleanup() {
-    printf '\e[?1049l' # end altscreen
-    # stty echo # enable echo
+    tput rmcup # end altscreen
     printf '\033[0 q' # change cursor to default
     if [[ "$time" -ne "" ]]; then
         ((chars-=indent))
@@ -292,6 +290,11 @@ err_char() {
     fi
 }
 
+# set cursor postion
+pos() {
+    tput cup $(($1-1)) $(($2-1))
+}
+
 redraw() {
     clear
     tlen=$i
@@ -301,7 +304,7 @@ redraw() {
         ((i+=line))
     done
     for line in "${lines[@]:$vline:$h}"; do
-        printf '\e[%d;%dH' $((y+yy)) $xx # set cursor pos
+        pos $((y+yy)) $xx
 
         green=$tlen
         if ((typo>=0)); then
@@ -326,16 +329,16 @@ redraw() {
         ((i+=line))
 
         if [[ "${text:i-1:1}" == $'\n' ]]; then
-            printf '\e[%d;%dH' $((y+yy)) $(($xx+line-1)) # set cursor pos
+            pos $((y+yy)) $(($xx+line-1))
             echo -n $newline
         fi
         ((y++))
     done
     if ((vline+h<lcount)); then
-        printf '\e[%d;%dH' $((y+yy+1)) $((xx+f/2)) # set cursor pos
+        pos $((y+yy+1)) $((xx+f/2))
         printf "⌄"
     fi
-    printf '\e[%d;%dH' $yy $xx # set cursor pos
+    pos $yy $xx
 }
 
 reset() {
@@ -463,7 +466,7 @@ while IFS='' read -d '' -rsn1 char; do
     fi
     ((x+=xx))
     ((y+=yy))
-    printf '\e[%d;%dH' $y $x # set cursor pos
+    pos $y $x
 
     if [[ "$char" == $'\x7f' ]]; then
         ch=' '
@@ -474,6 +477,6 @@ while IFS='' read -d '' -rsn1 char; do
             ch=$newline
         fi
         printf '%s' "$ch"
-        printf '\e[%d;%dH' $y $x # set cursor pos
+        pos $y $x
     fi
 done
