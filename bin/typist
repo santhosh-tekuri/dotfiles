@@ -151,10 +151,13 @@ elif [ "$qsize" != "" ]; then
             ;;
     esac
     file=~/.local/share/typist/quotes
-    if [ ! -f $file ]; then
+    if [ ! -f "$file" ]; then
         >&2 echo downloading quotes
         mkdir -p "$(dirname $file)"
-        curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > $file
+        if ! curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > "$file"; then
+            rm "$file"
+            exit 1
+        fi
     fi
     text=$(awk "$qsize" $file | shuf -n1)
 else
@@ -165,7 +168,10 @@ else
         if [ ! -f "$file" ]; then
             >&2 echo downloading "$lang"
             mkdir -p "$(dirname "$file")"
-            curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/"$lang".json | jq -r '.words[]' > "$file"
+            if ! curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/"$lang".json | jq -r '.words[]' > "$file"; then
+                rm "$file"
+                exit 1
+            fi
         fi
     fi
 
