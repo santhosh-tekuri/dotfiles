@@ -168,7 +168,7 @@ else
     text=""
     while IFS='' read -r word; do
         if [ $caps == "all" ] || ( [ $caps == "rand" ] && (( RANDOM % 2 == 1 ))); then
-            word=$(echo ${word:0:1} | tr '[:lower:]' '[:upper:]')${word:1}
+            word=$(echo "${word:0:1}" | tr '[:lower:]' '[:upper:]')${word:1}
         fi
         if [ "$symbols" != "" ] && (( RANDOM % 2 == 1)); then
             i=$(( RANDOM % ${#symbols} ))
@@ -193,7 +193,7 @@ else
         else 
             text+=" $word"
         fi
-    done < <(shuf -n $n $file)
+    done < <(shuf -n "$n" "$file")
     text=${text:1}
 fi
 
@@ -206,7 +206,7 @@ if [ -t 0 ]; then
     lines=()
     while IFS='' read -r line; do
         lines+=(${#line})
-    done < <(echo "$text" | fold -s -w $w)
+    done < <(echo "$text" | fold -s -w "$w")
 else
     case "$stdin" in
         "lang")
@@ -214,7 +214,7 @@ else
             lines=()
             while IFS='' read -r line; do
                 lines+=(${#line})
-            done < <(echo "$text" | fold -s -w $w)
+            done < <(echo "$text" | fold -s -w "$w")
             ;;
         *)
             lines=()
@@ -223,7 +223,7 @@ else
                 ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
                 while IFS='' read -r ln; do
                     lines+=(${#ln})
-                done < <(echo "$line" | fold -s -w $w)
+                done < <(echo "$line" | fold -s -w "$w")
                 last=${#lines[@]}
                 ((last--))
                 ((lines[last]++))
@@ -267,11 +267,11 @@ cleanup() {
     printf '\033[0 q' # change cursor to default
     if [[ "$time" -ne "" ]]; then
         ((chars-=indent))
-        printf "WPM   %s\n" $(bc <<< "scale=2; $chars * 60 / 5 / $time" )
-        printf "ACC   %s\n" $(bc <<< "scale=2; $chars * 100 / $keys")
+        printf "WPM   %s\n" "$(bc <<< "scale=2; $chars * 60 / 5 / $time" )"
+        printf "ACC   %s\n" "$(bc <<< "scale=2; $chars * 100 / $keys")"
         printf "ERR   %s\n" $errors
         printf "CHARS %s\n" $chars
-        printf "TIME  %s sec\n" $time
+        printf "TIME  %s sec\n" "$time"
     fi
 }
 trap cleanup EXIT
@@ -319,7 +319,7 @@ redraw() {
         if ((typo>=0 && typo<=i)); then
             echo -n "$red"
             while ((i<tlen && line>0)); do
-                printf "%s" $(err_char "${typed:i:1}")
+                printf "%s" "$(err_char "${typed:i:1}")"
                 ((i++))
                 ((line--))
             done
