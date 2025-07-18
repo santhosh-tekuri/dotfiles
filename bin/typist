@@ -304,7 +304,7 @@ redraw() {
         printf '\e[%d;%dH' $((y+yy)) $xx # set cursor pos
 
         green=$tlen
-        if ((type>=0)); then
+        if ((typo>=0)); then
             green=$typo
         fi
         if ((green>i)); then
