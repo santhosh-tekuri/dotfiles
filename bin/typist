@@ -379,7 +379,7 @@ while IFS='' read -d '' -rsn1 char; do
             typo=-1
         fi
         # skip indent backward
-        if [[ "${text:i:1}" == ' ' ]]; then
+        if ((typo<0)) && [[ "${text:i:1}" == ' ' ]]; then
             while true; do
                 if ((i == 0 )); then
                     break
@@ -410,7 +410,7 @@ while IFS='' read -d '' -rsn1 char; do
         fi
         ((i++))
         # skip indent forward
-        if [[ "${text:i-1:1}" == $'\n' ]]; then
+        if ((typo<0)) && [[ "${text:i-1:1}" == $'\n' ]]; then
             while true; do
                 if ((i >= chars)); then
                     break
