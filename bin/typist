@@ -153,7 +153,7 @@ elif [ "$qsize" != "" ]; then
     file=~/.local/share/typist/quotes
     if [ ! -f $file ]; then
         >&2 echo downloading quotes
-        mkdir -p $(dirname $file)
+        mkdir -p "$(dirname $file)"
         curl -s --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > $file
     fi
     text=$(awk "$qsize" $file | shuf -n1)
@@ -162,10 +162,10 @@ else
         file="/usr/share/dict/words"
     else
         file=~/.local/share/typist/languages/$lang
-        if [ ! -f $file ]; then
-            >&2 echo downloading $lang
-            mkdir -p $(dirname $file)
-            curl -s --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/$lang.json | jq -r '.words[]' > $file
+        if [ ! -f "$file" ]; then
+            >&2 echo downloading "$lang"
+            mkdir -p "$(dirname "$file")"
+            curl -s --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/"$lang".json | jq -r '.words[]' > "$file"
         fi
     fi
 
@@ -362,7 +362,7 @@ while IFS='' read -d '' -rsn1 char; do
         SECONDS=0
     fi 
     case "$char" in
-        $'\0') # ener
+        $'\0') # enter
             char=$'\n'
             ;;
         $'\e') # escape
