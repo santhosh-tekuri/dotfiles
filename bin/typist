@@ -171,11 +171,11 @@ else
 
     text=""
     while IFS='' read -r word; do
-        if [ $caps == "all" ] || ( [ $caps == "rand" ] && (( $RANDOM % 2 == 1 ))); then
+        if [ $caps == "all" ] || ( [ $caps == "rand" ] && (( RANDOM % 2 == 1 ))); then
             word=$(echo ${word:0:1} | tr '[:lower:]' '[:upper:]')${word:1}
         fi
-        if [ "$symbols" != "" ] && (( $RANDOM % 2 == 1)); then
-            i=$(( $RANDOM % ${#symbols} ))
+        if [ "$symbols" != "" ] && (( RANDOM % 2 == 1)); then
+            i=$(( RANDOM % ${#symbols} ))
             ch="${symbols:i:1}"
             case "$ch" in
                 "&"|"@"|"#"|"("|"{"|'['|'<')
@@ -230,18 +230,18 @@ else
                 done < <(echo "$line" | fold -s -w $w)
                 last=${#lines[@]}
                 ((last--))
-                ((lines[$last]++))
+                ((lines[last]++))
             done <<< "$text"
             last=${#lines[@]}
             ((last--))
-            ((lines[$last]--))
+            ((lines[last]--))
             ;;
     esac
 fi
 chars=${#text}
 lcount=${#lines[@]}
 
-xx=$(( ( $(tput cols) - $w ) / 2))
+xx=$(( ( $(tput cols) - w ) / 2))
 ((xx++))
 if ((xx<0)); then
     >&2 echo text width too long
@@ -333,8 +333,8 @@ redraw() {
         ((i+=line))
 
         if [[ "${text:i-1:1}" == $'\n' ]]; then
-            pos $((y+yy)) $(($xx+line-1))
-            echo -n $newline
+            pos $((y+yy)) $((xx+line-1))
+            echo -n "$newline"
         fi
         ((y++))
     done
@@ -431,7 +431,7 @@ while IFS='' read -d '' -rsn1 char; do
         fi
     fi
 
-    if (( $i == $chars )) && ((typo<0)); then
+    if (( i == chars )) && ((typo<0)); then
         time=$SECONDS
         break
     fi
@@ -440,11 +440,11 @@ while IFS='' read -d '' -rsn1 char; do
     y=0
     x=$i
     for line in "${lines[@]}"; do
-        if (( $x < $line )); then
+        if (( x < line )); then
             break
         fi
         ((y++))
-        x=$(( $x - $line )) 
+        x=$(( x - line ))
     done
     while (( x > w )); do
         ((x-=w))
@@ -474,7 +474,7 @@ while IFS='' read -d '' -rsn1 char; do
 
     if [[ "$char" == $'\x7f' ]]; then
         ch=' '
-        if (( $i < ${#text} )); then
+        if (( i < ${#text} )); then
             ch="${text:i:1}"
         fi
         if [[ "$ch" == $'\n' ]]; then
