@@ -278,8 +278,23 @@ cleanup() {
 }
 trap cleanup EXIT
 
+min() {
+    printf "%s" $(( $1 < $2 ? $1 : $2 ))
+}
+
+err_char() {
+    if [[ "$1" == ' ' ]]; then
+        echo -n "$space_char"
+    elif [[ "$1" == $'\n' ]]; then
+        echo -n "$newline_char"
+    else
+        echo -n "$1"
+    fi
+}
+
 redraw() {
     clear
+    tlen=$i
     local i=0
     local y=0
     for line in "${lines[@]:0:$vline}"; do
@@ -287,8 +302,29 @@ redraw() {
     done
     for line in "${lines[@]:$vline:$h}"; do
         printf '\e[%d;%dH' $((y+yy)) $xx # set cursor pos
+
+        green=$tlen
+        if ((type>=0)); then
+            green=$typo
+        fi
+        if ((green>i)); then
+            len=$(min $((green-i)) line)
+            printf '\e[32m%s\e[m' "${text:i:len}"
+            ((i+=len))
+            ((line-=len))
+        fi
+        if ((typo>=0 && typo<=i)); then
+            printf '\e[31m'
+            while ((i<tlen && line>0)); do
+                printf "%s" $(err_char "${typed:i:1}")
+                ((i++))
+                ((line--))
+            done
+            printf '\e[m'
+        fi
         echo -n "${text:i:line}"
         ((i+=line))
+
         if [[ "${text:i-1:1}" == $'\n' ]]; then
             printf '\e[%d;%dH' $((y+yy)) $(($xx+line-1)) # set cursor pos
             echo -n $newline
@@ -370,13 +406,7 @@ while IFS='' read -d '' -rsn1 char; do
         if ((typo<0)); then
             printf '\e[32m%c\e[m' "$char"
         else
-            if [[ "$char" == " " ]]; then
-                printf '\e[31m%s\e[m' "$space_char"
-            elif [[ "$char" == $'\n' ]]; then
-                printf '\e[31m%s\e[m' "$newline_char"
-            else
-                printf '\e[31m%c\e[m' "$char"
-            fi
+            printf '\e[31m%s\e[m' $(err_char "$char")
         fi
         ((i++))
         # skip indent forward
