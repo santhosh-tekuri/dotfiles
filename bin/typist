@@ -68,68 +68,58 @@ favorite typing site:
 EOF
 )
 
-if ! args=$(getopt hLNq:l:n:cCpP:sS:W:H: $*); then
-    >&2 echo "$usage"
-    exit 2
-fi
-set -- $args
-while :; do
-    case "$1" in
-    -h)
-        echo "$usage"
-        exit 0
-        ;;
-    -L)
-        stdin=lang
-        shift
-        ;;
-    -N)
-        newline=$newline_char
-        shift
-        ;;
-    -q)
-        qsize=$2
-        shift; shift
-        ;;
-    -l)
-        lang=$2
-        shift; shift
-        ;;
-    -n)
-        n=$2
-        shift; shift
-        ;;
-    -W)
-        w=$2
-        shift; shift
-        ;;
-    -H)
-        h=$2
-        shift; shift
-        ;;
-    -c)
-        caps=rand
-        shift
-        ;;
-    -C)
-        caps=all
-        shift
-        ;;
-    -p)
-        symbols=",.-?!:;'\"()"
-        shift
-        ;;
-    -s)
-        symbols='`~!@#$%^&*()-_=+[{}];":,<.>/?\\|'\'
-        shift
-        ;;
-    -P|-S)
-        symbols="$2"
-        shift; shift
-        ;;
-    --)
-        shift; break
-        ;;
+while getopts "hLNq:l:n:cCpP:sS:W:H:" opt; do
+    case $opt in
+        \?) # Invalid option
+            >&2 echo "Error: Invalid option -$OPTARG."
+            >&2 echo "$usage"
+            exit 2
+            ;;
+        :) # Missing argument for an option
+            >&2 echo "Error: Option -$OPTARG requires an argument."
+            >&2 echo "$usage"
+            exit 2
+            ;;
+        h)
+            echo "$usage"
+            exit 0
+            ;;
+        L)
+            stdin=lang
+            ;;
+        N)
+            newline=$newline_char
+            ;;
+        q)
+            qsize="$OPTARG"
+            ;;
+        l)
+            lang="$OPTARG"
+            ;;
+        n)
+            n="$OPTARG"
+            ;;
+        W)
+            w="$OPTARG"
+            ;;
+        H)
+            h="$OPTARG"
+            ;;
+        c)
+            caps=rand
+            ;;
+        C)
+            caps=all
+            ;;
+        p)
+            symbols=",.-?!:;'\"()"
+            ;;
+        s)
+            symbols='`~!@#$%^&*()-_=+[{}];":,<.>/?\\|'\'
+            ;;
+        P|S)
+            symbols="$OPTARG"
+            ;;
     esac
 done
 
