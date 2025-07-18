@@ -21,6 +21,7 @@ USAGE: typist [options...]
 -n <words>          number of words
                     default 50
 -f <num>            text width
+-H <num>            text height
 -c                  captalize words randomly
 -C                  capitalize all words
 -p                  add punctuation
@@ -63,7 +64,7 @@ favorite typing site:
 EOF
 )
 
-if ! args=$(getopt hLNq:l:n:cCpP:sS:f: $*); then
+if ! args=$(getopt hLNq:l:n:cCpP:sS:f:H: $*); then
     >&2 echo "$usage"
     exit 2
 fi
@@ -96,6 +97,10 @@ while :; do
         ;;
     -f)
         f=$2
+        shift; shift
+        ;;
+    -H)
+        h=$2
         shift; shift
         ;;
     -c)
@@ -399,7 +404,7 @@ while IFS='' read -d '' -rsn1 char; do
         ((y++))
     done
     ((y-=vline))
-    if ((y==h)); then
+    if ((y==h-1)); then
         up=0
         while ((vline+up+1+h<=lcount && y-up-1>=0)); do
             ((up++))
