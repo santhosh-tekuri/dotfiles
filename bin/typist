@@ -70,56 +70,56 @@ EOF
 
 while getopts "hLNq:l:n:cCpP:sS:W:H:" opt; do
     case $opt in
-        \?) # Invalid option
-            >&2 echo "Error: Invalid option -$OPTARG."
-            >&2 echo "$usage"
-            exit 2
-            ;;
-        :) # Missing argument for an option
-            >&2 echo "Error: Option -$OPTARG requires an argument."
-            >&2 echo "$usage"
-            exit 2
-            ;;
-        h)
-            echo "$usage"
-            exit 0
-            ;;
-        L)
-            stdin=lang
-            ;;
-        N)
-            newline=$newline_char
-            ;;
-        q)
-            qsize="$OPTARG"
-            ;;
-        l)
-            lang="$OPTARG"
-            ;;
-        n)
-            n="$OPTARG"
-            ;;
-        W)
-            w="$OPTARG"
-            ;;
-        H)
-            h="$OPTARG"
-            ;;
-        c)
-            caps=rand
-            ;;
-        C)
-            caps=all
-            ;;
-        p)
-            symbols=",.-?!:;'\"()"
-            ;;
-        s)
-            symbols='`~!@#$%^&*()-_=+[{}];":,<.>/?\\|'\'
-            ;;
-        P|S)
-            symbols="$OPTARG"
-            ;;
+    \?) # Invalid option
+        >&2 echo "Error: Invalid option -$OPTARG."
+        >&2 echo "$usage"
+        exit 2
+        ;;
+    :) # Missing argument for an option
+        >&2 echo "Error: Option -$OPTARG requires an argument."
+        >&2 echo "$usage"
+        exit 2
+        ;;
+    h)
+        echo "$usage"
+        exit 0
+        ;;
+    L)
+        stdin=lang
+        ;;
+    N)
+        newline=$newline_char
+        ;;
+    q)
+        qsize="$OPTARG"
+        ;;
+    l)
+        lang="$OPTARG"
+        ;;
+    n)
+        n="$OPTARG"
+        ;;
+    W)
+        w="$OPTARG"
+        ;;
+    H)
+        h="$OPTARG"
+        ;;
+    c)
+        caps=rand
+        ;;
+    C)
+        caps=all
+        ;;
+    p)
+        symbols=",.-?!:;'\"()"
+        ;;
+    s)
+        symbols='`~!@#$%^&*()-_=+[{}];":,<.>/?\\|'\'
+        ;;
+    P|S)
+        symbols="$OPTARG"
+        ;;
     esac
 done
 
@@ -127,18 +127,18 @@ if [ ! -t 0 ]; then
     text=$(cat | tr "’“”—" "'\"\"-")
 elif [ "$qsize" != "" ]; then
     case "$qsize" in
-        short)
-            qsize='length >= 1 && length <= 100' ;;
-        medium)
-            qsize='length >= 101 && length <= 300' ;;
-        long)
-            qsize='length >= 301 && length <= 600' ;;
-        thick)
-            qsize='length >= 601' ;;
-        *)
-            >&2 echo invalid quote size. valid are short, medium, long, thick
-            exit 2
-            ;;
+    short)
+        qsize='length >= 1 && length <= 100' ;;
+    medium)
+        qsize='length >= 101 && length <= 300' ;;
+    long)
+        qsize='length >= 301 && length <= 600' ;;
+    thick)
+        qsize='length >= 601' ;;
+    *)
+        >&2 echo invalid quote size. valid are short, medium, long, thick
+        exit 2
+        ;;
     esac
     file=~/.local/share/typist/quotes
     if [ ! -f "$file" ]; then
@@ -174,21 +174,21 @@ else
             i=$(( RANDOM % ${#symbols} ))
             ch="${symbols:i:1}"
             case "$ch" in
-                "&"|"@"|"#"|"("|"{"|'['|'<')
-                    text+=" $ch$word"
-                    ;;
-                "_")
-                    text+="_$word"
-                    ;;
-                "-")
-                    text+=" - $word"
-                    ;;
-                \`|"'"|"\"")
-                    text+=" $ch$word$ch"
-                    ;;
-                *)
-                    text+=" $word$ch"
-                    ;;
+            "&"|"@"|"#"|"("|"{"|'['|'<')
+                text+=" $ch$word"
+                ;;
+            "_")
+                text+="_$word"
+                ;;
+            "-")
+                text+=" - $word"
+                ;;
+            \`|"'"|"\"")
+                text+=" $ch$word$ch"
+                ;;
+            *)
+                text+=" $word$ch"
+                ;;
             esac
         else 
             text+=" $word"
@@ -208,31 +208,28 @@ if [ -t 0 ]; then
         lines+=(${#line})
     done < <(echo "$text" | fold -s -w "$w")
 else
-    case "$stdin" in
-        "lang")
-            text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
-            lines=()
-            while IFS='' read -r line; do
-                lines+=(${#line})
-            done < <(echo "$text" | fold -s -w "$w")
-            ;;
-        *)
-            lines=()
-            indent=0
-            while IFS='' read -r line; do
-                ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
-                while IFS='' read -r ln; do
-                    lines+=(${#ln})
-                done < <(echo "$line" | fold -s -w "$w")
-                last=${#lines[@]}
-                ((last--))
-                ((lines[last]++))
-            done <<< "$text"
+    if [[ "$stdin" == "lang" ]]; then
+        text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
+        lines=()
+        while IFS='' read -r line; do
+            lines+=(${#line})
+        done < <(echo "$text" | fold -s -w "$w")
+    else
+        lines=()
+        indent=0
+        while IFS='' read -r line; do
+            ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
+            while IFS='' read -r ln; do
+                lines+=(${#ln})
+            done < <(echo "$line" | fold -s -w "$w")
             last=${#lines[@]}
             ((last--))
-            ((lines[last]--))
-            ;;
-    esac
+            ((lines[last]++))
+        done <<< "$text"
+        last=${#lines[@]}
+        ((last--))
+        ((lines[last]--))
+    fi
 fi
 chars=${#text}
 lcount=${#lines[@]}
@@ -358,19 +355,19 @@ while IFS='' read -d '' -rsn1 char; do
         SECONDS=0
     fi 
     case "$char" in
-        $'\0') # enter
-            char=$'\n'
-            ;;
-        $'\e') # escape
-            read -rsn1 ignore
-            if [[ "$ignore" == $'\e' ]]; then
-                break # double escape
-            fi
-            read -rsn1 ignore # arrow keys
-            continue ;;
-        $'\t') # tab -> begin
-            begin
-            continue ;;
+    $'\0') # enter
+        char=$'\n'
+        ;;
+    $'\e') # escape
+        read -rsn1 ignore
+        if [[ "$ignore" == $'\e' ]]; then
+            break # double escape
+        fi
+        read -rsn1 ignore # arrow keys
+        continue ;;
+    $'\t') # tab -> begin
+        begin
+        continue ;;
     esac
     if [[ "$char" == $'\x7f' ]]; then
         if [[ $i == 0 ]]; then
