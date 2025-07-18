@@ -3,6 +3,10 @@
 set -e
 set -o pipefail
 
+green=$(tput setaf 2)
+red=$(tput setaf 1)
+reset=$(tput sgr0)
+
 newline_char=↲
 space_char=␣
 newline=' '
@@ -306,24 +310,24 @@ redraw() {
     for line in "${lines[@]:$vline:$h}"; do
         pos $((y+yy)) $xx
 
-        green=$tlen
+        glen=$tlen
         if ((typo>=0)); then
-            green=$typo
+            glen=$typo
         fi
-        if ((green>i)); then
-            len=$(min $((green-i)) line)
-            printf '\e[32m%s\e[m' "${text:i:len}"
+        if ((glen>i)); then
+            len=$(min $((glen-i)) line)
+            echo -n "$green${text:i:len}$reset"
             ((i+=len))
             ((line-=len))
         fi
         if ((typo>=0 && typo<=i)); then
-            printf '\e[31m'
+            echo -n "$red"
             while ((i<tlen && line>0)); do
                 printf "%s" $(err_char "${typed:i:1}")
                 ((i++))
                 ((line--))
             done
-            printf '\e[m'
+            echo -n "$reset"
         fi
         echo -n "${text:i:line}"
         ((i+=line))
@@ -341,7 +345,7 @@ redraw() {
     pos $yy $xx
 }
 
-reset() {
+begin() {
     vline=0
     i=0
     typo=-1
@@ -350,7 +354,7 @@ reset() {
     errors=0
     redraw
 }
-reset
+begin
 
 while IFS='' read -d '' -rsn1 char; do
     ((keys++))
@@ -368,8 +372,8 @@ while IFS='' read -d '' -rsn1 char; do
             fi
             read -rsn1 ignore # arrow keys
             continue ;;
-        $'\t') # tab -> reset
-            reset
+        $'\t') # tab -> begin
+            begin
             continue ;;
     esac
     if [[ "$char" == $'\x7f' ]]; then
@@ -407,9 +411,9 @@ while IFS='' read -d '' -rsn1 char; do
             fi
         fi
         if ((typo<0)); then
-            printf '\e[32m%c\e[m' "$char"
+            echo -n "$green$char$reset"
         else
-            printf '\e[31m%s\e[m' $(err_char "$char")
+            echo -n "$red$(err_char "$char")$reset"
         fi
         ((i++))
         # skip indent forward
