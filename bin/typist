@@ -252,7 +252,7 @@ fi
 if [ ! -t 0 ]; then
     exec 0<>/dev/tty
 fi
-stty -echo # diable echo
+# stty -echo # diable echo
 printf '\e[?1049h' # start altscreen
 printf '\e[2J' # clear screen
 printf '\e[?25h' # show cursor
@@ -260,7 +260,7 @@ printf '\033[6 q' # change cursor to I-beam
 
 cleanup() {
     printf '\e[?1049l' # end altscreen
-    stty echo # enable echo
+    # stty echo # enable echo
     if [[ "$time" -ne "" ]]; then
         ((chars-=indent))
         printf "WPM   %s\n" $(bc <<< "scale=2; $chars * 60 / 5 / $time" )
