@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+command -v jq >/dev/null 2>&1 || {
+    >&2 echo "jq command not found"
+    exit 1
+}
 set -e
 set -o pipefail
 
@@ -21,10 +25,10 @@ USAGE: typist [options...]
 
 -l <language>       monkeytype language or 'os'
                     default english
--q <size>           quote of size (short, medium, long, thick)
--z                  practice a zen story
 -n <words>          number of words
                     default 50
+-q <size>           quote of size (short, medium, long, thick)
+-z                  practice a zen story
 -W <num>            text width
 -H <num>            text height
 -c                  captalize words randomly
@@ -45,6 +49,9 @@ to practice some random words:
     typist -l english_5k -n 100
     typist -l code_rust -n 50
 
+to practice a zen story:
+    typist -z
+
 to practice capitals:
     typist -c # capitalizes words randomly
     typist -C # capitalizes all words
@@ -61,6 +68,7 @@ to practice quotes:
     typist -q medium
 
 you can provide your own text to type
+    pbpaste | typist # type from clipboard
     yes however | head -n 50 | typist
 
 you can just copy the text generated and use it in your
