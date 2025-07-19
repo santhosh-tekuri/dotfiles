@@ -22,6 +22,7 @@ USAGE: typist [options...]
 -l <language>       monkeytype language or 'os'
                     default english
 -q <size>           quote of size (short, medium, long, thick)
+-z                  practice a zen story
 -n <words>          number of words
                     default 50
 -W <num>            text width
@@ -29,7 +30,7 @@ USAGE: typist [options...]
 -c                  captalize words randomly
 -C                  capitalize all words
 -p                  add punctuation
--P <punctuations>    add given punctuations
+-P <punctuations>   add given punctuations
 -s                  add symbols
 -S <symbols>        add given symbols
 -L                  treat stdin as language
@@ -68,7 +69,7 @@ favorite typing site:
 EOF
 )
 
-while getopts "hLNq:l:n:cCpP:sS:W:H:" opt; do
+while getopts "hLNq:l:n:cCpP:sS:W:H:z" opt; do
     case $opt in
     \?) # Invalid option
         >&2 echo "Error: Invalid option -$OPTARG."
@@ -120,6 +121,9 @@ while getopts "hLNq:l:n:cCpP:sS:W:H:" opt; do
     P|S)
         symbols="$OPTARG"
         ;;
+    z)
+        story=$(printf "%03d.md" $(((RANDOM%101)+1)))
+        ;;
     esac
 done
 
@@ -146,13 +150,24 @@ elif [ "$qsize" != "" ]; then
     file=~/.local/share/typist/quotes
     if [ ! -f "$file" ]; then
         >&2 echo downloading quotes
-        mkdir -p "$(dirname $file)"
+        mkdir -p "$(dirname "$file")"
         if ! curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > "$file"; then
             rm "$file"
             exit 1
         fi
     fi
     text=$(awk "$qsize" $file | shuf -n1)
+elif [ "$story" != "" ]; then
+    file=~/.local/share/typist/zen/$story
+    if [ ! -f "$file" ]; then
+        >&2 echo downloading story "$story"
+        mkdir -p "$(dirname "$file")"
+        if ! curl -sS --fail https://raw.githubusercontent.com/nkanaev/zen101/refs/heads/master/stories/en/"$story" > "$file"; then
+            rm "$file"
+            exit 1
+        fi
+    fi
+    text=$(cat "$file")
 else
     if [ "$lang" == "os" ]; then
         file="/usr/share/dict/words"
