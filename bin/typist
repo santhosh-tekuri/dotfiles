@@ -194,7 +194,7 @@ else
             text+=" $word"
         fi
     done < <(shuf -n "$n" "$file")
-    text=${text:1}
+    text=${text:1} # rm leading space
 fi
 
 if [ ! -t 1 ]; then
@@ -202,21 +202,19 @@ if [ ! -t 1 ]; then
     exit
 fi
 
+lines=()
+indent=0
 if [ -t 0 ]; then
-    lines=()
     while IFS='' read -r line; do
         lines+=(${#line})
     done < <(echo "$text" | fold -s -w "$w")
 else
     if [[ "$stdin" == "lang" ]]; then
         text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
-        lines=()
         while IFS='' read -r line; do
             lines+=(${#line})
         done < <(echo "$text" | fold -s -w "$w")
     else
-        lines=()
-        indent=0
         while IFS='' read -r line; do
             ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
             while IFS='' read -r ln; do
@@ -259,7 +257,7 @@ tput smcup # start altscreen
 tput cnorm # show cursor
 printf '\033[4 q' # change cursor to underline
 
-cleanup() {
+on_exit() {
     tput rmcup # end altscreen
     printf '\033[0 q' # change cursor to default
     if [[ "$time" -ne "" ]]; then
@@ -271,7 +269,7 @@ cleanup() {
         printf "TIME  %s sec\n" "$time"
     fi
 }
-trap cleanup EXIT
+trap on_exit EXIT
 
 min() {
     printf "%s" $(( $1 < $2 ? $1 : $2 ))
