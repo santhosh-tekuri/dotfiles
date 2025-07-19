@@ -125,6 +125,9 @@ done
 
 if [ ! -t 0 ]; then
     text=$(cat | tr "’“”—" "'\"\"-")
+    if [[ "$stdin" == "lang" ]]; then
+        text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
+    fi
 elif [ "$qsize" != "" ]; then
     case "$qsize" in
     short)
@@ -213,33 +216,22 @@ if ((xx<0)); then
     exit 1
 fi
 
+# fold paragraphs
 lines=()
 indent=0
-if [ -t 0 ]; then
-    while IFS='' read -r line; do
-        lines+=(${#line})
-    done < <(echo "$text" | fold -s -w "$w")
-else
-    if [[ "$stdin" == "lang" ]]; then
-        text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
-        while IFS='' read -r line; do
-            lines+=(${#line})
-        done < <(echo "$text" | fold -s -w "$w")
-    else
-        while IFS='' read -r line; do
-            ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
-            while IFS='' read -r ln; do
-                lines+=(${#ln})
-            done < <(echo "$line" | fold -s -w "$w")
-            last=${#lines[@]}
-            ((last--))
-            ((lines[last]++))
-        done <<< "$text"
-        last=${#lines[@]}
-        ((last--))
-        ((lines[last]--))
-    fi
-fi
+while IFS='' read -r line; do
+    ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
+    while IFS='' read -r ln; do
+        lines+=(${#ln})
+    done < <(echo "$line" | fold -s -w "$w")
+    last=${#lines[@]}
+    ((last--))
+    ((lines[last]++))
+done <<< "$text"
+last=${#lines[@]}
+((last--))
+((lines[last]--))
+
 chars=${#text}
 lcount=${#lines[@]}
 
