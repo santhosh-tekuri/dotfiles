@@ -35,6 +35,14 @@ vim.api.nvim_create_autocmd('InsertLeave', {
     end,
 })
 
+vim.api.nvim_create_autocmd('FocusGained', {
+    desc = "Copy from clipboard on FocusGained",
+    callback = function()
+        vim.fn.setreg("0", vim.fn.getreg("+"))
+        vim.fn.setreg("", vim.fn.getreg("+"))
+    end,
+})
+
 -- set diagnotic signs
 vim.diagnostic.config({
     signs = {
