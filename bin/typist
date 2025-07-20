@@ -77,15 +77,15 @@ favorite typing site:
 EOF
 )
 
-while getopts "hLNq:l:n:cCpP:sS:W:H:z" opt; do
+while getopts ":hLNq:l:n:cCpP:sS:W:H:z" opt; do
     case $opt in
     \?) # Invalid option
-        >&2 echo "Error: Invalid option -$OPTARG."
+        >&2 echo "Error: Invalid option -$OPTARG"
         >&2 echo "$usage"
         exit 2
         ;;
     :) # Missing argument for an option
-        >&2 echo "Error: Option -$OPTARG requires an argument."
+        >&2 echo "Error: Option -$OPTARG requires an argument"
         >&2 echo "$usage"
         exit 2
         ;;
