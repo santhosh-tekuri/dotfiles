@@ -37,6 +37,8 @@ USAGE: typist [options...]
 -P <punctuations>   add given punctuations
 -s                  add symbols
 -S <symbols>        add given symbols
+-d                  add digits
+-D <symbols>        add given digits
 -L                  treat stdin as language
 -N                  show newlines
 -h                  show this help
@@ -77,7 +79,7 @@ favorite typing site:
 EOF
 )
 
-while getopts ":hLNq:l:n:cCpP:sS:W:H:z" opt; do
+while getopts ":hLNq:l:n:cCpP:sS:W:H:zdD:" opt; do
     case $opt in
     \?) # Invalid option
         >&2 echo "Error: Invalid option -$OPTARG"
@@ -132,8 +134,15 @@ while getopts ":hLNq:l:n:cCpP:sS:W:H:z" opt; do
     z)
         story=$(printf "%03d.md" $(((RANDOM%101)+1)))
         ;;
+    d)
+        digits=1234567890
+        ;;
+    D)
+        digits="$OPTARG"
+        ;;
     esac
 done
+symbols+="$digits"
 
 if [ ! -t 0 ]; then
     text=$(cat | tr "’“”—" "'\"\"-")
