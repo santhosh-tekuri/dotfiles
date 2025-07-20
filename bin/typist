@@ -414,6 +414,9 @@ while IFS='' read -d '' -rsn1 char; do
             done
         fi
     else
+        if [[ "${text:i:1}" != [[:ascii:]] ]]; then
+            char=${text:i:1}
+        fi
         typed+="$char"
         if [[ "$char" != "${text:i:1}" ]]; then
             ((errors++))
