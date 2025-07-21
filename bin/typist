@@ -145,7 +145,7 @@ done
 symbols+="$digits"
 
 if [ ! -t 0 ]; then
-    text=$(cat | tr "’“”—" "'\"\"-")
+    text=$(cat | tr "’“”—" "'\"\"-" | sed -e 's/…/.../g')
     if [[ "$stdin" == "lang" ]]; then
         text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
     fi
