@@ -41,6 +41,7 @@ USAGE: typist [options...]
 -D <symbols>        add given digits
 -L                  treat stdin as language
 -N                  show newlines
+-r                  story from reddit
 -h                  show this help
 
 shortcuts:
@@ -69,6 +70,9 @@ to practice symbols:
 to practice quotes:
     typist -q medium
 
+to practice reddit story:
+    typist -r
+
 you can provide your own text to type
     pbpaste | typist # type from clipboard
     yes however | head -n 50 | typist
@@ -79,7 +83,7 @@ favorite typing site:
 EOF
 )
 
-while getopts ":hLNq:l:n:cCpP:sS:W:H:zdD:" opt; do
+while getopts ":hLNq:l:n:cCpP:sS:W:H:zdD:r" opt; do
     case $opt in
     \?) # Invalid option
         >&2 echo "Error: Invalid option -$OPTARG"
@@ -140,12 +144,15 @@ while getopts ":hLNq:l:n:cCpP:sS:W:H:zdD:" opt; do
     D)
         digits="$OPTARG"
         ;;
+    r)
+        reddit=true
+        ;;
     esac
 done
 symbols+="$digits"
 
 if [ ! -t 0 ]; then
-    text=$(cat | tr "’“”—" "'\"\"-" | sed -e 's/…/.../g')
+    text=$(cat | tr "’“”—" "'\"\"-" | sed -e 's/…/.../g' -e 's/\r//g')
     if [[ "$stdin" == "lang" ]]; then
         text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
     fi
@@ -185,6 +192,9 @@ elif [ "$story" != "" ]; then
         fi
     fi
     text=$(cat "$file")
+elif [ "$reddit" == "true" ]; then
+     text=$(curl -sS --fail --user-agent 'firefox' 'https://www.reddit.com/r/stories/new.json'| 
+         jq -c '.data.children[].data| (.title + "\n\n" + .selftext)' | shuf -n 1 | jq -r .)
 else
     if [ "$lang" == "os" ]; then
         file="/usr/share/dict/words"
