@@ -151,8 +151,13 @@ while getopts ":hLNq:l:n:cCpP:sS:W:H:zdD:r" opt; do
 done
 symbols+="$digits"
 
+sanitize() {
+    text=$(echo -n "$text" | tr "’“”—" "'\"\"-" | sed -e 's/…/.../g' -e 's/\r//g')
+}
+
 if [ ! -t 0 ]; then
-    text=$(cat | tr "’“”—" "'\"\"-" | sed -e 's/…/.../g' -e 's/\r//g')
+    text=$(cat)
+    sanitize
     if [[ "$stdin" == "lang" ]]; then
         text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
     fi
@@ -195,6 +200,7 @@ elif [ "$story" != "" ]; then
 elif [ "$reddit" == "true" ]; then
      text=$(curl -sS --fail --user-agent 'firefox' 'https://www.reddit.com/r/stories/new.json'| 
          jq -c '.data.children[].data| (.title + "\n\n" + .selftext)' | shuf -n 1 | jq -r .)
+     sanitize
 else
     if [ "$lang" == "os" ]; then
         file="/usr/share/dict/words"
@@ -301,11 +307,17 @@ on_exit() {
     printf '\033[0 q' # change cursor to default
     if [[ "$time" -ne "" ]]; then
         ((chars-=indent))
-        printf "WPM   %s\n" "$(bc <<< "scale=2; $chars * 60 / 5 / $time" )"
-        printf "ACC   %s\n" "$(bc <<< "scale=2; $chars * 100 / $keys")"
-        printf "ERR   %s\n" $errors
-        printf "CHARS %s\n" $chars
-        printf "TIME  %s sec\n" "$time"
+        gwpm=$(bc <<< "scale=2; $chars * 60 / 5 / $time" )
+        acc=$(bc <<< "scale=2; $chars * 100 / $keys")
+        nwpm=$(bc <<< "scale=2; $gwpm*$acc/100")
+        cat << EOF
+Net WPM   $nwpm
+Gross WPM $gwpm
+Accuracy  $acc
+Errors    $errors
+Chars     $chars
+Time      $time sec
+EOF
     fi
 }
 trap on_exit EXIT
