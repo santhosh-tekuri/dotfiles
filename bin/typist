@@ -342,7 +342,7 @@ pos() {
 }
 
 redraw() {
-    clear
+    tput civis
     tlen=$i
     local i=0
     local y=0
@@ -380,12 +380,16 @@ redraw() {
             echo -n "$newline"
         fi
         ((y++))
+        tput el
     done
+    pos $((y+yy+1)) $((xx+w/2))
     if ((vline+h<lcount)); then
-        pos $((y+yy+1)) $((xx+w/2))
         printf "⌄"
+    else
+        printf " "
     fi
     pos $yy $xx
+    tput cnorm
 }
 
 begin() {
