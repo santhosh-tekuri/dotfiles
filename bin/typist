@@ -409,16 +409,33 @@ while IFS='' read -d '' -rsn1 char; do
         ;;
     $'\e') # escape
         read -rsn1 ignore
-        if [[ "$ignore" == $'\e' ]]; then
+        if [[ "$ignore" == $'\x7f' ]]; then
+            char="erase_word"
+        elif [[ "$ignore" == $'\e' ]]; then
             break # double escape
+        else
+            read -rsn1 ignore # arrow keys
+            continue;
         fi
-        read -rsn1 ignore # arrow keys
-        continue ;;
+        ;;
     $'\t') # tab -> begin
         begin
         continue ;;
     esac
-    if [[ "$char" == $'\x7f' ]]; then
+    if [[ "$char" == "erase_word" ]]; then
+        while ((i>0)) && [[ "${typed:i-1:1}" == ' ' ]]; do
+            typed=${typed:0:${#typed}-1}
+            ((i--))
+        done
+        while ((i>0)) && [[ "${typed:i-1:1}" != ' ' ]]; do
+            typed=${typed:0:${#typed}-1}
+            ((i--))
+        done
+        if ((typo>i)); then
+            typo=-1
+        fi
+        redraw
+    elif [[ "$char" == $'\x7f' ]]; then
         if [[ $i == 0 ]]; then
             continue
         fi
