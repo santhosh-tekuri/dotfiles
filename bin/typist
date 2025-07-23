@@ -350,6 +350,7 @@ redraw() {
         ((i+=line))
     done
     for line in "${lines[@]:$vline:$h}"; do
+        line_len=$line
         pos $((y+yy)) $xx
 
         glen=$tlen
@@ -375,7 +376,7 @@ redraw() {
         ((i+=line))
 
         if [[ "${text:i-1:1}" == $'\n' ]]; then
-            pos $((y+yy)) $((xx+line-1))
+            pos $((y+yy)) $((xx+line_len-1))
             echo -n "$newline"
         fi
         ((y++))
