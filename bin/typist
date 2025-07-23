@@ -268,13 +268,19 @@ fi
 lines=()
 indent=0
 while IFS='' read -r line; do
-    ((indent += $(echo "$line" | awk '{print match($0,/[^ ]|$/)-1}')))
-    while IFS='' read -r ln; do
-        lines+=(${#ln})
-    done < <(echo "$line" | fold -s -w "$w")
-    last=${#lines[@]}
-    ((last--))
-    ((lines[last]++))
+    leading_whitespace="${line/[^[:space:]]*/}"
+    ((indent += ${#leading_whitespace}))
+    len=${#line}
+    if ((len<w)); then
+        lines+=($((len+1)))
+    else
+        while IFS='' read -r ln; do
+            lines+=(${#ln})
+        done < <(echo "$line" | fold -s -w "$w")
+        last=${#lines[@]}
+        ((last--))
+        ((lines[last]++))
+    fi
 done <<< "$text"
 last=${#lines[@]}
 ((last--))
