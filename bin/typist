@@ -1,24 +1,31 @@
 #!/usr/bin/env bash
 
-command -v jq >/dev/null 2>&1 || {
-    >&2 echo "jq command not found"
-    exit 1
-}
-set -e
-set -o pipefail
-
+# defaults --
 green=$(tput setaf 2)
 red=$(tput setaf 1)
 reset=$(tput sgr0)
 
 newline_char=↲
 space_char=␣
-newline=' '
 lang=english
 n=50
 w=100
-caps=none
 h=10
+
+# check commands --
+
+command -v jq >/dev/null 2>&1 || {
+    >&2 echo "jq command not found"
+    exit 1
+}
+
+# --
+
+set -e
+set -o pipefail
+
+newline=' '
+caps=none
 
 usage=$(cat <<EOF
 USAGE: typist [options...]
