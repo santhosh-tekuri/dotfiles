@@ -10,6 +10,7 @@ adjust-cell-height = 20%
 
 keybind = cmd+k=text:\x02
 keybind = cmd+shift+k=clear_screen
+keybind = shift+backspace=text:\x1B\x7f
 
 background = 0d0f18
 foreground = 75869a
