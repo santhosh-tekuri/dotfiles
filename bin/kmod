@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Please run as root"
+    exit 1
+fi
+
+on_exit() {
+    kill "$(jobs -p)"
+}
+
+trap on_exit TERM
+'/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon' &
+kanata -c ~/.config/kanata/kanata.kbd
