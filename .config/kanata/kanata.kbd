@@ -20,6 +20,7 @@
     (t! mod l ralt)
     (t! mod d lsft)
     (t! mod k rsft)
+    lshft (multi lsft (layer-while-held lshift))
     caps (tap-hold-press $tt $ht
         (caps-word 5000)
         (layer-while-held arrows)
@@ -33,6 +34,10 @@
     j down
     k up
     l right
+)
+
+(deflayermap (lshift)
+    bspc A-bspc
 )
 
 (deflayermap (fn)
