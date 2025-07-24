@@ -30,7 +30,7 @@ caps=none
 usage=$(cat <<EOF
 USAGE: typist [options...]
 
--l <language>       monkeytype language or 'os'
+-l <language>       monkeytype language or 'os' or 'keybr'
                     default english
 -n <words>          number of words
                     default 50
@@ -211,6 +211,16 @@ elif [ "$reddit" == "true" ]; then
 else
     if [ "$lang" == "os" ]; then
         file="/usr/share/dict/words"
+    elif [ "$lang" == "keybr" ]; then
+        file=!/.local/share/typist/languages/keybr
+        if [ ! -f "$file" ]; then
+            >&2 echo downloading "$lang"
+            mkdir -p "$(dirname "$file")"
+            if ! curl -sS --fail https://raw.githubusercontent.com/aradzie/keybr.com/refs/heads/master/packages/keybr-content-words/lib/data/words-en.json | jq -r '.[]' > "$file"; then
+                rm "$file"
+                exit 1
+            fi
+        fi
     else
         file=~/.local/share/typist/languages/$lang
         if [ ! -f "$file" ]; then
