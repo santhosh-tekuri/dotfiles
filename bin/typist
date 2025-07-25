@@ -14,10 +14,12 @@ h=10
 
 # check commands --
 
-command -v jq >/dev/null 2>&1 || {
-    >&2 echo "jq command not found"
-    exit 1
-}
+for cmd in jq shuf; do
+    command -v $cmd >/dev/null 2>&1 || {
+        >&2 echo "$cmd command not found"
+        exit 1
+    }
+done
 
 # --
 
