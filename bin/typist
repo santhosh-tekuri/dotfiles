@@ -366,6 +366,14 @@ pos() {
     tput cup $(($1-1)) $(($2-1))
 }
 
+setfg() {
+    if ((typo<0)); then
+        echo -n "$green"
+    else
+        echo -n "$red"
+    fi
+}
+
 redraw() {
     tput civis
     tlen=$i
@@ -374,6 +382,7 @@ redraw() {
     for line in "${lines[@]:0:$vline}"; do
         ((i+=line))
     done
+    echo -n "$reset"
     for line in "${lines[@]:$vline:$h}"; do
         line_len=$line
         pos $((y+yy)) $xx
@@ -414,6 +423,7 @@ redraw() {
         printf " "
     fi
     pos $yy $xx
+    setfg
     tput cnorm
 }
 
@@ -462,6 +472,7 @@ while IFS='' read -d '' -rsn1 char; do
             ((i--))
         done
         if ((typo>i)); then
+            echo -n "$green"
             typo=-1
         fi
         redraw
@@ -472,6 +483,7 @@ while IFS='' read -d '' -rsn1 char; do
         typed=${typed:0:${#typed}-1}
         ((i--))
         if ((typo==i)); then
+            echo -n "$green"
             typo=-1
         fi
         # skip indent backward
@@ -499,13 +511,14 @@ while IFS='' read -d '' -rsn1 char; do
         if [[ "$char" != "${text:i:1}" ]]; then
             ((errors++))
             if ((typo<0)); then
+                echo -n "$red"
                 typo=$i
             fi
         fi
         if ((typo<0)); then
-            echo -n "$green$char$reset"
+            echo -n "$char"
         else
-            echo -n "$red$(err_char "$char")$reset"
+            echo -n "$(err_char "$char")"
         fi
         ((i++))
         # skip indent forward
@@ -572,7 +585,8 @@ while IFS='' read -d '' -rsn1 char; do
         if [[ "$ch" == $'\n' ]]; then
             ch=$newline
         fi
-        printf '%s' "$ch"
+        echo -n "$reset$ch"
         pos $y $x
+        setfg
     fi
 done
