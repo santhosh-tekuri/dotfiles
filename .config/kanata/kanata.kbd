@@ -1,5 +1,6 @@
 (defcfg
     process-unmapped-keys yes
+    log-layer-changes no
 )
 
 (defsrc)
@@ -14,6 +15,8 @@
 )
 
 (deflayermap (base)
+    (t! mod a lmet)
+    (t! mod ; rmeta)
     (t! mod f lctrl)
     (t! mod j rctrl)
     (t! mod s lalt)
