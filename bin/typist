@@ -145,7 +145,7 @@ while getopts ":hLNq:l:n:cCpP:sS:W:H:zdD:r" opt; do
         symbols="$OPTARG"
         ;;
     z)
-        story=$(printf "%03d.md" $(((RANDOM%101)+1)))
+        zen=$(printf "%03d.md" $(((RANDOM%101)+1)))
         ;;
     d)
         digits=1234567890
@@ -195,12 +195,12 @@ elif [ "$qsize" != "" ]; then
         fi
     fi
     text=$(awk "$qsize" $file | shuf -n1)
-elif [ "$story" != "" ]; then
-    file=~/.local/share/typist/zen/$story
+elif [ "$zen" != "" ]; then
+    file=~/.local/share/typist/zen/$zen
     if [ ! -f "$file" ]; then
-        >&2 echo downloading story "$story"
+        >&2 echo downloading story "$zen"
         mkdir -p "$(dirname "$file")"
-        if ! curl -sS --fail https://raw.githubusercontent.com/nkanaev/zen101/refs/heads/master/stories/en/"$story" > "$file"; then
+        if ! curl -sS --fail https://raw.githubusercontent.com/nkanaev/zen101/refs/heads/master/stories/en/"$zen" > "$file"; then
             rm "$file"
             exit 1
         fi
