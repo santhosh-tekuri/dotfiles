@@ -2,11 +2,11 @@
 
 # author: Santhosh Kumar Tekuri
 #
-# this script quanrantines files/folders. thus prevent Gatekeeper checks
+# this script de-quanrantines files/folders. thus prevent Gatekeeper checks
 #
 # usage:
-#      quarantine file*
+#      dequarantine file*
 # example:
-#      quarantine ~/Downloads/google-cloud*.tar.gz
+#      dequarantine ~/Downloads/google-cloud*.tar.gz
 
-xattr -d -r com.apple.quarantine $*
+xattr -dr com.apple.quarantine "$@"
