@@ -523,16 +523,10 @@ while IFS='' read -d '' -rsn1 char; do
         ((i++))
         # skip indent forward
         if ((typo<0)) && [[ "${text:i-1:1}" == $'\n' ]]; then
-            while true; do
-                if ((i >= chars)); then
-                    break
-                fi
-                if [[ "${text:i:1}" != ' ' ]]; then
-                    break
-                fi
-                ((i++))
-                typed+=' '
-            done
+            rem=${text:i}
+            leading_whitespace="${rem/[^[:space:]]*/}"
+            ((i += ${#leading_whitespace}))
+            typed+=$leading_whitespace
         fi
     fi
 
