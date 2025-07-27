@@ -272,6 +272,7 @@ if [ ! -t 1 ]; then
     exit
 fi
 
+# adjust width
 xx=$(( ( $(tput cols) - w ) / 2))
 if ((xx<5)); then
     w=$(( $(tput cols) - 10 ))
@@ -308,6 +309,7 @@ last=${#lines[@]}
 chars=${#text}
 lcount=${#lines[@]}
 
+# height
 ht=${#lines[@]}
 if ((ht>h)); then
     ht=h
