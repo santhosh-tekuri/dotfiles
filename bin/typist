@@ -328,32 +328,38 @@ tput cnorm # show cursor
 printf '\033[4 q' # change cursor to underline
 
 on_exit() {
+    time=$SECONDS
     tput rmcup # end altscreen
     printf '\033[0 q' # change cursor to default
-    if [[ "$time" -ne "" ]]; then
-        # compute indent
-        indent=0
-        from=0
-        for len in "${lines[@]}"; do
-            line="${text:from:len}"
-            leading_whitespace="${line/[^ ]*/}"
-            ((indent += ${#leading_whitespace}))
-            ((from+=len))
-        done
+    if ((time==0)) || ((i==0)); then
+        return
+    fi
 
-        ((chars-=indent))
-        gwpm=$(bc <<< "scale=2; $chars * 60 / 5 / $time" )
-        acc=$(bc <<< "scale=2; $chars * 100 / $keys")
-        nwpm=$(bc <<< "scale=2; $gwpm*$acc/100")
-        cat << EOF
+    # compute indent
+    indent=0
+    from=0
+    for len in "${lines[@]}"; do
+        if ((from>=i)); then
+            break
+        fi
+        line="${text:from:len}"
+        leading_whitespace="${line/[^ ]*/}"
+        ((indent += ${#leading_whitespace}))
+        ((from+=len))
+    done
+
+    ((i-=indent))
+    gwpm=$(bc <<< "scale=2; $i * 60 / 5 / $time" )
+    acc=$(bc <<< "scale=2; $i * 100 / $keys")
+    nwpm=$(bc <<< "scale=2; $gwpm*$acc/100")
+    cat << EOF
 Net WPM   $nwpm
 Gross WPM $gwpm
 Accuracy  $acc
 Errors    $errors
-Chars     $chars
+Chars     $i
 Time      $time sec
 EOF
-    fi
 }
 trap on_exit EXIT
 
