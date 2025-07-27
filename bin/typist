@@ -287,7 +287,7 @@ fi
 lines=()
 indent=0
 while IFS='' read -r line; do
-    leading_whitespace="${line/[^[:space:]]*/}"
+    leading_whitespace="${line/[^ ]*/}"
     ((indent += ${#leading_whitespace}))
     len=${#line}
     if ((len<w)); then
@@ -524,7 +524,7 @@ while IFS='' read -d '' -rsn1 char; do
         # skip indent forward
         if ((typo<0)) && [[ "${text:i-1:1}" == $'\n' ]]; then
             rem=${text:i}
-            leading_whitespace="${rem/[^[:space:]]*/}"
+            leading_whitespace="${rem/[^ ]*/}"
             ((i += ${#leading_whitespace}))
             typed+=$leading_whitespace
         fi
@@ -550,7 +550,7 @@ while IFS='' read -d '' -rsn1 char; do
         ((y++))
     done
     ((y-=vline))
-    if ((y==h-1)); then
+    if ((y>=h-1)); then
         up=0
         while ((vline+up+1+h<=lcount && y-up-1>=0)); do
             ((up++))
