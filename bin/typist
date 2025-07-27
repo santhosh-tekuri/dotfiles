@@ -555,6 +555,9 @@ while IFS='' read -d '' -rsn1 char; do
         while ((vline+up+1+h<=lcount && y-up-1>=0)); do
             ((up++))
         done
+        if ((typo>=0)); then
+            ((up--)) # ensure typo visible
+        fi
         if ((up>0)); then
             ((vline+=up))
             ((y-=up))
