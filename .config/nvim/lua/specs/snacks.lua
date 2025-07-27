@@ -58,6 +58,10 @@ function spec.config()
     vim.keymap.set('n', ' h', Snacks.picker.help, { desc = "Open help picker" })
     vim.keymap.set('n', ' f', Snacks.picker.files, { desc = "Open file picker" })
     vim.keymap.set('n', ' b', function()
+        if #vim.api.nvim_list_bufs() == 2 then
+            vim.cmd("b#")
+            return
+        end
         Snacks.picker.buffers {
             current = false,
         }
