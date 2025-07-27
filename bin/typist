@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 # defaults --
 green=$(tput setaf 2)
 red=$(tput setaf 1)
@@ -286,10 +287,7 @@ fi
 
 # fold paragraphs
 lines=()
-indent=0
 while IFS='' read -r line; do
-    leading_whitespace="${line/[^ ]*/}"
-    ((indent += ${#leading_whitespace}))
     len=${#line}
     if ((len<w)); then
         lines+=($((len+1)))
@@ -333,6 +331,16 @@ on_exit() {
     tput rmcup # end altscreen
     printf '\033[0 q' # change cursor to default
     if [[ "$time" -ne "" ]]; then
+        # compute indent
+        indent=0
+        from=0
+        for len in "${lines[@]}"; do
+            line="${text:from:len}"
+            leading_whitespace="${line/[^ ]*/}"
+            ((indent += ${#leading_whitespace}))
+            ((from+=len))
+        done
+
         ((chars-=indent))
         gwpm=$(bc <<< "scale=2; $chars * 60 / 5 / $time" )
         acc=$(bc <<< "scale=2; $chars * 100 / $keys")
