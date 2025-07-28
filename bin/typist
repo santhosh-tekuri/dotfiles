@@ -24,19 +24,19 @@ done
 
 # --
 
-set -e
-set -o pipefail
+set -Eeo pipefail
 
 newline=' '
 caps=none
+
 
 usage=$(cat <<EOF
 USAGE: typist [options...]
 
 -l <language>       monkeytype language or 'os' or 'keybr'
                     default english
--n <words>          number of words
-                    default 50
+-n <words>          number of words (default 50)
+                    or line-range in sed syntax, ex: 20,90
 -q <size>           quote of size (short, medium, long, thick)
 -z                  practice a zen story
 -W <num>            text width
@@ -165,13 +165,21 @@ sanitize() {
     text=$(echo -n "$text" | tr "’“”—" "'\"\"-" | sed -e 's/…/.../g' -e 's/\r//g')
 }
 
+nwords() {
+    if [[ "$n" == *,* ]]; then
+        sed -n "${n}p" "$file"
+    else
+        shuf -n "$n" "$file"
+    fi
+}
+
 if [ ! -t 0 ]; then
     text=$(cat)
     sanitize
     if [[ "$lang" == "stdin" ]]; then
         text=$(echo "$text" | tr '\n' ' ' | awk '{$1=$1};1')
     fi
-elif [ "$qsize" != "" ]; then
+elif [ -n "$qsize" ]; then
     case "$qsize" in
     short)
         qsize='length >= 1 && length <= 100' ;;
@@ -264,7 +272,7 @@ else
         else 
             text+=" $word"
         fi
-    done < <(shuf -n "$n" "$file")
+    done < <(nwords)
     text=${text:1} # rm leading space
 fi
 
