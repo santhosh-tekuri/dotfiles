@@ -352,13 +352,21 @@ on_exit() {
     gwpm=$(bc <<< "scale=2; $i * 60 / 5 / $time" )
     acc=$(bc <<< "scale=2; $i * 100 / $keys")
     nwpm=$(bc <<< "scale=2; $gwpm*$acc/100")
+
+    dur=""
+    while ((time>0)); do
+        dur=$((time%60))":"$dur
+        ((time/=60))
+    done
+    dur=${dur:0:${#dur}-1}
+
     cat << EOF
 Net WPM   $nwpm
 Gross WPM $gwpm
 Accuracy  $acc
 Errors    $errors
 Chars     $i
-Time      $time sec
+Time      $dur
 EOF
 }
 trap on_exit EXIT
