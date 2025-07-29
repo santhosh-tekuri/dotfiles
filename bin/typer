@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import time
+import datetime
+import curses
+
+width, height = 100, 5
+newline_char = "↲"
+space_char = "␣"
+typed = list()
+typos = set()
+typo = None
+errors = 0
+newline = " "
+
+
+def main(scr):
+    curses.use_default_colors()
+    curses.init_pair(1, curses.COLOR_RED, -1)
+    curses.init_pair(2, curses.COLOR_GREEN, -1)
+    curses.init_pair(3, curses.COLOR_BLUE, -1)
+    red = curses.color_pair(1)
+    green = curses.color_pair(2)
+    blue = curses.color_pair(3)
+    curses.set_escdelay(25)
+    scr.refresh()
+
+    pad = curses.newpad(len(lines) + height, width)
+    y, x = scr.getmaxyx()
+    if x < width:
+        raise Exception("terminal width is too small")
+    if x < height:
+        raise Exception("terminal height is too small")
+    y, x = (y - height) // 2, (x - width) // 2
+    yy, xx = y + height - 1, x + width - 1
+    vline = 0
+    for i, line in enumerate(lines):
+        pad.addstr(i, 0, line)
+    pad.move(0, 0)
+
+    def pad_refresh():
+        return pad.refresh(vline, 0, y, x, yy, xx)
+
+    def add_typed(ch):
+        if cy >= len(typed):
+            typed.append(list())
+        typed[-1].append(ch)
+        if ch == lines[cy][cx]:
+            if (cy, cx) in typos:
+                pad.addch(ch, blue)
+            else:
+                pad.addch(ch, green)
+        else:
+            typos.add((cy, cx))
+            global errors, typo
+            errors += 1
+            if typo is None:
+                typo = (cy, cx)
+            if ch == "\n":
+                ch = newline_char
+            elif ch == " ":
+                ch = space_char
+            pad.addch(ch, red)
+
+    def undo_typed():
+        typed[-1].pop()
+        if not typed[-1]:
+            typed.pop()
+        ch = lines[cy][cx]
+        if ch == "\n":
+            ch = newline
+        pad.addch(cy, cx, ch)
+        global typo
+        if typo == (cy, cx):
+            typo = None
+
+    cy, cx = 0, 0
+    pad_refresh()
+    global start
+    start = time.perf_counter()
+    while True:
+        key = scr.getch()
+        if key == 27:  # escape
+            break
+        elif key == 23:  # ctrl+w
+            t = typed[-1]
+            while t and t[-1] == " ":
+                cx -= 1
+                undo_typed()
+            while t and t[-1] != " ":
+                cx -= 1
+                undo_typed()
+        elif key == 9:  # tab
+            typed.clear()
+            typos.clear()
+            global typo, errors
+            typo = None
+            errors = 0
+            vline = 0
+            cx, cy = 0, 0
+            pad.clear()
+            for i, line in enumerate(lines):
+                pad.addstr(i, 0, line)
+        elif key == curses.KEY_BACKSPACE or key == 127:
+            if cx == 0 and cy == 0:
+                continue
+            if cx > 0:
+                cx -= 1
+                undo_typed()
+                if cy != 0:
+                    # skip indent backward
+                    skip = True
+                    for char in reversed(lines[cy][: cx + 1]):
+                        if char != " ":
+                            skip = False
+                            break
+                    if skip:
+                        cy -= 1
+                        cx = len(lines[cy]) - 1
+            else:
+                cy -= 1
+                cx = len(lines[cy]) - 1
+                undo_typed()
+            if cy < vline:
+                vline -= 1
+        elif key == 10 or (key >= 32 and key <= 126):
+            key = chr(key)
+            ch = lines[cy][cx]
+            add_typed(key)
+            cx += 1
+            if cx == len(lines[cy]):
+                cx = 0
+                cy += 1
+            if cy == len(lines) and typo is None:
+                break
+            if ch == "\n":
+                # skip indent forward
+                for char in lines[cy]:
+                    if char != " ":
+                        break
+                    cx += 1
+            if cy == vline + height - 1:
+                vline = min(cy, len(lines) - height)
+        else:
+            continue
+        pad.move(cy, cx)
+        pad_refresh()
+
+
+def fold(text, width):
+    while text:
+        if len(text) <= width:
+            yield text
+            return
+        w = width
+        if text[w] == " " or text[w - 1] != " ":
+            while w > 0 and text[w - 1] != " ":
+                w -= 1
+        if not w:
+            w = width
+        line = text[:w]
+        text = text[w:]
+        yield line
+
+
+punctuation = str.maketrans(
+    {
+        ord("…"): "...",
+        ord("‘"): "'",
+        ord("’"): "'",
+        ord("“"): '"',
+        ord("”"): '"',
+        ord("—"): "-",
+    }
+)
+lines = list()
+for line in sys.stdin:
+    line = line.translate(punctuation)
+    line = line.encode("ascii", "ignore").decode("ascii")  # rm non-ascii chars
+    if len(line) > width:
+        lines.extend(fold(line, width))
+    else:
+        lines.append(line)
+lines[-1] = lines[-1].rstrip()
+
+for line in lines:
+    print(repr(line))
+
+with open("/dev/tty", "r+") as tty_file:
+    os.dup2(tty_file.fileno(), 0)
+
+# sys.stdout.write("\033[4] q")  # change cursor to underline
+# sys.stdout.flush()
+log_file = open("log.txt", "a")
+
+
+def log(*args):
+    print(file=log_file, flush=True, *args)
+
+
+try:
+    curses.wrapper(main)
+except Exception as ex:
+    import traceback
+
+    traceback.print_exc()
+    print(ex, file=sys.stderr)
+    sys.exit((1))
+
+sec = time.perf_counter() - start
+print(f"errors: {errors}")
+print(f"time: {datetime.timedelta(seconds=sec)}")
