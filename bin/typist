@@ -225,10 +225,11 @@ with open("/dev/tty", "r+") as tty_file:
 
 try:
     curses.wrapper(main)
-except Exception as ex:
+except KeyboardInterrupt:
+    sys.exit(1)
+except Exception:
     traceback.print_exc()
-    print(ex, file=sys.stderr)
-    sys.exit((1))
+    sys.exit(1)
 
 if keys > 0:
     sec = time.perf_counter() - start
