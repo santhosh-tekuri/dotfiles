@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# outputs random zen story
+# USAGE: zen [STORY_NUMBER]
+# STORY_NUMBER must be between 1 to 101
+# if not spcified outputs random story
+
+set -Eeo pipefail
+
+if (($#>0)); then
+    story=$1
+else
+    story=$(((RANDOM%101)+1))
+fi
+story=$(printf "%03d.md" "$story")
+file=~/.local/share/typist/zen/$story
+if [ ! -f "$file" ]; then
+    >&2 echo downloading story "$story"
+    mkdir -p "$(dirname "$file")"
+    if ! curl -sS --fail https://raw.githubusercontent.com/nkanaev/zen101/refs/heads/master/stories/en/"$story" > "$file"; then
+        rm "$file"
+        exit 1
+    fi
+fi
+cat "$file"

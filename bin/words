@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+
+n=50
+
+set -Eeo pipefail
+
+caps=none
+n=50
+symbols=""
+lang=english
+
+usage=$(cat <<EOF
+USAGE: words [options...] <source>
+
+-n <words>          number of words (default 50)
+                    or line-range in sed syntax, ex: 20,90
+-c                  captalize words randomly
+-C                  capitalize all words
+-p                  add punctuation
+-s                  add symbols
+-d                  add digits
+-x <symbols>        add given symbols
+-h                  show this help
+
+source can be:
+    any monkeytype language
+    keybr
+    os (from /usr/share/dict/words)
+    - (from stdin)
+defaults to english
+EOF
+)
+
+while getopts ":hn:cCpsdx:" opt; do
+    case $opt in
+    \?) # Invalid option
+        >&2 echo "Error: Invalid option -$OPTARG"
+        >&2 echo "$usage"
+        exit 2
+        ;;
+    :) # Missing argument for an option
+        >&2 echo "Error: Option -$OPTARG requires an argument"
+        >&2 echo "$usage"
+        exit 2
+        ;;
+    h)
+        echo "$usage"
+        exit 0
+        ;;
+    n)
+        n="$OPTARG"
+        ;;
+    c)
+        caps=rand
+        ;;
+    C)
+        caps=all
+        ;;
+    p)
+        symbols=",.-?!:;'\"()"
+        ;;
+    s)
+        symbols='`~!@#$%^&*()-_=+[{}];":,<.>/?\\|'\'
+        ;;
+    d)
+        digits=1234567890
+        ;;
+    x)
+        symbols="$OPTARG"
+        ;;
+    esac
+done
+symbols+="$digits"
+
+shift $((OPTIND - 1))
+if (($#>0)); then
+    lang="$1"
+fi
+
+case "$lang" in
+-)
+    cat | tr '\n' ' ' | awk '{$1=$1};1'
+    exit
+    ;;
+os)
+    file="/usr/share/dict/words"
+    ;;
+keybr)
+    file=!/.local/share/typist/words/keybr
+    if [ ! -f "$file" ]; then
+        >&2 echo downloading "$lang"
+        mkdir -p "$(dirname "$file")"
+        if ! curl -sS --fail https://raw.githubusercontent.com/aradzie/keybr.com/refs/heads/master/packages/keybr-content-words/lib/data/words-en.json | jq -r '.[]' > "$file"; then
+            rm "$file"
+            exit 1
+        fi
+    fi
+    ;;
+*)
+    file=~/.local/share/typist/languages/$lang
+    if [ ! -f "$file" ]; then
+        >&2 echo downloading "$lang"
+        mkdir -p "$(dirname "$file")"
+        if ! curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/"$lang".json | jq -r '.words[]' > "$file"; then
+            rm "$file"
+            exit 1
+        fi
+    fi
+    ;;
+esac
+
+nwords() {
+    if [[ "$n" == *,* ]]; then
+        sed -n "${n}p" "$file" | shuf
+    else
+        shuf -n "$n" "$file"
+    fi
+}
+
+first=true
+while IFS='' read -r word; do
+    if [ $caps == "all" ] || ( [ $caps == "rand" ] && (( RANDOM % 2 == 1 ))); then
+        word=$(echo "${word:0:1}" | tr '[:lower:]' '[:upper:]')${word:1}
+    fi
+    if [ "$symbols" != "" ] && (( RANDOM % 2 == 1)); then
+        i=$(( RANDOM % ${#symbols} ))
+        ch="${symbols:i:1}"
+        case "$ch" in
+        "&"|"@"|"#"|"("|"{"|'['|'<')
+            word=" $ch$word"
+            ;;
+        "_")
+            word="_$word"
+            ;;
+        "-")
+            word=" - $word"
+            ;;
+        \`|"'"|"\"")
+            word=" $ch$word$ch"
+            ;;
+        *)
+            word=" $word$ch"
+            ;;
+        esac
+    else 
+        word=" $word"
+    fi
+    if [ "$first" == "true" ]; then
+        first=false
+        echo -n "${word:1}"
+    else
+        echo -n "${word}"
+    fi
+done < <(nwords)

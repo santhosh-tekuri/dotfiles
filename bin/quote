@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -Eeo pipefail
+
+# USAGE: quote [SIZE]
+# valid SIZE are short, medium, long, thick
+
+file=~/.local/share/typist/quotes
+if [ ! -f "$file" ]; then
+    >&2 echo downloading quotes
+    mkdir -p "$(dirname "$file")"
+    if ! curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/quotes/english.json | jq -r '.quotes[].text | sub("\n";" ";"g")' > "$file"; then
+        rm "$file"
+        exit 1
+    fi
+fi
+
+if (($#>0)); then
+    case "$1" in
+    short)
+        qsize='length >= 1 && length <= 100' ;;
+    medium)
+        qsize='length >= 101 && length <= 300' ;;
+    long)
+        qsize='length >= 301 && length <= 600' ;;
+    thick)
+        qsize='length >= 601' ;;
+    *)
+        >&2 echo invalid quote size. valid are short, medium, long, thick
+        exit 2
+        ;;
+    esac
+    awk "$qsize" $file | shuf -n1
+else
+    shuf -n1 $file
+fi

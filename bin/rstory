@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+curl -sS --fail --user-agent 'firefox' 'https://www.reddit.com/r/stories/new.json' | 
+ jq -c '.data.children[].data | (.title + "\n\n" + .selftext)' |
+ shuf -n 1 |
+ jq -r .
