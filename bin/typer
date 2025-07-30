@@ -216,5 +216,10 @@ except Exception as ex:
     sys.exit((1))
 
 sec = time.perf_counter() - start
+delta = str(datetime.timedelta(seconds=sec))
+delta = delta.removeprefix("0:")
+delta = delta.removeprefix("00:")
+chars = sum(len(line) for line in typed)
+print(f"chars: {chars}")
 print(f"errors: {errors}")
-print(f"time: {datetime.timedelta(seconds=sec)}")
+print(f"time: {delta}")
