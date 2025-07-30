@@ -35,13 +35,20 @@ def main(scr):
         raise Exception("terminal height is too small")
     y, x = (y - height) // 2, (x - width) // 2
     yy, xx = y + height - 1, x + width - 1
-    vline = 0
+    vline, vline_prev = 0, -1
     for i, line in enumerate(lines):
         pad.addstr(i, 0, line)
-    pad.move(0, 0)
 
     def pad_refresh():
-        return pad.refresh(vline, 0, y, x, yy, xx)
+        nonlocal vline_prev
+        if vline_prev != vline:
+            vline_prev = vline
+            scr.addch(
+                y + height, x + width // 2, " " if vline + height >= len(lines) else "⌄"
+            )
+            scr.refresh()
+        pad.move(cy, cx)
+        pad.refresh(vline, 0, y, x, yy, xx)
 
     def add_typed(ch):
         if cy >= len(typed):
@@ -151,7 +158,6 @@ def main(scr):
                     vline = min(cy, len(lines) - height)
         else:
             continue
-        pad.move(cy, cx)
         pad_refresh()
 
 
