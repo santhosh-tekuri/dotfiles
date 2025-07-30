@@ -6,6 +6,7 @@ import os
 import time
 import datetime
 import curses
+import traceback
 
 char = str
 Pos = Tuple[int, int]
@@ -225,8 +226,6 @@ with open("/dev/tty", "r+") as tty_file:
 try:
     curses.wrapper(main)
 except Exception as ex:
-    import traceback
-
     traceback.print_exc()
     print(ex, file=sys.stderr)
     sys.exit((1))
