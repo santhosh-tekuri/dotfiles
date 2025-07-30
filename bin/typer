@@ -213,6 +213,9 @@ for line in sys.stdin:
         lines.extend(fold(line, width))
     else:
         lines.append(line)
+if not lines:
+    print("got empty text as input", file=sys.stderr)
+    sys.exit(1)
 lines[-1] = lines[-1].rstrip()
 height = min(height, len(lines))
 
