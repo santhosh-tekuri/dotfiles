@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 
+from typing import Optional, List, Set, Tuple
 import sys
 import os
 import time
 import datetime
 import curses
 
-width, height = 100, 5
-newline_char = "↲"
-space_char = "␣"
-typed = list()
-typos = set()
-typo = None
-errors = 0
-newline = " "
+char = str
+Pos = Tuple[int, int]
+
+width: int = 100
+height: int = 5
+newline_char: char = "↲"
+space_char: char = "␣"
+typed: List[List[char]] = list()
+typos: Set[Pos] = set()
+typo: Optional[Pos] = None
+errors: int = 0
+newline: char = " "
 
 
 def main(scr):
@@ -89,9 +94,9 @@ def main(scr):
     start = time.perf_counter()
     while True:
         key = scr.getch()
-        if key == 27:  # escape
+        if key == 27:  # escape; exit
             break
-        elif key == 23:  # ctrl+w
+        elif key == 23:  # ctrl+w: erase word
             t = typed[-1]
             while t and t[-1] == " ":
                 cx -= 1
@@ -99,7 +104,7 @@ def main(scr):
             while t and t[-1] != " ":
                 cx -= 1
                 undo_typed()
-        elif key == 9:  # tab
+        elif key == 9:  # tab: reset
             typed.clear()
             typos.clear()
             global typo, errors
@@ -110,7 +115,7 @@ def main(scr):
             pad.clear()
             for i, line in enumerate(lines):
                 pad.addstr(i, 0, line)
-        elif key == curses.KEY_BACKSPACE or key == 127:
+        elif key == curses.KEY_BACKSPACE or key == 127:  # backspace
             if cx == 0 and cy == 0:
                 continue
             if cx > 0:
@@ -119,8 +124,8 @@ def main(scr):
                 if cy != 0:
                     # skip indent backward
                     skip = True
-                    for char in reversed(lines[cy][: cx + 1]):
-                        if char != " ":
+                    for ch in reversed(lines[cy][: cx + 1]):
+                        if ch != " ":
                             skip = False
                             break
                     if skip:
@@ -150,8 +155,8 @@ def main(scr):
                 if cy == len(lines) and typo is None:
                     break
                 if skip:  # skip indent forward
-                    for char in lines[cy]:
-                        if char != " ":
+                    for ch in lines[cy]:
+                        if ch != " ":
                             break
                         cx += 1
                 if cy == vline + height - 1:
