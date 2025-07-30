@@ -11,7 +11,7 @@ char = str
 Pos = Tuple[int, int]
 
 width: int = 100
-height: int = 5
+height: int = 10
 newline_char: char = "↲"
 space_char: char = "␣"
 typed: List[List[char]] = list()
@@ -39,11 +39,11 @@ def main(scr):
     curses.set_escdelay(25)
     scr.refresh()
 
-    pad = curses.newpad(len(lines) + height, width)
+    pad = curses.newpad(len(lines) + max(height, 10), width)
     y, x = scr.getmaxyx()
     if x < width:
         raise Exception("terminal width is too small")
-    if x < height:
+    if y < height:
         raise Exception("terminal height is too small")
     y, x = (y - height) // 2, (x - width) // 2
     yy, xx = y + height - 1, x + width - 1
@@ -91,7 +91,7 @@ def main(scr):
         typed[-1].pop()
         if not typed[-1]:
             typed.pop()
-        ch = lines[cy][cx]
+        ch = lines[cy][cx] if cy < len(lines) else " "
         if ch == "\n":
             ch = newline
         pad.addch(cy, cx, ch)
@@ -131,7 +131,7 @@ def main(scr):
             if cx > 0:
                 cx -= 1
                 undo_typed()
-                if cy != 0:
+                if cy != 0 and cy < len(lines):
                     # skip indent backward
                     skip = True
                     for ch in reversed(lines[cy][: cx + 1]):
@@ -143,7 +143,7 @@ def main(scr):
                         cx = len(lines[cy]) - 1
             else:
                 cy -= 1
-                cx = len(lines[cy]) - 1
+                cx = len(lines[cy]) - 1 if cy < len(lines) else width - 1
                 undo_typed()
             if cy < vline:
                 vline -= 1
@@ -169,8 +169,10 @@ def main(scr):
                         if ch != " ":
                             break
                         cx += 1
-                if cy == vline + height - 1:
+                elif cy == vline + height - 1:
                     vline = min(cy, len(lines) - height)
+            if cy >= vline + height:
+                vline = cy
         else:
             continue
         pad_refresh()
@@ -212,6 +214,7 @@ for line in sys.stdin:
     else:
         lines.append(line)
 lines[-1] = lines[-1].rstrip()
+height = min(height, len(lines))
 
 with open("/dev/tty", "r+") as tty_file:
     os.dup2(tty_file.fileno(), 0)
