@@ -47,7 +47,7 @@ def main(scr):
         if cy >= len(typed):
             typed.append(list())
         typed[-1].append(ch)
-        if ch == lines[cy][cx]:
+        if cy < len(lines) and ch == lines[cy][cx]:
             if (cy, cx) in typos:
                 pad.addch(ch, blue)
             else:
@@ -127,22 +127,28 @@ def main(scr):
                 vline -= 1
         elif key == 10 or (key >= 32 and key <= 126):
             key = chr(key)
-            ch = lines[cy][cx]
-            add_typed(key)
-            cx += 1
-            if cx == len(lines[cy]):
-                cx = 0
-                cy += 1
-            if cy == len(lines) and typo is None:
-                break
-            if ch == "\n":
-                # skip indent forward
-                for char in lines[cy]:
-                    if char != " ":
-                        break
-                    cx += 1
-            if cy == vline + height - 1:
-                vline = min(cy, len(lines) - height)
+            if cy >= len(lines):
+                add_typed(key)
+                cx += 1
+                if cx == width:
+                    cx = 0
+                    cy += 1
+            else:
+                skip = lines[cy][cx] == "\n"
+                add_typed(key)
+                cx += 1
+                if cx == len(lines[cy]):
+                    cx = 0
+                    cy += 1
+                if cy == len(lines) and typo is None:
+                    break
+                if skip:  # skip indent forward
+                    for char in lines[cy]:
+                        if char != " ":
+                            break
+                        cx += 1
+                if cy == vline + height - 1:
+                    vline = min(cy, len(lines) - height)
         else:
             continue
         pad.move(cy, cx)
