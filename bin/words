@@ -26,6 +26,7 @@ source can be:
     any monkeytype language
     keybr
     os (from /usr/share/dict/words)
+    ngrams1, ngrams2, ngrams3, ngrams4
     - (from stdin)
 defaults to english
 EOF
@@ -86,7 +87,7 @@ os)
     file="/usr/share/dict/words"
     ;;
 keybr)
-    file=!/.local/share/typist/words/keybr
+    file=!/.local/share/typist/words/$lang
     if [ ! -f "$file" ]; then
         >&2 echo downloading "$lang"
         mkdir -p "$(dirname "$file")"
@@ -96,8 +97,19 @@ keybr)
         fi
     fi
     ;;
+ngrams*)
+    file=~/.local/share/typist/words/$lang
+    if [ ! -f "$file" ]; then
+        >&2 echo downloading "$lang"
+        mkdir -p "$(dirname "$file")"
+        if ! curl -sS --fail https://raw.githubusercontent.com/KaranAgarwalla/Encryption-Decryption/refs/heads/master/"$lang".txt | awk '{print tolower($1)}' > "$file"; then
+            rm "$file"
+            exit 1
+        fi
+    fi
+    ;;
 *)
-    file=~/.local/share/typist/languages/$lang
+    file=~/.local/share/typist/words/$lang
     if [ ! -f "$file" ]; then
         >&2 echo downloading "$lang"
         mkdir -p "$(dirname "$file")"
