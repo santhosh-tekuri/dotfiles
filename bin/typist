@@ -18,7 +18,7 @@ red = "#ef534f"
 green = "#4d6e2a"
 blue = "#2c7fff"
 
-width: int = 100
+width: int = 80
 height: int = 10
 newline_char: char = "↲"
 space_char: char = "␣"
@@ -29,6 +29,11 @@ typo: Optional[Pos] = None
 errors: int = 0
 newline: char = " "
 start: float = 0
+
+
+class TypistException(Exception):
+    def __init__(self, *args) -> None:
+        super().__init__(*args)
 
 
 def log(*args):
@@ -68,9 +73,9 @@ def main(scr):
     pad = curses.newpad(len(lines) + max(height, 10), width)
     y, x = scr.getmaxyx()
     if x < width:
-        raise Exception("terminal width is too small")
+        raise TypistException("terminal width is too small")
     if y < height:
-        raise Exception("terminal height is too small")
+        raise TypistException("terminal height is too small")
     y, x = (y - height) // 2, (x - width) // 2
     yy, xx = y + height - 1, x + width - 1
     vline, vline_prev = 0, -1
@@ -251,6 +256,9 @@ with open("/dev/tty", "r+") as tty_file:
 try:
     curses.wrapper(main)
 except KeyboardInterrupt:
+    sys.exit(1)
+except TypistException as ex:
+    print(ex, file=sys.stderr)
     sys.exit(1)
 except Exception:
     traceback.print_exc()
