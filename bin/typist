@@ -29,11 +29,29 @@ def log(*args):
         print(file=log, *args)
 
 
+def init_color(c, hex):
+    hex = hex.lstrip("#")
+    r = int(int(hex[0:2], 16) * 1000 / 255)
+    g = int(int(hex[2:4], 16) * 1000 / 255)
+    b = int(int(hex[4:6], 16) * 1000 / 255)
+    curses.init_color(c, r, g, b)
+
+
 def main(scr):
-    curses.use_default_colors()
-    curses.init_pair(1, curses.COLOR_RED, -1)
-    curses.init_pair(2, curses.COLOR_GREEN, -1)
-    curses.init_pair(3, curses.COLOR_BLUE, -1)
+    if curses.has_colors() and curses.can_change_color():
+        init_color(curses.COLOR_BLACK, "#0d0f18")
+        init_color(curses.COLOR_WHITE, "#75869a")
+        init_color(curses.COLOR_RED, "#ef534f")
+        init_color(curses.COLOR_GREEN, "#4d6e2a")
+        init_color(curses.COLOR_BLUE, "#2c7fff")
+        bg = curses.COLOR_BLACK
+    else:
+        curses.use_default_colors()
+        bg = -1
+
+    curses.init_pair(1, curses.COLOR_RED, bg)
+    curses.init_pair(2, curses.COLOR_GREEN, bg)
+    curses.init_pair(3, curses.COLOR_BLUE, bg)
     red = curses.color_pair(1)
     green = curses.color_pair(2)
     blue = curses.color_pair(3)
@@ -233,9 +251,7 @@ except Exception:
 
 if keys > 0:
     sec = time.perf_counter() - start
-    delta = str(datetime.timedelta(seconds=sec))
-    delta = delta.removeprefix("0:")
-    delta = delta.removeprefix("00:")
+    delta = str(datetime.timedelta(seconds=sec)).removeprefix("0:").removeprefix("00:")
     chars = sum(len(line) for line in typed)
     acc = 100 * (keys - errors) / keys
     raw = (60 * keys) / (5 * sec)
