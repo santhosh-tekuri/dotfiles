@@ -259,6 +259,8 @@ except Exception:
 if keys > 0:
     sec = time.perf_counter() - start
     delta = str(datetime.timedelta(seconds=sec)).removeprefix("0:").removeprefix("00:")
+    if "." in delta:
+        delta = delta[:-4]
     chars = sum(len(line) for line in typed)
     acc = 100 * (keys - errors) / keys
     raw = (60 * keys) / (5 * sec)
