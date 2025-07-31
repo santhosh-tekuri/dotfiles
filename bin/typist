@@ -34,11 +34,6 @@ width: int = 80
 height: int = 10
 newline_char: char = "↲"
 space_char: char = "␣"
-typed: List[List[char]] = list()
-typos: Set[Pos] = set()
-typo: Optional[Pos] = None
-newline: char = " "
-start: float = 0
 
 
 class TypistException(Exception):
@@ -59,12 +54,21 @@ class Screen:
     lines: List[str]
     keys: int
     errors: int
+    start: float
+    newline: char
+    typos: Set[Pos]
+    typo: Optional[Pos]
+    typed: List[List[char]]
 
     def __init__(self, scr) -> None:
         self.scr = scr
         self.lines = list()
+        self.typed = list()
         self.keys = 0
         self.errors = 0
+        self.typos = set()
+        self.typo = None
+        self.newline = " "
         self.init_width()
         self.init_input()
         self.init_height()
@@ -147,24 +151,22 @@ class Screen:
             pad.refresh(vline, 0, y, x, yy, xx)
 
         def add_typed(ch):
-            global start
             if not self.keys:
-                start = time.perf_counter()
+                self.start = time.perf_counter()
             self.keys += 1
-            if cy >= len(typed):
-                typed.append(list())
-            typed[-1].append(ch)
+            if cy >= len(self.typed):
+                self.typed.append(list())
+            self.typed[-1].append(ch)
             if cy < len(self.lines) and ch == self.lines[cy][cx]:
-                if (cy, cx) in typos:
+                if (cy, cx) in self.typos:
                     pad.addch(ch, self.blue)
                 else:
                     pad.addch(ch, self.green)
             else:
-                typos.add((cy, cx))
-                global typo
+                self.typos.add((cy, cx))
                 self.errors += 1
-                if typo is None:
-                    typo = (cy, cx)
+                if self.typo is None:
+                    self.typo = (cy, cx)
                 if ch == "\n":
                     ch = newline_char
                 elif ch == " ":
@@ -172,16 +174,15 @@ class Screen:
                 pad.addch(ch, self.red)
 
         def undo_typed():
-            typed[-1].pop()
-            if not typed[-1]:
-                typed.pop()
+            self.typed[-1].pop()
+            if not self.typed[-1]:
+                self.typed.pop()
             ch = self.lines[cy][cx] if cy < len(self.lines) else " "
             if ch == "\n":
-                ch = newline
+                ch = self.newline
             pad.addch(cy, cx, ch)
-            global typo
-            if typo == (cy, cx):
-                typo = None
+            if self.typo == (cy, cx):
+                self.typo = None
 
         cy, cx = 0, 0
         pad_refresh()
@@ -190,7 +191,7 @@ class Screen:
             if key == 27:  # escape; exit
                 break
             elif key == 23:  # ctrl+w: erase word
-                t = typed[-1]
+                t = self.typed[-1]
                 while t and t[-1] == " ":
                     cx -= 1
                     undo_typed()
@@ -198,10 +199,9 @@ class Screen:
                     cx -= 1
                     undo_typed()
             elif key == 9:  # tab: reset
-                typed.clear()
-                typos.clear()
-                global typo
-                typo = None
+                self.typed.clear()
+                self.typos.clear()
+                self.typo = None
                 self.errors = 0
                 self.keys = 0
                 vline = 0
@@ -246,7 +246,7 @@ class Screen:
                     if cx == len(self.lines[cy]):
                         cx = 0
                         cy += 1
-                    if cy == len(self.lines) and typo is None:
+                    if cy == len(self.lines) and self.typo is None:
                         break
                     if skip:  # skip indent forward
                         for ch in self.lines[cy]:
@@ -263,8 +263,8 @@ class Screen:
         return self.results() if self.keys > 0 else ""
 
     def results(self):
-        sec = time.perf_counter() - start
-        chars = sum(len(line) for line in typed)
+        sec = time.perf_counter() - self.start
+        chars = sum(len(line) for line in self.typed)
         acc = 100 * (self.keys - self.errors) / self.keys
         raw = (60 * self.keys) / (5 * sec)
         wpm = (60 * (self.keys - self.errors)) / (5 * sec)
