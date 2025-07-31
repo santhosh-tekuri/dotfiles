@@ -59,6 +59,8 @@ class Screen:
     typos: Set[Pos]
     typo: Optional[Pos]
     typed: List[List[char]]
+    cy: int
+    cx: int
 
     def __init__(self, scr) -> None:
         self.scr = scr
@@ -68,12 +70,15 @@ class Screen:
         self.errors = 0
         self.typos = set()
         self.typo = None
+        self.cy, self.cx = 0, 0
         self.newline = " "
+
         self.init_width()
         self.init_input()
         self.init_height()
         self.init_tty()
         self.init_theme()
+        self.init_pad()
 
     def init_tty(self):
         with open("/dev/tty", "r+") as tty_file:
@@ -124,67 +129,68 @@ class Screen:
         self.green = curses.color_pair(2)
         self.blue = curses.color_pair(3)
 
+    def init_pad(self):
+        self.pad = curses.newpad(len(self.lines) + max(height, 10), width)
+        y, x = self.scr.getmaxyx()
+        y, x = (y - height) // 2, (x - width) // 2
+        yy, xx = y + height - 1, x + width - 1
+        self.vline, self.vline_prev = 0, -1
+        self.pad_location = (y, x, yy, xx)
+        for i, line in enumerate(self.lines):
+            self.pad.addstr(i, 0, line)
+
+    def refresh(self):
+        if self.vline_prev != self.vline:
+            self.vline_prev = self.vline
+            self.scr.addch(
+                self.pad_location[0] + height,
+                self.pad_location[1] + width // 2,
+                " " if self.vline + height >= len(self.lines) else "⌄",
+            )
+            self.scr.refresh()
+        self.pad.move(self.cy, self.cx)
+        self.pad.refresh(self.vline, 0, *self.pad_location)
+
+    def add_typed(self, ch):
+        if not self.keys:
+            self.start = time.perf_counter()
+        self.keys += 1
+        if self.cy >= len(self.typed):
+            self.typed.append(list())
+        self.typed[-1].append(ch)
+        if self.cy < len(self.lines) and ch == self.lines[self.cy][self.cx]:
+            if (self.cy, self.cx) in self.typos:
+                self.pad.addch(ch, self.blue)
+            else:
+                self.pad.addch(ch, self.green)
+        else:
+            self.typos.add((self.cy, self.cx))
+            self.errors += 1
+            if self.typo is None:
+                self.typo = (self.cy, self.cx)
+            if ch == "\n":
+                ch = newline_char
+            elif ch == " ":
+                ch = space_char
+            self.pad.addch(ch, self.red)
+
+    def undo_typed(self):
+        self.typed[-1].pop()
+        if not self.typed[-1]:
+            self.typed.pop()
+        ch = self.lines[self.cy][self.cx] if self.cy < len(self.lines) else " "
+        if ch == "\n":
+            ch = self.newline
+        self.pad.addch(self.cy, self.cx, ch)
+        if self.typo == (self.cy, self.cx):
+            self.typo = None
+
     def run(self):
         scr = self.scr
         curses.set_escdelay(25)
         scr.refresh()
 
-        self.pad = curses.newpad(len(self.lines) + max(height, 10), width)
-        y, x = scr.getmaxyx()
-        y, x = (y - height) // 2, (x - width) // 2
-        yy, xx = y + height - 1, x + width - 1
-        self.vline, self.vline_prev = 0, -1
-        for i, line in enumerate(self.lines):
-            self.pad.addstr(i, 0, line)
-
-        def pad_refresh():
-            if self.vline_prev != self.vline:
-                self.vline_prev = self.vline
-                scr.addch(
-                    y + height,
-                    x + width // 2,
-                    " " if self.vline + height >= len(self.lines) else "⌄",
-                )
-                scr.refresh()
-            self.pad.move(self.cy, self.cx)
-            self.pad.refresh(self.vline, 0, y, x, yy, xx)
-
-        def add_typed(ch):
-            if not self.keys:
-                self.start = time.perf_counter()
-            self.keys += 1
-            if self.cy >= len(self.typed):
-                self.typed.append(list())
-            self.typed[-1].append(ch)
-            if self.cy < len(self.lines) and ch == self.lines[self.cy][self.cx]:
-                if (self.cy, self.cx) in self.typos:
-                    self.pad.addch(ch, self.blue)
-                else:
-                    self.pad.addch(ch, self.green)
-            else:
-                self.typos.add((self.cy, self.cx))
-                self.errors += 1
-                if self.typo is None:
-                    self.typo = (self.cy, self.cx)
-                if ch == "\n":
-                    ch = newline_char
-                elif ch == " ":
-                    ch = space_char
-                self.pad.addch(ch, self.red)
-
-        def undo_typed():
-            self.typed[-1].pop()
-            if not self.typed[-1]:
-                self.typed.pop()
-            ch = self.lines[self.cy][self.cx] if self.cy < len(self.lines) else " "
-            if ch == "\n":
-                ch = self.newline
-            self.pad.addch(self.cy, self.cx, ch)
-            if self.typo == (self.cy, self.cx):
-                self.typo = None
-
-        self.cy, self.cx = 0, 0
-        pad_refresh()
+        self.refresh()
         while True:
             key = scr.getch()
             if key == 27:  # escape; exit
@@ -193,10 +199,10 @@ class Screen:
                 t = self.typed[-1]
                 while t and t[-1] == " ":
                     self.cx -= 1
-                    undo_typed()
+                    self.undo_typed()
                 while t and t[-1] != " ":
                     self.cx -= 1
-                    undo_typed()
+                    self.undo_typed()
             elif key == 9:  # tab: reset
                 self.typed.clear()
                 self.typos.clear()
@@ -213,7 +219,7 @@ class Screen:
                     continue
                 if self.cx > 0:
                     self.cx -= 1
-                    undo_typed()
+                    self.undo_typed()
                     if self.cy != 0 and self.cy < len(self.lines):
                         # skip indent backward
                         skip = True
@@ -231,20 +237,20 @@ class Screen:
                         if self.cy < len(self.lines)
                         else width - 1
                     )
-                    undo_typed()
+                    self.undo_typed()
                 if self.cy < self.vline:
                     self.vline -= 1
             elif key == 10 or (key >= 32 and key <= 126):
                 key = chr(key)
                 if self.cy >= len(self.lines):
-                    add_typed(key)
+                    self.add_typed(key)
                     self.cx += 1
                     if self.cx == width:
                         self.cx = 0
                         self.cy += 1
                 else:
                     skip = self.lines[self.cy][self.cx] == "\n"
-                    add_typed(key)
+                    self.add_typed(key)
                     self.cx += 1
                     if self.cx == len(self.lines[self.cy]):
                         self.cx = 0
@@ -262,7 +268,7 @@ class Screen:
                     self.vline = self.cy
             else:
                 continue
-            pad_refresh()
+            self.refresh()
         return self.results() if self.keys > 0 else ""
 
     def results(self):
