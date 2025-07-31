@@ -11,6 +11,13 @@ import traceback
 char = str
 Pos = Tuple[int, int]
 
+# color theme
+black = "#0d0f18"
+white = "#75869a"
+red = "#ef534f"
+green = "#4d6e2a"
+blue = "#2c7fff"
+
 width: int = 100
 height: int = 10
 newline_char: char = "↲"
@@ -39,11 +46,11 @@ def init_color(c, hex):
 
 def main(scr):
     if curses.has_colors() and curses.can_change_color():
-        init_color(curses.COLOR_BLACK, "#0d0f18")
-        init_color(curses.COLOR_WHITE, "#75869a")
-        init_color(curses.COLOR_RED, "#ef534f")
-        init_color(curses.COLOR_GREEN, "#4d6e2a")
-        init_color(curses.COLOR_BLUE, "#2c7fff")
+        init_color(curses.COLOR_BLACK, black)
+        init_color(curses.COLOR_WHITE, white)
+        init_color(curses.COLOR_RED, globals()["red"])
+        init_color(curses.COLOR_GREEN, globals()["green"])
+        init_color(curses.COLOR_BLUE, globals()["blue"])
         bg = curses.COLOR_BLACK
     else:
         curses.use_default_colors()
