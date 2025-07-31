@@ -256,6 +256,27 @@ class Screen:
             else:
                 continue
             pad_refresh()
+        return self.results() if keys > 0 else ""
+
+    def results(self):
+        sec = time.perf_counter() - start
+        chars = sum(len(line) for line in typed)
+        acc = 100 * (keys - errors) / keys
+        raw = (60 * keys) / (5 * sec)
+        wpm = (60 * (keys - errors)) / (5 * sec)
+        delta = str(datetime.timedelta(seconds=sec))
+        delta = delta.removeprefix("0:").removeprefix("00:")
+        if "." in delta:
+            delta = delta[:-4]
+        return (
+            f"wpm:      {wpm:.2f}\n"
+            f"raw:      {raw:.2f}\n"
+            f"accuracy: {acc:.2f}\n"
+            f"chars:    {chars}\n"
+            f"typed:    {keys}\n"
+            f"errors:   {errors}\n"
+            f"time:     {delta}\n"
+        )
 
 
 def fold(text, width):
@@ -275,7 +296,8 @@ def fold(text, width):
 
 
 try:
-    curses.wrapper(lambda scr: Screen(scr).run())
+    results = curses.wrapper(lambda scr: Screen(scr).run())
+    print(results, end="")
 except KeyboardInterrupt:
     sys.exit(1)
 except TypistException as ex:
@@ -284,20 +306,3 @@ except TypistException as ex:
 except Exception:
     traceback.print_exc()
     sys.exit(1)
-
-if keys > 0:
-    sec = time.perf_counter() - start
-    delta = str(datetime.timedelta(seconds=sec)).removeprefix("0:").removeprefix("00:")
-    if "." in delta:
-        delta = delta[:-4]
-    chars = sum(len(line) for line in typed)
-    acc = 100 * (keys - errors) / keys
-    raw = (60 * keys) / (5 * sec)
-    wpm = (60 * (keys - errors)) / (5 * sec)
-    print(f"wpm:      {wpm:.2f}")
-    print(f"raw:      {raw:.2f}")
-    print(f"accuracy: {acc:.2f}")
-    print(f"chars:    {chars}")
-    print(f"typed:    {keys}")
-    print(f"errors:   {errors}")
-    print(f"time:     {delta}")
