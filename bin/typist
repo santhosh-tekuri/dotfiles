@@ -249,7 +249,7 @@ class Screen:
                             if ch != " ":
                                 break
                             cx += 1
-                    elif cy == vline + height - 1:
+                    if cy == vline + height - 1:
                         vline = min(cy, len(lines) - height)
                 if cy >= vline + height:
                     vline = cy
