@@ -129,26 +129,25 @@ class Screen:
         curses.set_escdelay(25)
         scr.refresh()
 
-        pad = curses.newpad(len(self.lines) + max(height, 10), width)
+        self.pad = curses.newpad(len(self.lines) + max(height, 10), width)
         y, x = scr.getmaxyx()
         y, x = (y - height) // 2, (x - width) // 2
         yy, xx = y + height - 1, x + width - 1
-        vline, vline_prev = 0, -1
+        self.vline, self.vline_prev = 0, -1
         for i, line in enumerate(self.lines):
-            pad.addstr(i, 0, line)
+            self.pad.addstr(i, 0, line)
 
         def pad_refresh():
-            nonlocal vline_prev
-            if vline_prev != vline:
-                vline_prev = vline
+            if self.vline_prev != self.vline:
+                self.vline_prev = self.vline
                 scr.addch(
                     y + height,
                     x + width // 2,
-                    " " if vline + height >= len(self.lines) else "⌄",
+                    " " if self.vline + height >= len(self.lines) else "⌄",
                 )
                 scr.refresh()
-            pad.move(cy, cx)
-            pad.refresh(vline, 0, y, x, yy, xx)
+            self.pad.move(cy, cx)
+            self.pad.refresh(self.vline, 0, y, x, yy, xx)
 
         def add_typed(ch):
             if not self.keys:
@@ -159,9 +158,9 @@ class Screen:
             self.typed[-1].append(ch)
             if cy < len(self.lines) and ch == self.lines[cy][cx]:
                 if (cy, cx) in self.typos:
-                    pad.addch(ch, self.blue)
+                    self.pad.addch(ch, self.blue)
                 else:
-                    pad.addch(ch, self.green)
+                    self.pad.addch(ch, self.green)
             else:
                 self.typos.add((cy, cx))
                 self.errors += 1
@@ -171,7 +170,7 @@ class Screen:
                     ch = newline_char
                 elif ch == " ":
                     ch = space_char
-                pad.addch(ch, self.red)
+                self.pad.addch(ch, self.red)
 
         def undo_typed():
             self.typed[-1].pop()
@@ -180,7 +179,7 @@ class Screen:
             ch = self.lines[cy][cx] if cy < len(self.lines) else " "
             if ch == "\n":
                 ch = self.newline
-            pad.addch(cy, cx, ch)
+            self.pad.addch(cy, cx, ch)
             if self.typo == (cy, cx):
                 self.typo = None
 
@@ -204,11 +203,11 @@ class Screen:
                 self.typo = None
                 self.errors = 0
                 self.keys = 0
-                vline = 0
+                self.vline = 0
                 cx, cy = 0, 0
-                pad.clear()
+                self.pad.clear()
                 for i, line in enumerate(self.lines):
-                    pad.addstr(i, 0, line)
+                    self.pad.addstr(i, 0, line)
             elif key == curses.KEY_BACKSPACE or key == 127:  # backspace
                 if cx == 0 and cy == 0:
                     continue
@@ -229,8 +228,8 @@ class Screen:
                     cy -= 1
                     cx = len(self.lines[cy]) - 1 if cy < len(self.lines) else width - 1
                     undo_typed()
-                if cy < vline:
-                    vline -= 1
+                if cy < self.vline:
+                    self.vline -= 1
             elif key == 10 or (key >= 32 and key <= 126):
                 key = chr(key)
                 if cy >= len(self.lines):
@@ -253,10 +252,10 @@ class Screen:
                             if ch != " ":
                                 break
                             cx += 1
-                    if cy == vline + height - 1:
-                        vline = min(cy, len(self.lines) - height)
-                if cy >= vline + height:
-                    vline = cy
+                    if cy == self.vline + height - 1:
+                        self.vline = min(cy, len(self.lines) - height)
+                if cy >= self.vline + height:
+                    self.vline = cy
             else:
                 continue
             pad_refresh()
