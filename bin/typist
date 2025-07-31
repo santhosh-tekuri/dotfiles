@@ -36,7 +36,6 @@ newline_char: char = "↲"
 space_char: char = "␣"
 lines = list()
 typed: List[List[char]] = list()
-keys: int = 0
 typos: Set[Pos] = set()
 typo: Optional[Pos] = None
 errors: int = 0
@@ -66,6 +65,7 @@ class Screen:
         self.init_height()
         self.init_tty()
         self.init_theme()
+        self.keys = 0
 
     def init_tty(self):
         with open("/dev/tty", "r+") as tty_file:
@@ -143,10 +143,10 @@ class Screen:
             pad.refresh(vline, 0, y, x, yy, xx)
 
         def add_typed(ch):
-            global start, keys
-            if not keys:
+            global start
+            if not self.keys:
                 start = time.perf_counter()
-            keys += 1
+            self.keys += 1
             if cy >= len(typed):
                 typed.append(list())
             typed[-1].append(ch)
@@ -196,10 +196,10 @@ class Screen:
             elif key == 9:  # tab: reset
                 typed.clear()
                 typos.clear()
-                global typo, errors, keys
+                global typo, errors
                 typo = None
                 errors = 0
-                keys = 0
+                self.keys = 0
                 vline = 0
                 cx, cy = 0, 0
                 pad.clear()
@@ -256,14 +256,14 @@ class Screen:
             else:
                 continue
             pad_refresh()
-        return self.results() if keys > 0 else ""
+        return self.results() if self.keys > 0 else ""
 
     def results(self):
         sec = time.perf_counter() - start
         chars = sum(len(line) for line in typed)
-        acc = 100 * (keys - errors) / keys
-        raw = (60 * keys) / (5 * sec)
-        wpm = (60 * (keys - errors)) / (5 * sec)
+        acc = 100 * (self.keys - errors) / self.keys
+        raw = (60 * self.keys) / (5 * sec)
+        wpm = (60 * (self.keys - errors)) / (5 * sec)
         delta = str(datetime.timedelta(seconds=sec))
         delta = delta.removeprefix("0:").removeprefix("00:")
         if "." in delta:
@@ -273,7 +273,7 @@ class Screen:
             f"raw:      {raw:.2f}\n"
             f"accuracy: {acc:.2f}\n"
             f"chars:    {chars}\n"
-            f"typed:    {keys}\n"
+            f"typed:    {self.keys}\n"
             f"errors:   {errors}\n"
             f"time:     {delta}\n"
         )
