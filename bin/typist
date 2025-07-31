@@ -54,12 +54,8 @@ def log(*args):
         print(file=log, *args)
 
 
-def init_color(c, hex):
-    hex = hex.lstrip("#")
-    r = int(int(hex[0:2], 16) * 1000 / 255)
-    g = int(int(hex[2:4], 16) * 1000 / 255)
-    b = int(int(hex[4:6], 16) * 1000 / 255)
-    curses.init_color(c, r, g, b)
+def rgb(hex):
+    return (int(int(hex[i : i + 2], 16) * 1000 / 255) for i in range(1, 6, 2))
 
 
 class Screen:
@@ -102,11 +98,11 @@ class Screen:
 
     def init_theme(self):
         if curses.has_colors() and curses.can_change_color():
-            init_color(curses.COLOR_BLACK, Theme.black)
-            init_color(curses.COLOR_WHITE, Theme.white)
-            init_color(curses.COLOR_RED, Theme.red)
-            init_color(curses.COLOR_GREEN, Theme.green)
-            init_color(curses.COLOR_BLUE, Theme.blue)
+            curses.init_color(curses.COLOR_BLACK, *rgb(Theme.black))
+            curses.init_color(curses.COLOR_WHITE, *rgb(Theme.white))
+            curses.init_color(curses.COLOR_RED, *rgb(Theme.red))
+            curses.init_color(curses.COLOR_GREEN, *rgb(Theme.green))
+            curses.init_color(curses.COLOR_BLUE, *rgb(Theme.blue))
             bg = curses.COLOR_BLACK
         else:
             curses.use_default_colors()
