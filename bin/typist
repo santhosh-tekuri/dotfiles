@@ -139,6 +139,18 @@ class Screen:
         for i, line in enumerate(self.lines):
             self.pad.addstr(i, 0, line)
 
+    def reset(self):
+        self.typed.clear()
+        self.typos.clear()
+        self.typo = None
+        self.errors = 0
+        self.keys = 0
+        self.vline = 0
+        self.cx, self.cy = 0, 0
+        self.pad.clear()
+        for i, line in enumerate(self.lines):
+            self.pad.addstr(i, 0, line)
+
     def refresh(self):
         if self.vline_prev != self.vline:
             self.vline_prev = self.vline
@@ -185,6 +197,67 @@ class Screen:
         if self.typo == (self.cy, self.cx):
             self.typo = None
 
+    def erase_word(self):
+        t = self.typed[-1]
+        while t and t[-1] == " ":
+            self.cx -= 1
+            self.undo_typed()
+        while t and t[-1] != " ":
+            self.cx -= 1
+            self.undo_typed()
+
+    def on_backspace(self):
+        if self.cx == 0 and self.cy == 0:
+            return
+        if self.cx > 0:
+            self.cx -= 1
+            self.undo_typed()
+            if self.cy != 0 and self.cy < len(self.lines):
+                # skip indent backward
+                skip = True
+                for ch in reversed(self.lines[self.cy][: self.cx + 1]):
+                    if ch != " ":
+                        skip = False
+                        break
+                if skip:
+                    self.cy -= 1
+                    self.cx = len(self.lines[self.cy]) - 1
+        else:
+            self.cy -= 1
+            self.cx = (
+                len(self.lines[self.cy]) - 1 if self.cy < len(self.lines) else width - 1
+            )
+            self.undo_typed()
+        if self.cy < self.vline:
+            self.vline -= 1
+
+    def on_char(self, key):
+        if self.cy >= len(self.lines):
+            self.add_typed(key)
+            self.cx += 1
+            if self.cx == width:
+                self.cx = 0
+                self.cy += 1
+        else:
+            skip = self.lines[self.cy][self.cx] == "\n"
+            self.add_typed(key)
+            self.cx += 1
+            if self.cx == len(self.lines[self.cy]):
+                self.cx = 0
+                self.cy += 1
+            if self.cy == len(self.lines) and self.typo is None:
+                return True
+            if skip:  # skip indent forward
+                for ch in self.lines[self.cy]:
+                    if ch != " ":
+                        break
+                    self.cx += 1
+            if self.cy == self.vline + height - 1:
+                self.vline = min(self.cy, len(self.lines) - height)
+        if self.cy >= self.vline + height:
+            self.vline = self.cy
+        return False
+
     def run(self):
         scr = self.scr
         curses.set_escdelay(25)
@@ -196,76 +269,14 @@ class Screen:
             if key == 27:  # escape; exit
                 break
             elif key == 23:  # ctrl+w: erase word
-                t = self.typed[-1]
-                while t and t[-1] == " ":
-                    self.cx -= 1
-                    self.undo_typed()
-                while t and t[-1] != " ":
-                    self.cx -= 1
-                    self.undo_typed()
+                self.erase_word()
             elif key == 9:  # tab: reset
-                self.typed.clear()
-                self.typos.clear()
-                self.typo = None
-                self.errors = 0
-                self.keys = 0
-                self.vline = 0
-                self.cx, self.cy = 0, 0
-                self.pad.clear()
-                for i, line in enumerate(self.lines):
-                    self.pad.addstr(i, 0, line)
+                self.reset()
             elif key == curses.KEY_BACKSPACE or key == 127:  # backspace
-                if self.cx == 0 and self.cy == 0:
-                    continue
-                if self.cx > 0:
-                    self.cx -= 1
-                    self.undo_typed()
-                    if self.cy != 0 and self.cy < len(self.lines):
-                        # skip indent backward
-                        skip = True
-                        for ch in reversed(self.lines[self.cy][: self.cx + 1]):
-                            if ch != " ":
-                                skip = False
-                                break
-                        if skip:
-                            self.cy -= 1
-                            self.cx = len(self.lines[self.cy]) - 1
-                else:
-                    self.cy -= 1
-                    self.cx = (
-                        len(self.lines[self.cy]) - 1
-                        if self.cy < len(self.lines)
-                        else width - 1
-                    )
-                    self.undo_typed()
-                if self.cy < self.vline:
-                    self.vline -= 1
+                self.on_backspace()
             elif key == 10 or (key >= 32 and key <= 126):
-                key = chr(key)
-                if self.cy >= len(self.lines):
-                    self.add_typed(key)
-                    self.cx += 1
-                    if self.cx == width:
-                        self.cx = 0
-                        self.cy += 1
-                else:
-                    skip = self.lines[self.cy][self.cx] == "\n"
-                    self.add_typed(key)
-                    self.cx += 1
-                    if self.cx == len(self.lines[self.cy]):
-                        self.cx = 0
-                        self.cy += 1
-                    if self.cy == len(self.lines) and self.typo is None:
-                        break
-                    if skip:  # skip indent forward
-                        for ch in self.lines[self.cy]:
-                            if ch != " ":
-                                break
-                            self.cx += 1
-                    if self.cy == self.vline + height - 1:
-                        self.vline = min(self.cy, len(self.lines) - height)
-                if self.cy >= self.vline + height:
-                    self.vline = self.cy
+                if self.on_char(chr(key)):
+                    break
             else:
                 continue
             self.refresh()
