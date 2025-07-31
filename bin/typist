@@ -37,7 +37,6 @@ space_char: char = "␣"
 typed: List[List[char]] = list()
 typos: Set[Pos] = set()
 typo: Optional[Pos] = None
-errors: int = 0
 newline: char = " "
 start: float = 0
 
@@ -57,10 +56,15 @@ def rgb(hex):
 
 
 class Screen:
+    lines: List[str]
+    keys: int
+    errors: int
+
     def __init__(self, scr) -> None:
         self.scr = scr
         self.lines = list()
         self.keys = 0
+        self.errors = 0
         self.init_width()
         self.init_input()
         self.init_height()
@@ -157,8 +161,8 @@ class Screen:
                     pad.addch(ch, self.green)
             else:
                 typos.add((cy, cx))
-                global errors, typo
-                errors += 1
+                global typo
+                self.errors += 1
                 if typo is None:
                     typo = (cy, cx)
                 if ch == "\n":
@@ -196,9 +200,9 @@ class Screen:
             elif key == 9:  # tab: reset
                 typed.clear()
                 typos.clear()
-                global typo, errors
+                global typo
                 typo = None
-                errors = 0
+                self.errors = 0
                 self.keys = 0
                 vline = 0
                 cx, cy = 0, 0
@@ -261,9 +265,9 @@ class Screen:
     def results(self):
         sec = time.perf_counter() - start
         chars = sum(len(line) for line in typed)
-        acc = 100 * (self.keys - errors) / self.keys
+        acc = 100 * (self.keys - self.errors) / self.keys
         raw = (60 * self.keys) / (5 * sec)
-        wpm = (60 * (self.keys - errors)) / (5 * sec)
+        wpm = (60 * (self.keys - self.errors)) / (5 * sec)
         delta = str(datetime.timedelta(seconds=sec))
         delta = delta.removeprefix("0:").removeprefix("00:")
         if "." in delta:
@@ -274,7 +278,7 @@ class Screen:
             f"accuracy: {acc:.2f}\n"
             f"chars:    {chars}\n"
             f"typed:    {self.keys}\n"
-            f"errors:   {errors}\n"
+            f"errors:   {self.errors}\n"
             f"time:     {delta}\n"
         )
 
