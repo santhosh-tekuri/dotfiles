@@ -34,7 +34,6 @@ width: int = 80
 height: int = 10
 newline_char: char = "↲"
 space_char: char = "␣"
-lines = list()
 typed: List[List[char]] = list()
 typos: Set[Pos] = set()
 typo: Optional[Pos] = None
@@ -60,12 +59,13 @@ def rgb(hex):
 class Screen:
     def __init__(self, scr) -> None:
         self.scr = scr
+        self.lines = list()
+        self.keys = 0
         self.init_width()
         self.init_input()
         self.init_height()
         self.init_tty()
         self.init_theme()
-        self.keys = 0
 
     def init_tty(self):
         with open("/dev/tty", "r+") as tty_file:
@@ -83,16 +83,16 @@ class Screen:
             line = line.translate(trans)
             line = line.encode("ascii", "ignore").decode("ascii")  # rm non-ascii chars
             if len(line) > width:
-                lines.extend(fold(line, width))
+                self.lines.extend(fold(line, width))
             else:
-                lines.append(line)
-        if not lines:
+                self.lines.append(line)
+        if not self.lines:
             raise TypistException("empty input")
-        lines[-1] = lines[-1].rstrip()
+        self.lines[-1] = self.lines[-1].rstrip()
 
     def init_height(self):
         global height
-        height = min(height, len(lines), curses.LINES - 1)
+        height = min(height, len(self.lines), curses.LINES - 1)
         if height < 1:
             raise TypistException("terminal height is too small")
 
@@ -121,12 +121,12 @@ class Screen:
         curses.set_escdelay(25)
         scr.refresh()
 
-        pad = curses.newpad(len(lines) + max(height, 10), width)
+        pad = curses.newpad(len(self.lines) + max(height, 10), width)
         y, x = scr.getmaxyx()
         y, x = (y - height) // 2, (x - width) // 2
         yy, xx = y + height - 1, x + width - 1
         vline, vline_prev = 0, -1
-        for i, line in enumerate(lines):
+        for i, line in enumerate(self.lines):
             pad.addstr(i, 0, line)
 
         def pad_refresh():
@@ -136,7 +136,7 @@ class Screen:
                 scr.addch(
                     y + height,
                     x + width // 2,
-                    " " if vline + height >= len(lines) else "⌄",
+                    " " if vline + height >= len(self.lines) else "⌄",
                 )
                 scr.refresh()
             pad.move(cy, cx)
@@ -150,7 +150,7 @@ class Screen:
             if cy >= len(typed):
                 typed.append(list())
             typed[-1].append(ch)
-            if cy < len(lines) and ch == lines[cy][cx]:
+            if cy < len(self.lines) and ch == self.lines[cy][cx]:
                 if (cy, cx) in typos:
                     pad.addch(ch, self.blue)
                 else:
@@ -171,7 +171,7 @@ class Screen:
             typed[-1].pop()
             if not typed[-1]:
                 typed.pop()
-            ch = lines[cy][cx] if cy < len(lines) else " "
+            ch = self.lines[cy][cx] if cy < len(self.lines) else " "
             if ch == "\n":
                 ch = newline
             pad.addch(cy, cx, ch)
@@ -203,7 +203,7 @@ class Screen:
                 vline = 0
                 cx, cy = 0, 0
                 pad.clear()
-                for i, line in enumerate(lines):
+                for i, line in enumerate(self.lines):
                     pad.addstr(i, 0, line)
             elif key == curses.KEY_BACKSPACE or key == 127:  # backspace
                 if cx == 0 and cy == 0:
@@ -211,46 +211,46 @@ class Screen:
                 if cx > 0:
                     cx -= 1
                     undo_typed()
-                    if cy != 0 and cy < len(lines):
+                    if cy != 0 and cy < len(self.lines):
                         # skip indent backward
                         skip = True
-                        for ch in reversed(lines[cy][: cx + 1]):
+                        for ch in reversed(self.lines[cy][: cx + 1]):
                             if ch != " ":
                                 skip = False
                                 break
                         if skip:
                             cy -= 1
-                            cx = len(lines[cy]) - 1
+                            cx = len(self.lines[cy]) - 1
                 else:
                     cy -= 1
-                    cx = len(lines[cy]) - 1 if cy < len(lines) else width - 1
+                    cx = len(self.lines[cy]) - 1 if cy < len(self.lines) else width - 1
                     undo_typed()
                 if cy < vline:
                     vline -= 1
             elif key == 10 or (key >= 32 and key <= 126):
                 key = chr(key)
-                if cy >= len(lines):
+                if cy >= len(self.lines):
                     add_typed(key)
                     cx += 1
                     if cx == width:
                         cx = 0
                         cy += 1
                 else:
-                    skip = lines[cy][cx] == "\n"
+                    skip = self.lines[cy][cx] == "\n"
                     add_typed(key)
                     cx += 1
-                    if cx == len(lines[cy]):
+                    if cx == len(self.lines[cy]):
                         cx = 0
                         cy += 1
-                    if cy == len(lines) and typo is None:
+                    if cy == len(self.lines) and typo is None:
                         break
                     if skip:  # skip indent forward
-                        for ch in lines[cy]:
+                        for ch in self.lines[cy]:
                             if ch != " ":
                                 break
                             cx += 1
                     if cy == vline + height - 1:
-                        vline = min(cy, len(lines) - height)
+                        vline = min(cy, len(self.lines) - height)
                 if cy >= vline + height:
                     vline = cy
             else:
