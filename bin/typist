@@ -97,9 +97,13 @@ class Screen:
                 self.lines.extend(fold(line, width))
             else:
                 self.lines.append(line)
+        # remove trailing empty newlines
+        while self.lines and self.lines[-1] == "\n":
+            self.lines.pop()
+        # remove trailing whitespace
+        self.lines[-1] = self.lines[-1].rstrip()
         if not self.lines:
             raise TypistException("empty input")
-        self.lines[-1] = self.lines[-1].rstrip()
 
     def init_height(self):
         global height
