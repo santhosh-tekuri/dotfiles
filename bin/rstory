@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
-curl -sS --fail --user-agent 'firefox' 'https://www.reddit.com/r/stories/new.json' | 
+# Usage: rstory [type] [flair]
+# prints random post from subreddit stories
+
+url="https://www.reddit.com/r/stories/${1:-new}.json"
+if (($#>1)); then
+    url+="?link_flair_text=$2"
+fi
+
+curl -sS --fail --user-agent 'firefox' "$url" |
  jq -c '.data.children[].data | (.title + "\n\n" + .selftext)' |
  shuf -n 1 |
  jq -r .
