@@ -66,12 +66,9 @@ class Screen:
         self.scr = scr
         self.lines = list()
         self.typed = list()
-        self.keys = 0
-        self.errors = 0
         self.typos = set()
-        self.typo = None
-        self.cy, self.cx = 0, 0
         self.newline = " "
+        self.vline_prev = -1
 
         self.init_width()
         self.init_input()
@@ -79,6 +76,7 @@ class Screen:
         self.init_tty()
         self.init_theme()
         self.init_pad()
+        self.reset()
 
     def init_tty(self):
         with open("/dev/tty", "r+") as tty_file:
@@ -134,10 +132,7 @@ class Screen:
         y, x = self.scr.getmaxyx()
         y, x = (y - height) // 2, (x - width) // 2
         yy, xx = y + height - 1, x + width - 1
-        self.vline, self.vline_prev = 0, -1
         self.pad_location = (y, x, yy, xx)
-        for i, line in enumerate(self.lines):
-            self.pad.addstr(i, 0, line)
 
     def reset(self):
         self.typed.clear()
@@ -171,13 +166,11 @@ class Screen:
             self.typed.append(list())
         self.typed[-1].append(ch)
         if self.cy < len(self.lines) and ch == self.lines[self.cy][self.cx]:
-            if (self.cy, self.cx) in self.typos:
-                self.pad.addch(ch, self.blue)
-            else:
-                self.pad.addch(ch, self.green)
+            color = self.blue if (self.cy, self.cx) in self.typos else self.green
+            self.pad.addch(ch, color)
         else:
-            self.typos.add((self.cy, self.cx))
             self.errors += 1
+            self.typos.add((self.cy, self.cx))
             if self.typo is None:
                 self.typo = (self.cy, self.cx)
             if ch == "\n":
