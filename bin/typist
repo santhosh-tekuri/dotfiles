@@ -35,6 +35,7 @@ width: int = 80
 height: int = 10
 newline_char: char = "↲"
 space_char: char = "␣"
+print("\033[4 q", end="", flush=True)  # use underline cursor
 
 
 class TypistException(Exception):
