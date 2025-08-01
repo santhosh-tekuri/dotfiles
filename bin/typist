@@ -229,15 +229,14 @@ class Screen:
             self.vline -= 1
 
     def on_char(self, key):
+        self.add_typed(key)
         if self.cy >= len(self.lines):
-            self.add_typed(key)
             self.cx += 1
             if self.cx == width:
                 self.cx = 0
                 self.cy += 1
         else:
             skip = self.lines[self.cy][self.cx] == "\n"
-            self.add_typed(key)
             self.cx += 1
             if self.cx == len(self.lines[self.cy]):
                 self.cx = 0
