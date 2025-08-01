@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from typing import Optional, List, Set, Tuple
+from typing import Optional, List, Set, Dict, Tuple
 import sys
 import os
+import re
 import time
 import datetime
 import curses
@@ -54,6 +55,7 @@ def rgb(hex):
 
 class Screen:
     lines: List[str]
+    hints: Dict[Pos, char]
     keys: int
     errors: int
     start: float
@@ -74,6 +76,7 @@ class Screen:
 
         self.init_width()
         self.init_input()
+        self.init_hints()
         self.init_height()
         self.init_tty()
         self.init_theme()
@@ -106,6 +109,14 @@ class Screen:
         self.lines[-1] = self.lines[-1].rstrip()
         if not self.lines:
             raise TypistException("empty input")
+
+    def init_hints(self):
+        self.hints = dict()
+        twospaces = re.compile("[^ ]  [^ ]")
+        for y, line in enumerate(self.lines):
+            for m in re.finditer(twospaces, line):
+                self.hints[y, m.start() + 1] = space_char
+                self.hints[y, m.start() + 2] = space_char
 
     def init_height(self):
         global height
@@ -158,6 +169,8 @@ class Screen:
         self.pad.clear()
         for i, line in enumerate(self.lines):
             self.pad.addstr(i, 0, line)
+        for pos, ch in self.hints.items():
+            self.pad.addch(*pos, ch, self.dull)
 
     def refresh(self):
         if self.vline_prev != self.vline:
@@ -196,10 +209,15 @@ class Screen:
         self.typed[-1].pop()
         if not self.typed[-1]:
             self.typed.pop()
-        ch = self.lines[self.cy][self.cx] if self.cy < len(self.lines) else " "
-        if ch == "\n":
-            ch = self.newline
-        self.pad.addch(self.cy, self.cx, ch)
+        ch = self.hints.get((self.cy, self.cx))
+        if ch is None:
+            ch = self.lines[self.cy][self.cx] if self.cy < len(self.lines) else " "
+            if ch == "\n":
+                ch = self.newline
+            self.pad.addch(self.cy, self.cx, ch)
+        else:
+            self.pad.addch(self.cy, self.cx, ch, self.dull)
+
         if self.typo == (self.cy, self.cx):
             self.typo = None
 
