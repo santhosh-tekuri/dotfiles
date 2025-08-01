@@ -18,6 +18,7 @@ class Theme:
     red = "#ef534f"
     green = "#4d6e2a"
     blue = "#2c7fff"
+    dull = "#2e353d"
 
 
 translations = {
@@ -118,6 +119,7 @@ class Screen:
             curses.init_color(curses.COLOR_RED, *rgb(Theme.red))
             curses.init_color(curses.COLOR_GREEN, *rgb(Theme.green))
             curses.init_color(curses.COLOR_BLUE, *rgb(Theme.blue))
+            curses.init_color(curses.COLOR_MAGENTA, *rgb(Theme.dull))
             bg = curses.COLOR_BLACK
         else:
             curses.use_default_colors()
@@ -126,10 +128,12 @@ class Screen:
         curses.init_pair(1, curses.COLOR_RED, bg)
         curses.init_pair(2, curses.COLOR_GREEN, bg)
         curses.init_pair(3, curses.COLOR_BLUE, bg)
+        curses.init_pair(4, curses.COLOR_MAGENTA, bg)
 
         self.red = curses.color_pair(1)
         self.green = curses.color_pair(2)
         self.blue = curses.color_pair(3)
+        self.dull = curses.color_pair(4)
 
     def init_pad(self):
         self.pad = curses.newpad(len(self.lines) + max(height, 10), width)
@@ -137,6 +141,10 @@ class Screen:
         y, x = (y - height) // 2, (x - width) // 2
         yy, xx = y + height - 1, x + width - 1
         self.pad_location = (y, x, yy, xx)
+        # draw ruler
+        while y <= yy:
+            self.scr.addch(y, x + width, "│", self.dull)
+            y += 1
 
     def reset(self):
         self.typed.clear()
