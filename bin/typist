@@ -114,9 +114,17 @@ class Screen:
         self.hints = dict()
         twospaces = re.compile("[^ ]  [^ ]")
         for y, line in enumerate(self.lines):
+            # words sepated with two spaces
             for m in re.finditer(twospaces, line):
                 self.hints[y, m.start() + 1] = space_char
                 self.hints[y, m.start() + 2] = space_char
+
+            # space(s) before newline
+            if line.endswith("\n"):
+                for i in range(len(line) - 2, -1, -1):
+                    if line[i] != " ":
+                        break
+                    self.hints[(y, i)] = space_char
 
     def init_height(self):
         global height
