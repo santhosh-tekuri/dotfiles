@@ -290,9 +290,9 @@ class Screen:
         if "." in delta:
             delta = delta[:-4]
         return (
-            f"wpm:      {wpm:.2f}\n"
-            f"raw:      {raw:.2f}\n"
-            f"accuracy: {acc:.2f}\n"
+            f"wpm:      {format_float(wpm)}\n"
+            f"raw:      {format_float(raw)}\n"
+            f"accuracy: {format_float(acc)}\n"
             f"chars:    {chars}\n"
             f"typed:    {self.keys}\n"
             f"errors:   {self.errors}\n"
@@ -314,6 +314,13 @@ def fold(text, width):
         line = text[:w]
         text = text[w:]
         yield line
+
+
+def format_float(v):
+    s = f"{v:.2f}"
+    while "." in s and s.endswith("0"):
+        s = s[:-1]
+    return s.rstrip(".")
 
 
 try:
