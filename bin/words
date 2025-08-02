@@ -10,9 +10,9 @@ symbols=""
 lang=english
 
 usage=$(cat <<EOF
-USAGE: words [options...] <source>
+Usage: words [options...] <source>
 
--n <words>          number of words (default 50)
+-n <num-words>      number of words (default 50)
                     or line-range in sed syntax, ex: 20,90
 -c                  captalize words randomly
 -C                  capitalize all words
@@ -22,7 +22,7 @@ USAGE: words [options...] <source>
 -x <symbols>        add given symbols
 -h                  show this help
 
-source can be:
+<source> can be:
     any monkeytype language
     keybr
     os (from /usr/share/dict/words)
