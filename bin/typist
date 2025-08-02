@@ -161,10 +161,20 @@ class Screen:
         y, x = (y - height) // 2, (x - width) // 2
         yy, xx = y + height - 1, x + width - 1
         self.pad_location = (y, x, yy, xx)
-        # draw ruler
-        while y <= yy:
-            self.scr.addch(y, x + width, "│", self.dull)
-            y += 1
+
+    def draw_scrollbar(self):
+        x = self.pad_location[3] + 1
+        y = self.pad_location[0]
+        for i in range(height):
+            self.scr.addch(y + i, x, "│", self.dull)
+        cheight = len(self.lines)
+        vheight = height
+        if cheight > vheight:
+            vline = min(self.vline, cheight - vheight)
+            theight = max(1, int(vheight * (vheight / cheight)))
+            tpos = int((vline / (cheight - vheight)) * (vheight - theight))
+            for i in range(theight):
+                self.scr.addch(y + tpos + i, x, "│")
 
     def reset(self):
         self.typed.clear()
@@ -188,6 +198,7 @@ class Screen:
                 self.pad_location[1] + width // 2,
                 " " if self.vline + height >= len(self.lines) else "⌄",
             )
+            self.draw_scrollbar()
             self.scr.refresh()
         self.pad.move(self.cy, self.cx)
         self.pad.refresh(self.vline, 0, *self.pad_location)
