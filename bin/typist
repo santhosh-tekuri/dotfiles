@@ -106,9 +106,9 @@ class Screen:
         while self.lines and self.lines[-1] == "\n":
             self.lines.pop()
         # remove trailing whitespace
-        self.lines[-1] = self.lines[-1].rstrip()
         if not self.lines:
             raise TypistException("empty input")
+        self.lines[-1] = self.lines[-1].rstrip()
 
     def init_hints(self):
         self.hints = dict()
@@ -323,6 +323,24 @@ class Screen:
         delta = delta.removeprefix("0:").removeprefix("00:")
         if "." in delta:
             delta = delta[:-4]
+
+        misspelled = set()
+        for typo in self.typos:
+            line = self.lines[typo[0]]
+            if not line[typo[1]].isspace():
+                i, j = typo[1], typo[1]
+                while i > 0 and not line[i - 1].isspace():
+                    i -= 1
+                while j < len(line) and not line[j + 1].isspace():
+                    j += 1
+                misspelled.add(line[i : j + 1])
+
+        f = os.path.expanduser("~/.local/share/typist/words/misspelled")
+        os.makedirs(os.path.dirname(f), exist_ok=True)
+        with open(f, "a") as f:
+            for word in misspelled:
+                print(word, file=f)
+
         return (
             f"wpm:      {format_float(wpm)}\n"
             f"raw:      {format_float(raw)}\n"
@@ -331,6 +349,7 @@ class Screen:
             f"typed:    {self.keys}\n"
             f"errors:   {self.errors}\n"
             f"time:     {delta}\n"
+            f"mistyped: {misspelled}\n"
         )
 
 
