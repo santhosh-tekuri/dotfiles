@@ -28,6 +28,7 @@ Usage: words [options...] <source>
     os (from /usr/share/dict/words)
     ngrams1, ngrams2, ngrams3, ngrams4
     - (from stdin)
+    misspelled
 defaults to english
 EOF
 )
@@ -77,6 +78,9 @@ shift $((OPTIND - 1))
 if (($#>0)); then
     lang="$1"
 fi
+dir=~/.local/share/typist/words
+file="$dir/$lang"
+mkdir -p "$dir"
 
 case "$lang" in
 -)
@@ -86,11 +90,11 @@ case "$lang" in
 os)
     file="/usr/share/dict/words"
     ;;
+misspelled)
+    ;;
 keybr)
-    file=!/.local/share/typist/words/$lang
     if [ ! -f "$file" ]; then
         >&2 echo downloading "$lang"
-        mkdir -p "$(dirname "$file")"
         if ! curl -sS --fail https://raw.githubusercontent.com/aradzie/keybr.com/refs/heads/master/packages/keybr-content-words/lib/data/words-en.json | jq -r '.[]' > "$file"; then
             rm "$file"
             exit 1
@@ -98,10 +102,8 @@ keybr)
     fi
     ;;
 ngrams*)
-    file=~/.local/share/typist/words/$lang
     if [ ! -f "$file" ]; then
         >&2 echo downloading "$lang"
-        mkdir -p "$(dirname "$file")"
         if ! curl -sS --fail https://raw.githubusercontent.com/KaranAgarwalla/Encryption-Decryption/refs/heads/master/"$lang".txt | awk '{print tolower($1)}' > "$file"; then
             rm "$file"
             exit 1
@@ -109,10 +111,8 @@ ngrams*)
     fi
     ;;
 *)
-    file=~/.local/share/typist/words/$lang
     if [ ! -f "$file" ]; then
         >&2 echo downloading "$lang"
-        mkdir -p "$(dirname "$file")"
         if ! curl -sS --fail https://raw.githubusercontent.com/monkeytypegame/monkeytype/refs/heads/master/frontend/static/languages/"$lang".json | jq -r '.words[]' > "$file"; then
             rm "$file"
             exit 1
