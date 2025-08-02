@@ -125,7 +125,18 @@ nwords() {
     if [[ "$n" == *,* ]]; then
         sed -n "${n}p" "$file" | shuf
     else
-        shuf -n "$n" "$file"
+        # repeat words only when the #words is not enough
+        lines=$(grep -c "" "$file") # grep counts last line always
+        ((loop=n/lines))
+        if ((loop>0)); then
+            for i in $(seq 1 $((n/lines))); do
+                shuf -n "$n" "$file"
+            done
+        fi
+        ((n=n%lines))
+        if ((n>0)); then
+            shuf -n "$n" "$file"
+        fi
     fi
 }
 
