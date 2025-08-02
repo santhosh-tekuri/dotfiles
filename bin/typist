@@ -342,14 +342,14 @@ class Screen:
                 print(word, file=f)
 
         return (
-            f"wpm:      {format_float(wpm)}\n"
-            f"raw:      {format_float(raw)}\n"
-            f"accuracy: {format_float(acc)}\n"
-            f"chars:    {chars}\n"
-            f"typed:    {self.keys}\n"
-            f"errors:   {self.errors}\n"
-            f"time:     {delta}\n"
-            f"mistyped: {misspelled}\n"
+            f"wpm:        {format_float(wpm)}\n"
+            f"raw:        {format_float(raw)}\n"
+            f"accuracy:   {format_float(acc)}\n"
+            f"chars:      {chars}\n"
+            f"typed:      {self.keys}\n"
+            f"errors:     {self.errors}\n"
+            f"time:       {delta}\n"
+            f"misspelled: {len(misspelled)}\n"
         )
 
 
