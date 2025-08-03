@@ -7,6 +7,7 @@ import re
 import time
 import datetime
 import curses
+import subprocess
 import traceback
 
 char = str
@@ -66,7 +67,7 @@ class Screen:
     cy: int
     cx: int
 
-    def __init__(self, scr) -> None:
+    def __init__(self, scr, lines) -> None:
         self.scr = scr
         self.lines = list()
         self.typed = list()
@@ -75,17 +76,12 @@ class Screen:
         self.vline_prev = -1
 
         self.init_width()
-        self.init_input()
+        self.init_input(lines)
         self.init_hints()
         self.init_height()
-        self.init_tty()
         self.init_theme()
         self.init_pad()
         self.reset()
-
-    def init_tty(self):
-        with open("/dev/tty", "r+") as tty_file:
-            os.dup2(tty_file.fileno(), 0)
 
     def init_width(self):
         global width
@@ -93,22 +89,16 @@ class Screen:
         if width < 20:
             raise TypistException("terminal width is too small")
 
-    def init_input(self):
+    def init_input(self, lines):
+        self.lines = list()
         trans = str.maketrans({ord(k): v for k, v in translations.items()})
-        for line in sys.stdin:
+        for line in lines:
             line = line.translate(trans)
             line = line.encode("ascii", "ignore").decode("ascii")  # rm non-ascii chars
             if len(line) > width:
                 self.lines.extend(fold(line, width))
             else:
                 self.lines.append(line)
-        # remove trailing empty newlines
-        while self.lines and self.lines[-1] == "\n":
-            self.lines.pop()
-        # remove trailing whitespace
-        if not self.lines:
-            raise TypistException("empty input")
-        self.lines[-1] = self.lines[-1].rstrip()
 
     def init_hints(self):
         self.hints = dict()
@@ -393,8 +383,38 @@ def format_float(v):
     return s.rstrip(".")
 
 
+def read_input():
+    if len(sys.argv) > 1:
+        proc = subprocess.Popen(
+            sys.argv[1:],
+            stdout=subprocess.PIPE,
+            stderr=sys.stderr,
+            text=True,
+        )
+        assert proc.stdout is not None
+        lines = proc.stdout.readlines()
+        code = proc.wait()
+        if code:
+            print(f"subprocess failed with exit code {code}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        lines = sys.stdin.readlines()
+        with open("/dev/tty", "r+") as tty_file:
+            os.dup2(tty_file.fileno(), 0)
+
+    # remove trailing empty newlines
+    while lines and lines[-1] == "\n":
+        lines.pop()
+    # remove trailing whitespace
+    if not lines:
+        raise TypistException("empty input")
+    lines[-1] = lines[-1].rstrip()
+    return lines
+
+
 try:
-    results = curses.wrapper(lambda scr: Screen(scr).run())
+    lines = read_input()
+    results = curses.wrapper(lambda scr: Screen(scr, lines).run())
     print(results, end="")
 except KeyboardInterrupt:
     sys.exit(1)
