@@ -75,6 +75,7 @@ class Screen:
         self.newline = " "
         self.vline_prev = -1
 
+        curses.set_escdelay(25)
         self.init_width()
         self.init_input(lines)
         self.init_hints()
@@ -295,13 +296,9 @@ class Screen:
         return False
 
     def run(self):
-        scr = self.scr
-        curses.set_escdelay(25)
-        scr.refresh()
-
         self.refresh()
         while True:
-            key = scr.getch()
+            key = self.scr.getch()
             if key == 27:  # escape; exit
                 break
             elif key == 23:  # ctrl+w: erase word
@@ -355,8 +352,8 @@ class Screen:
             f"chars:      {chars}\n"
             f"typed:      {self.keys}\n"
             f"errors:     {self.errors}\n"
-            f"time:       {delta}\n"
             f"misspelled: {len(misspelled)}\n"
+            f"time:       {delta}\n"
         )
 
 
