@@ -272,6 +272,8 @@ class Screen:
             if self.cx == width:
                 self.cx = 0
                 self.cy += 1
+            if self.cy >= self.vline + height:
+                self.vline += 1
         else:
             skip = self.lines[self.cy][self.cx] == "\n"
             self.cx += 1
@@ -285,14 +287,12 @@ class Screen:
                     if ch != " ":
                         break
                     self.cx += 1
-            if self.typo is not None and self.cy >= self.vline + height:
-                self.vline += 1
+            if self.typo is not None:
+                if self.cy >= self.vline + height:
+                    self.vline += 1
             elif self.cy >= self.vline + height - 1:
-                if self.vline >= self.vline + height:
-                    self.vline = min(self.vline + 1, len(self.lines) - 1)
+                self.vline = min(self.cy, len(self.lines) - height)
 
-        if self.cy >= self.vline + height:
-            self.vline = self.cy
         return False
 
     def run(self):
