@@ -285,10 +285,10 @@ class Screen:
                     if ch != " ":
                         break
                     self.cx += 1
-            if self.cy >= self.vline + height - 1:
-                if self.typo is None:
-                    self.vline = min(self.cy, len(self.lines) - height)
-                elif self.vline >= self.vline + height:
+            if self.typo is not None and self.cy >= self.vline + height:
+                self.vline += 1
+            elif self.cy >= self.vline + height - 1:
+                if self.vline >= self.vline + height:
                     self.vline = min(self.vline + 1, len(self.lines) - 1)
 
         if self.cy >= self.vline + height:
