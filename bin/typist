@@ -298,7 +298,7 @@ class Screen:
                 if self.typo is None:
                     self.vline = min(self.cy, len(self.lines) - height)
                 else:
-                    self.vline += 1
+                    self.vline = min(self.vline + 1, len(self.lines) - 1)
 
         if self.cy >= self.vline + height:
             self.vline = self.cy
