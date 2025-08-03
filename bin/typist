@@ -295,7 +295,11 @@ class Screen:
                         break
                     self.cx += 1
             if self.cy == self.vline + height - 1:
-                self.vline = min(self.cy, len(self.lines) - height)
+                if self.typo is None:
+                    self.vline = min(self.cy, len(self.lines) - height)
+                else:
+                    self.vline += 1
+
         if self.cy >= self.vline + height:
             self.vline = self.cy
         return False
