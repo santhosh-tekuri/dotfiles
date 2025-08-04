@@ -184,11 +184,6 @@ class Screen:
     def refresh(self):
         if self.vline_prev != self.vline:
             self.vline_prev = self.vline
-            self.scr.addch(
-                self.pad_location[0] + height,
-                self.pad_location[1] + width // 2,
-                " " if self.vline + height >= len(self.lines) else "⌄",
-            )
             self.draw_scrollbar()
             self.scr.refresh()
         self.pad.move(self.cy, self.cx)
