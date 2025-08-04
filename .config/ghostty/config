@@ -13,7 +13,7 @@ mouse-hide-while-typing = true
 keybind=ctrl+left_bracket=text:\x1b
 keybind = cmd+k=text:\x02
 keybind = cmd+shift+k=clear_screen
-keybind = shift+backspace=text:\x1B\x7f
+keybind = shift+backspace=text:\x17
 
 background = 0d0f18
 foreground = 75869a
