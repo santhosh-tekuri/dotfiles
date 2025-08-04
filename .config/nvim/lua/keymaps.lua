@@ -1,11 +1,5 @@
 vim.g.mapleader = " "
 
--- disable arrow kyes completely
-vim.keymap.set({ "", "!" }, "<Right>", "", {})
-vim.keymap.set({ "", "!" }, "<Left>", "", {})
-vim.keymap.set({ "", "!" }, "<Up>", "", {})
-vim.keymap.set({ "", "!" }, "<Down>", "", {})
-
 -- move current line up/down
 vim.keymap.set("n", "<M-j>", ":m .+1<CR>==")
 vim.keymap.set("n", "<M-k>", ":m .-2<CR>==")
