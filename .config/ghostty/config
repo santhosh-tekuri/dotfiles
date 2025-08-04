@@ -10,6 +10,7 @@ adjust-cell-height = 20%
 adjust-underline-position=100%
 mouse-hide-while-typing = true
 
+keybind=ctrl+left_bracket=text:\x1b
 keybind = cmd+k=text:\x02
 keybind = cmd+shift+k=clear_screen
 keybind = shift+backspace=text:\x1B\x7f
