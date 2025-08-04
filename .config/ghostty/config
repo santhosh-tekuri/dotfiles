@@ -7,6 +7,7 @@ font-family = 0xProto
 font-size = 18
 font-variation = wght=100
 adjust-cell-height = 20%
+mouse-hide-while-typing = true
 
 keybind = cmd+k=text:\x02
 keybind = cmd+shift+k=clear_screen
