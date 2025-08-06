@@ -227,6 +227,8 @@ class Screen:
             self.typo = None
 
     def erase_word(self):
+        if not self.typed:
+            return
         t = self.typed[-1]
         while t and t[-1] == " ":
             self.cx -= 1
