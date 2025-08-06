@@ -116,6 +116,9 @@ class Screen:
                         break
                     self.hints[(y, i)] = space_char
 
+            if line.endswith("\n") and len(line) > width - 15:
+                self.hints[(y, len(line) - 1)] = newline_char
+
     def init_height(self):
         global height
         height = min(height, len(self.lines), curses.LINES - 1)
