@@ -15,6 +15,49 @@ if [ ! -f "$file" ]; then
     fi
 fi
 
+usage=$(cat <<EOF
+Usage: quote [options...] [<size>]
+
+-n <num-quotes>     number of quotes (default 1)
+                    or line-range in sed syntax, ex: 20,90
+
+<size> can be short, medium, long, thick. if not specified
+any size
+EOF
+)
+n=1
+while getopts ":hn:" opt; do
+    case $opt in
+    \?) # Invalid option
+        >&2 echo "Error: Invalid option -$OPTARG"
+        >&2 echo "$usage"
+        exit 2
+        ;;
+    :) # Missing argument for an option
+        >&2 echo "Error: Option -$OPTARG requires an argument"
+        >&2 echo "$usage"
+        exit 2
+        ;;
+    h)
+        echo "$usage"
+        exit 0
+        ;;
+    n)
+        n="$OPTARG"
+        ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+nquotes() {
+    if [[ "$n" == *,* ]]; then
+        sed -n "${n}p"
+    else
+        shuf -n "$n"
+    fi
+}
+
 if (($#>0)); then
     case "$1" in
     short)
@@ -30,7 +73,7 @@ if (($#>0)); then
         exit 2
         ;;
     esac
-    awk "$qsize" $file | shuf -n1
+    awk "$qsize" "$file" | nquotes
 else
-    shuf -n1 $file
+    nquotes < "$file"
 fi
