@@ -69,7 +69,6 @@ class Screen:
 
     def __init__(self, scr, lines) -> None:
         self.scr = scr
-        self.lines = list()
         self.typed = list()
         self.typos = set()
         self.newline = " "
@@ -125,13 +124,17 @@ class Screen:
 
     def init_theme(self):
         if curses.has_colors() and curses.can_change_color():
-            curses.init_color(curses.COLOR_BLACK, *rgb(Theme.black))
-            curses.init_color(curses.COLOR_WHITE, *rgb(Theme.white))
+            if "NVIM" in os.environ:
+                curses.use_default_colors()
+                bg = -1
+            else:
+                curses.init_color(curses.COLOR_BLACK, *rgb(Theme.black))
+                curses.init_color(curses.COLOR_WHITE, *rgb(Theme.white))
+                bg = curses.COLOR_BLACK
             curses.init_color(curses.COLOR_RED, *rgb(Theme.red))
             curses.init_color(curses.COLOR_GREEN, *rgb(Theme.green))
             curses.init_color(curses.COLOR_BLUE, *rgb(Theme.blue))
             curses.init_color(curses.COLOR_MAGENTA, *rgb(Theme.dull))
-            bg = curses.COLOR_BLACK
         else:
             curses.use_default_colors()
             bg = -1
