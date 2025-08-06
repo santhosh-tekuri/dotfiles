@@ -5,13 +5,22 @@
 
 (defsrc)
 
+;; use lshift+backspace to erace word
+(defoverrides
+    (lsft bspc) (lalt bspc)
+)
+
 (defvar
     tt 300
     ht 300
 )
 
 (deftemplate mod (orig new)
-    $orig (tap-hold-release $tt $ht $orig $new)
+;;  $orig (tap-hold-release $tt $ht $orig $new)
+    $orig (switch
+        ((key-timing 3 less-than 250)) $orig break
+        () (tap-hold-release $tt $ht $orig $new) break
+    )
 )
 
 (deflayermap (base)
@@ -23,7 +32,6 @@
     (t! mod l ralt)
     (t! mod d lsft)
     (t! mod k rsft)
-    lshft (multi lsft (layer-while-held lshift))
     caps (tap-hold-press $tt $ht
         (caps-word 5000)
         (layer-while-held arrows)
@@ -37,10 +45,6 @@
     j down
     k up
     l right
-)
-
-(deflayermap (lshift)
-    bspc A-bspc
 )
 
 (deflayermap (fn)
