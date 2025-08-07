@@ -419,6 +419,11 @@ def read_input():
 
 try:
     lines = read_input()
+except Exception as ex:
+    print(ex, file=sys.stderr)
+    sys.exit(1)
+
+try:
     results = curses.wrapper(lambda scr: Screen(scr, lines).run())
     print(results, end="")
 except KeyboardInterrupt:
