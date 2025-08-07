@@ -173,6 +173,12 @@ class Screen:
             for i in range(theight):
                 self.scr.addch(y + tpos + i, x, "│")
 
+    def skip_indent(self):
+        for ch in self.lines[self.cy]:
+            if ch != " ":
+                break
+            self.cx += 1
+
     def reset(self):
         self.typed.clear()
         self.typos.clear()
@@ -181,6 +187,7 @@ class Screen:
         self.keys = 0
         self.vline = 0
         self.cx, self.cy = 0, 0
+        self.skip_indent()
         self.pad.clear()
         for i, line in enumerate(self.lines):
             self.pad.addstr(i, 0, line)
@@ -285,11 +292,8 @@ class Screen:
                 self.cy += 1
             if self.cy == len(self.lines) and self.typo is None:
                 return True
-            if skip:  # skip indent forward
-                for ch in self.lines[self.cy]:
-                    if ch != " ":
-                        break
-                    self.cx += 1
+            if skip:
+                self.skip_indent()
             if self.typo is not None:
                 if self.cy >= self.vline + height:
                     self.vline += 1
