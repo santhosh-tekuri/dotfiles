@@ -5,7 +5,7 @@
 
 (defsrc)
 
-;; use lshift+backspace to erace word
+;; use lshift+backspace to erase word
 (defoverrides
     (lsft bspc) (lalt bspc)
 )
