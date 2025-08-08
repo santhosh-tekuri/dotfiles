@@ -252,7 +252,7 @@ class Screen:
             self.undo_typed()
 
     def on_backspace(self):
-        if self.cx == 0 and self.cy == 0:
+        if not self.typed:
             return
         if self.cx > 0:
             self.cx -= 1
