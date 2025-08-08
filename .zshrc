@@ -9,13 +9,6 @@ fpath=(~/.zsh/completion $fpath)
 autoload -U compinit
 compinit -u -D
 
-if command -v fzf >/dev/null 2>&1; then
-    source <(fzf --zsh)
-    compdef _gnu_generic fzf
-    source ~/.local/share/zsh/fzf-tab/fzf-tab.plugin.zsh
-    zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept
-fi
-
 mkdir -p ~/.cache/zsh
 zstyle ':completion:*' cache-path ~/.cache/zsh/zcompcache
 
@@ -25,26 +18,18 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # graphical menu to select completion options. (hit TAB to enable)
 zstyle ':completion:*' menu select
 
-# spell check commands
-setopt CORRECT
+setopt CORRECT # spell check commands
+setopt AUTO_CD # just type `dir` to cd
 
-# just type `dir` to cd
-setopt AUTO_CD
-
-
-# use emacs keymap for command line editing
-bindkey -e
-
-# ctrl-u -> kill before cursor
-bindkey \^U backward-kill-line
+bindkey -e # use emacs keymap for command line editing
+bindkey \^U backward-kill-line # ctrl-u -> kill before cursor
 
 # open command in $EDITOR using ctrl+x ctrl+e
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
 
-# turns on interactive comments; comments begin with a #
-setopt interactivecomments
+setopt interactivecomments # ignore text folliwing # on command line
 
 function hilite(){
     echo -en "\033[31m"  ## red
@@ -61,46 +46,35 @@ function hilite(){
 # suffix aliases - "Open With..."
 alias -s txt=vi
 
-#export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-#source /Users/santhosh/.rvm/scripts/rvm
-
 source ~/.local/share/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-source ~/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+# setup prompt --
+setopt prompt_subst # reevaluate the prompt expression each time a prompt is displayed
+setopt transientrprompt # remove any right prompt from display when accepting a command line
+PS1="%(?..%F{red})\$(ssh-ps1)\$(git-ps1)❯%f "
+RPS1='[%~]%f%k'
+zle_highlight=(default:fg=yellow,bold)
+
+# setup history --
+mkdir -p ~/.local/state/zsh
+HISTFILE=~/.local/state/zsh/history # history file name
+SAVEHIST=500000 # number of lines in histoty
+HISTSIZE=$SAVEHIST # number of lines the shell will keep within one session
+setopt bang_hist # use ! for history expansion
+setopt append_history # do not overwrite old history
+setopt hist_ignore_dups # do not record consecutive duplicates
+setopt hist_ignore_all_dups # do not record duplicates
+setopt hist_save_no_dups # do not save duplicate entries
+setopt hist_find_no_dups # do not display duplicates
+setopt hist_ignore_space # do not record commands starting with space
+setopt share_history # share history between sessions
+
+source ~/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh # suggest from history
 source ~/.local/share/zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-if command -v kubectl >/dev/null 2>&1; then
-    source <(kubectl completion zsh)
-fi
-
-function setup_ps1() {
-    # reevaluate the prompt expression each time a prompt is displayed
-    setopt prompt_subst
-
-    # remove any right prompt from display when accepting a command line
-    setopt transientrprompt
-
-    PS1="%(?..%F{red})\$(ssh-ps1)\$(git-ps1)❯%f "
-    RPS1='[%~]%f%k'
-    zle_highlight=(default:fg=yellow,bold)
-}
-setup_ps1
-
-function setup_history() {
-    mkdir -p ~/.local/state/zsh
-    HISTFILE=~/.local/state/zsh/history # history file name
-    SAVEHIST=1000 # number of lines in histoty
-    HISTSIZE=1200 # number of lines the shell will keep within one session
-    setopt APPEND_HISTORY # append the new history to the old
-    setopt HIST_IGNORE_DUPS # do not record duplicates
-    setopt HIST_IGNORE_SPACE # do not record commands starting with space
-    setopt SHARE_HISTORY # share history between sessions
-}
-setup_history
-
-#######################[ alias expansion ]##########################
+# alias expansion --
 function expand-alias() {
     [[ ! $BUFFER =~ "^\\\\.*" ]] && zle _expand_alias # expand only if not starts with '\'
     zle self-insert
@@ -110,4 +84,17 @@ bindkey -M main ' ' expand-alias
 bindkey '^ '   magic-space          # control-space to bypass completion
 bindkey -M isearch " "  magic-space # normal space during searches
 
+# command customization --
+if command -v fzf >/dev/null 2>&1; then
+    source <(fzf --zsh)
+    compdef _gnu_generic fzf
+    source ~/.local/share/zsh/fzf-tab/fzf-tab.plugin.zsh
+    zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept
+fi
+
+if command -v kubectl >/dev/null 2>&1; then
+    source <(kubectl completion zsh)
+fi
+
+# misc --
 source $dir/bin/docker.sh
