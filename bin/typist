@@ -312,6 +312,7 @@ class Screen:
             elif key == 23:  # ctrl+w: erase word
                 self.erase_word()
             elif key == 9:  # tab: reset
+                self.misspelled()
                 self.reset()
             elif key == curses.KEY_BACKSPACE or key == 127:  # backspace
                 self.on_backspace()
@@ -323,17 +324,7 @@ class Screen:
             self.refresh()
         return self.results() if self.keys > 0 else ""
 
-    def results(self):
-        sec = time.perf_counter() - self.start
-        chars = sum(len(line) for line in self.typed)
-        acc = 100 * (self.keys - self.errors) / self.keys
-        raw = (60 * self.keys) / (5 * sec)
-        wpm = (60 * (self.keys - self.errors)) / (5 * sec)
-        delta = str(datetime.timedelta(seconds=sec))
-        delta = delta.removeprefix("0:").removeprefix("00:")
-        if "." in delta:
-            delta = delta[:-4]
-
+    def misspelled(self):
         misspelled = set()
         for typo in self.typos:
             if typo[0] >= len(self.lines):
@@ -347,11 +338,25 @@ class Screen:
                     j += 1
                 misspelled.add(line[i : j + 1])
 
-        f = os.path.expanduser("~/.local/share/typist/words/misspelled")
-        os.makedirs(os.path.dirname(f), exist_ok=True)
-        with open(f, "a") as f:
-            for word in misspelled:
-                print(word, file=f)
+        if misspelled:
+            f = os.path.expanduser("~/.local/share/typist/words/misspelled")
+            os.makedirs(os.path.dirname(f), exist_ok=True)
+            with open(f, "a") as f:
+                for word in misspelled:
+                    print(word, file=f)
+
+        return len(misspelled)
+
+    def results(self):
+        sec = time.perf_counter() - self.start
+        chars = sum(len(line) for line in self.typed)
+        acc = 100 * (self.keys - self.errors) / self.keys
+        raw = (60 * self.keys) / (5 * sec)
+        wpm = (60 * (self.keys - self.errors)) / (5 * sec)
+        delta = str(datetime.timedelta(seconds=sec))
+        delta = delta.removeprefix("0:").removeprefix("00:")
+        if "." in delta:
+            delta = delta[:-4]
 
         return (
             f"wpm:        {format_float(wpm)}\n"
@@ -360,7 +365,7 @@ class Screen:
             f"chars:      {chars}\n"
             f"typed:      {self.keys}\n"
             f"errors:     {self.errors}\n"
-            f"misspelled: {len(misspelled)}\n"
+            f"misspelled: {self.misspelled()}\n"
             f"time:       {delta}\n"
         )
 
