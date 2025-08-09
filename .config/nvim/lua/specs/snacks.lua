@@ -57,6 +57,7 @@ function spec.config()
     }
     vim.keymap.set('n', ' h', Snacks.picker.help, { desc = "Open help picker" })
     vim.keymap.set('n', ' f', Snacks.picker.files, { desc = "Open file picker" })
+    vim.keymap.set('n', ' u', Snacks.picker.undo, { desc = "Open undo picker" })
     vim.keymap.set('n', ' b', function()
         local b = 0
         for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
