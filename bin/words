@@ -25,6 +25,7 @@ Usage: words [options...] <source>
 <source> can be:
     any monkeytype language
     keybr
+    <two-letters>.pair
     os (from /usr/share/dict/words)
     ngrams1, ngrams2, ngrams3, ngrams4
     - (from stdin)
@@ -91,6 +92,15 @@ os)
     file="/usr/share/dict/words"
     ;;
 misspelled)
+    ;;
+*.pair)
+    if [ ! -f "$file" ]; then
+        >&2 echo downloading "$lang"
+        if ! curl -sS --fail https://www.pairtype.com/data/corpus/"${lang%.pair}".json | jq -r '.[]' > "$file"; then
+            rm "$file"
+            exit 1
+        fi
+    fi
     ;;
 keybr)
     if [ ! -f "$file" ]; then
