@@ -61,13 +61,13 @@ export GREP_OPTIONS='--color=auto'
 export JDEBUG='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address'
 export JSUSPEND='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address'
 if /usr/libexec/java_home -v 1.6 >/dev/null 2>&1; then
-    export JAVA6_HOME=`/usr/libexec/java_home -v 1.6`
+    export JAVA6_HOME=$(/usr/libexec/java_home -v 1.6)
 fi
 if /usr/libexec/java_home -v 1.7 >/dev/null 2>&1; then
-    export JAVA7_HOME=`/usr/libexec/java_home -v 1.7`
+    export JAVA7_HOME=$(/usr/libexec/java_home -v 1.7)
 fi
 if /usr/libexec/java_home -v 1.8 >/dev/null 2>&1; then
-    export JAVA8_HOME=`/usr/libexec/java_home -v 1.8`
+    export JAVA8_HOME=$(/usr/libexec/java_home -v 1.8)
 fi
 
 # if screen session, unset PROMT_COMMAND
