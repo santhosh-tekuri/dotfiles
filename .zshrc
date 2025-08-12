@@ -60,6 +60,7 @@ mkdir -p ~/.local/state/zsh
 HISTFILE=~/.local/state/zsh/history # history file name
 SAVEHIST=500000 # number of lines in histoty
 HISTSIZE=$SAVEHIST # number of lines the shell will keep within one session
+HISTORY_IGNORE="(ls|ll|cd|pwd|exit|cls|kls)" # matching commands not written to history
 setopt bang_hist # use ! for history expansion
 setopt append_history # do not overwrite old history
 setopt hist_ignore_dups # do not record consecutive duplicates
