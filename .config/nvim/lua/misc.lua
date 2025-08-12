@@ -1,3 +1,5 @@
+vim.cmd("autocmd TermOpen * startinsert")
+
 vim.api.nvim_create_autocmd("BufWritePre", {
     desc = "Format on save",
     callback = function()
