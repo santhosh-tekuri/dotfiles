@@ -6,6 +6,7 @@ require('insjump')
 require('winline')
 require("lspprogress")
 require('quickfix')
+require("textobjs")
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -42,7 +43,6 @@ require("lazy").setup {
     require("specs.surround"),
     require("specs.colorizer"),
     -- require("specs.whichkey"),
-    require("specs.textobj"),
     require("specs.urlopen"),
     require("specs.coverage"),
     require("specs.autopairs"),
