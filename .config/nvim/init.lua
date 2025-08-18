@@ -34,7 +34,7 @@ require("lazy").setup {
     -- require("specs.fidget"),
     require("specs.gitsigns"),
     require("specs.treesitter"),
-    require("specs.treesitter_textobjs"),
+    -- require("specs.treesitter_textobjs"),
     require("specs.autotag"),
     require("specs.lsp"),
     -- require("specs.conform"),
