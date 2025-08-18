@@ -46,4 +46,5 @@ require("lazy").setup {
     require("specs.urlopen"),
     require("specs.coverage"),
     require("specs.autopairs"),
+    require("specs.registers"),
 }
