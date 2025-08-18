@@ -1,8 +1,6 @@
 -- lsp setup
 
-local spec = {
-    "mason-org/mason.nvim",
-}
+local spec = { "mason-org/mason.nvim" }
 
 function spec.config()
     require("mason").setup()
