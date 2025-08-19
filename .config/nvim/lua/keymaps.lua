@@ -19,8 +19,6 @@ vim.keymap.set('n', ' w', '<c-w>', { remap = false })
 vim.keymap.set('v', '>', '>gv', { remap = false })
 vim.keymap.set('v', '<', '<gv', { remap = false })
 
-vim.keymap.set('n', ' d', vim.diagnostic.setqflist, { desc = "show diagnostics" })
-
 vim.keymap.set('n', '<esc>', function()
     for _, win in ipairs(vim.api.nvim_list_wins()) do
         local config = vim.api.nvim_win_get_config(win)
@@ -70,13 +68,24 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
         vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
         vim.keymap.set('n', ' l', vim.lsp.codelens.run, opts("Perform codelens"))
-        vim.keymap.set('n', ' e', function()
+        vim.keymap.set('n', ' D', vim.diagnostic.setqflist, opts("show diagnostics"))
+
+        vim.keymap.set('n', ' d', function()
             if vim.diagnostic.config().virtual_lines then
                 vim.diagnostic.config({ virtual_lines = false })
+                vim.api.nvim_clear_autocmds({ group = "hideDiag" })
             else
                 vim.diagnostic.config({ virtual_lines = { current_line = true } })
+                vim.api.nvim_create_autocmd({ "CursorMoved", "InsertEnter" }, {
+                    group = vim.api.nvim_create_augroup("hideDiag", { clear = true }),
+                    callback = function()
+                        vim.diagnostic.config({ virtual_lines = false })
+                        vim.api.nvim_clear_autocmds({ group = "hideDiag" })
+                    end,
+                    buffer = 0,
+                })
             end
-        end, opts("toggle diagnotic for current line"))
+        end, opts("toggle diagnostic for current line"))
 
         -- setup codelens
         vim.lsp.codelens.refresh({ bufnr = 0 })
@@ -85,6 +94,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
             callback = function()
                 vim.lsp.codelens.refresh({ bufnr = 0 })
             end,
+            buffer = 0,
         })
     end,
 })

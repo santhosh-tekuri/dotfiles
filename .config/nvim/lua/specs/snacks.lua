@@ -59,26 +59,9 @@ function spec.config()
     vim.keymap.set('n', ' f', Snacks.picker.files, { desc = "Open file picker" })
     vim.keymap.set('n', ' u', Snacks.picker.undo, { desc = "Open undo picker" })
     vim.keymap.set('n', ' b', function()
-        local b = 0
-        for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-            if vim.fn.buflisted(bufnr) == 1 then
-                b = b + 1
-            end
-            if b == 2 then
-                vim.cmd("b#")
-                return
-            end
-        end
-        Snacks.picker.buffers {
-            current = false,
-        }
+        Snacks.picker.buffers { current = false }
     end, { desc = "Open buffer picker" })
     vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
-
-    -- keymap for terminal
-    vim.keymap.set({ 'n', 't' }, '<C-\\>', function()
-        Snacks.terminal()
-    end)
 
     vim.keymap.set('n', ' g', function()
         Snacks.terminal('lazygit')

@@ -12,11 +12,11 @@ function spec.config()
             }
         }
     }
-    vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
+    vim.keymap.set("n", "<leader>e", "<CMD>Oil --float<CR>", { desc = "Explore parent directory" })
 end
 
 return spec
 
 --[[
--       open file explorer
+<leader>e       open file explorer
 --]]
