@@ -45,6 +45,18 @@ vim.api.nvim_create_autocmd('FocusGained', {
     end,
 })
 
+vim.api.nvim_create_autocmd("LspProgress", {
+    desc = "Show LSP Progress on cmdline",
+    ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+    callback = function(ev)
+        if ev.data.params.value.kind == "end" then
+            vim.api.nvim_echo({ { "" } }, false, {})
+            return
+        end
+        vim.api.nvim_echo({ { vim.lsp.status() } }, false, {})
+    end,
+})
+
 -- set diagnotic signs
 vim.diagnostic.config({
     signs = {

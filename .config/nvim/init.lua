@@ -4,7 +4,6 @@ require("commands")
 require("misc")
 require('insjump')
 require('winline')
-require("lspprogress")
 require('quickfix')
 require("textobjs")
 
