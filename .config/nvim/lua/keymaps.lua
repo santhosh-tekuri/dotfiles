@@ -30,6 +30,14 @@ vim.keymap.set('n', '<esc>', function()
     end
 end, { desc = "close floating windows" })
 
+vim.keymap.set("i", "<C-L>", function()
+    local node = vim.treesitter.get_node()
+    if node ~= nil then
+        local row, col = node:end_()
+        pcall(vim.api.nvim_win_set_cursor, 0, { row + 1, col })
+    end
+end, { desc = "jump to end of current treesitter node" })
+
 -- `<leader>'{char}` opens file containing mark upper({char})
 vim.keymap.set('n', "<leader>'", function()
     local char = vim.fn.getcharstr(-1)
