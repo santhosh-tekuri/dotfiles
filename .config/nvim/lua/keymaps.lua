@@ -65,7 +65,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, opts("Perform code action"))
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Goto declaration"))
         vim.keymap.set('n', ' r', vim.lsp.buf.rename, opts("Rename symbol"))
-        vim.keymap.set({ 'n', 'v' }, ' k', vim.lsp.buf.hover, opts("Show docs for item under cursor"))
+        vim.keymap.set({ 'n', 'v' }, ' k', function()
+            vim.lsp.buf.hover { max_width = 80 }
+        end, opts("Show docs for item under cursor"))
         vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
         vim.keymap.set('n', ' l', vim.lsp.codelens.run, opts("Perform codelens"))
         vim.keymap.set('n', ' D', vim.diagnostic.setqflist, opts("show diagnostics"))

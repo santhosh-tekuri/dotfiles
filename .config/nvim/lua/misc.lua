@@ -69,12 +69,3 @@ vim.diagnostic.config({
     },
     severity_sort = true,
 })
-
--- options for vim.lsp.hover floating window (for golang popup is too wide)
-local hover = vim.lsp.buf.hover
----@diagnostic disable-next-line: duplicate-set-field
-vim.lsp.buf.hover = function()
-    return hover({
-        max_width = 80,
-    })
-end
