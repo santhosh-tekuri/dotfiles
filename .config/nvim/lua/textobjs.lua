@@ -1,11 +1,5 @@
-local M = {}
-
 local function select_lines(from, to)
-    if vim.fn.mode():find('v') ~= nil then
-        vim.cmd('normal! ' .. from .. 'GoV' .. to .. 'G')
-    else
-        vim.cmd('normal! ' .. from .. 'GV' .. to .. 'G')
-    end
+    vim.cmd('normal! ' .. from .. 'GV' .. to .. 'G')
 end
 
 local function select_region(srow, scol, erow, ecol)
@@ -16,14 +10,19 @@ end
 
 local function textobj(ltr, func)
     local opts = { noremap = true, silent = true }
-    local req = ':<c-u>lua require("textobjs").'
-    vim.keymap.set({ 'x', 'o' }, 'i' .. ltr, req .. func .. '(false)<cr>', opts)
-    vim.keymap.set({ 'x', 'o' }, 'a' .. ltr, req .. func .. '(true)<cr>', opts)
+    vim.keymap.set({ 'x', 'o' }, 'i' .. ltr, function()
+        vim.cmd("normal! ")
+        func(false)
+    end, opts)
+    vim.keymap.set({ 'x', 'o' }, 'a' .. ltr, function()
+        vim.cmd("normal! ")
+        func(true)
+    end, opts)
 end
 
 -------------------------------------------------------------------------------
 
-function M.select_line(around)
+local function select_line(around)
     if around then
         vim.cmd("normal! 0v$")
     else
@@ -31,11 +30,11 @@ function M.select_line(around)
     end
 end
 
-textobj("l", "select_line")
+textobj("l", select_line)
 
 -------------------------------------------------------------------------------
 
-function M.select_entire(around)
+local function select_entire(around)
     vim.cmd("normal! m'")
     if around then
         vim.cmd("keepjumps normal gg0vG$")
@@ -54,11 +53,11 @@ function M.select_entire(around)
     end
 end
 
-textobj("e", "select_entire")
+textobj("e", select_entire)
 
 -------------------------------------------------------------------------------
 
-function M.select_expression()
+local function select_expression()
     local node = vim.treesitter.get_node()
     if node == nil then
         return
@@ -79,7 +78,7 @@ function M.select_expression()
     select_region(srow + 1, scol + 1, erow + 1, ecol)
 end
 
-textobj("x", "select_expression")
+textobj("x", select_expression)
 
 -------------------------------------------------------------------------------
 
@@ -112,7 +111,7 @@ local function get_indent()
     return 0
 end
 
-function M.select_indent(around)
+local function select_indent(around)
     local indent = get_indent()
     vim.print(indent)
     local line = vim.fn.line('.')
@@ -156,11 +155,11 @@ function M.select_indent(around)
     select_lines(from, to)
 end
 
-textobj("i", "select_indent")
+textobj("i", select_indent)
 
 -------------------------------------------------------------------------------
 
-function M.select_toplevel(around)
+local function select_toplevel(around)
     local line, last = vim.fn.line('.'), vim.fn.line('$')
 
     local from = line
@@ -197,11 +196,11 @@ function M.select_toplevel(around)
     select_lines(from, to)
 end
 
-textobj("P", "select_toplevel")
+textobj("P", select_toplevel)
 
 -------------------------------------------------------------------------------
 
-function M.select_varsegment(around)
+local function select_varsegment(around)
     local str = vim.fn.getline('.')
     local col = vim.fn.col('.')
     if not str:sub(col, col):match('[a-zA-Z0-9_]') then
@@ -245,6 +244,4 @@ function M.select_varsegment(around)
     select_region(line, scol, line, ecol)
 end
 
-textobj("v", "select_varsegment")
-
-return M
+textobj("v", select_varsegment)
