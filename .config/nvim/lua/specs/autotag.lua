@@ -1,6 +1,3 @@
 -- automatically close and rename html tag
 
-return {
-    "windwp/nvim-ts-autotag",
-    opts = {},
-}
+return { "windwp/nvim-ts-autotag", opts = {} }

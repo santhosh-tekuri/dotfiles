@@ -1,10 +1,6 @@
 -- add/delete/change surrounding pairs
 
-return {
-    "kylechui/nvim-surround",
-    event = "VeryLazy",
-    opts = {},
-}
+return { "kylechui/nvim-surround", event = "VeryLazy", opts = {} }
 
 --[[
 ys{motion}{char}        surround by {char}

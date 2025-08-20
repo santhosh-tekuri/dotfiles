@@ -1,7 +1,6 @@
-local spec = {
-    "saghen/blink.cmp",
-    version = "*",
-}
+-- completion plugin
+
+local spec = { "saghen/blink.cmp", version = "*" }
 
 function spec.config()
     require("blink.cmp").setup {
