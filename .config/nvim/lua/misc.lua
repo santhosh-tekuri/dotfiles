@@ -62,14 +62,15 @@ vim.api.nvim_create_autocmd("LspProgress", {
             end
             return
         end
+        local width = 35
         if lspprogress_buf == nil then
             lspprogress_buf = vim.api.nvim_create_buf(false, true)
             vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = lspprogress_buf })
             local winid = vim.api.nvim_open_win(lspprogress_buf, false, {
                 relative = "editor",
                 row = vim.o.lines - 1,
-                col = vim.o.columns - 35,
-                width = 35,
+                col = vim.o.columns - width,
+                width = width,
                 height = 1,
                 style = "minimal",
                 focusable = false,
@@ -77,6 +78,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
             vim.api.nvim_set_option_value("winhighlight", "Normal:Normal", { win = winid })
         end
         local msg = ("%3d%%: %s %s"):format(value.percentage or 100, value.title or "", value.message or "")
+        msg = ("%" .. width .. "s"):format(msg)
         vim.api.nvim_buf_set_lines(lspprogress_buf, 0, -1, false, { msg })
     end,
 })
