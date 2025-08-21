@@ -45,17 +45,33 @@ vim.api.nvim_create_autocmd('FocusGained', {
     end,
 })
 
+local lspprogress_buf = nil
 vim.api.nvim_create_autocmd("LspProgress", {
     desc = "Show LSP Progress on cmdline",
     ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
     callback = function(ev)
-        if vim.fn.mode():find('c') == nil and vim.api.nvim_buf_get_name(0) ~= "cmdline" then
-            if ev.data.params.value.kind == "end" then
-                vim.api.nvim_echo({ { "" } }, false, {})
-                return
+        if ev.data.params.value.kind == "end" then
+            if lspprogress_buf ~= nil then
+                vim.api.nvim_buf_delete(lspprogress_buf, {})
+                lspprogress_buf = nil
             end
-            vim.api.nvim_echo({ { vim.lsp.status() } }, false, {})
+            return
         end
+        if lspprogress_buf == nil then
+            lspprogress_buf = vim.api.nvim_create_buf(false, true)
+            vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = lspprogress_buf })
+            local winid = vim.api.nvim_open_win(lspprogress_buf, false, {
+                relative = "editor",
+                row = vim.o.lines - 1,
+                col = vim.o.columns - 35,
+                width = 35,
+                height = 1,
+                style = "minimal",
+                focusable = false,
+            })
+            vim.api.nvim_set_option_value("winhighlight", "Normal:Normal", { win = winid })
+        end
+        vim.api.nvim_buf_set_lines(lspprogress_buf, 0, -1, false, { vim.lsp.status() })
     end,
 })
 
