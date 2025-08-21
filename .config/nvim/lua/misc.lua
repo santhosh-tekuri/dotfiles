@@ -83,6 +83,28 @@ vim.api.nvim_create_autocmd("LspProgress", {
     end,
 })
 
+vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufModifiedSet', 'WinScrolled', 'DiagnosticChanged' }, {
+    desc = "show file name with diagnostic hint in ruler",
+    callback = function()
+        local function group(bufnr)
+            for _, name in ipairs({ "ERROR", "WARN", "INFO", "HINT" }) do
+                local n = #vim.diagnostic.count(bufnr, { severity = vim.diagnostic.severity[name] })
+                if n > 0 then
+                    return '%#DiagnosticVirtualText' .. string.lower(name) .. "#"
+                end
+            end
+            return ""
+        end
+        local s = "%l,%c%="
+        s = s .. group(nil) .. "%t"
+        s = s .. (vim.bo.modified and '*' or ' ')
+        s = "%36(" .. s .. "%)"
+        if vim.o.rulerformat ~= s then
+            vim.opt.rulerformat = s
+        end
+    end
+})
+
 -- set diagnotic signs
 vim.diagnostic.config({
     signs = {

@@ -2,7 +2,6 @@ require("opts")
 require("keymaps")
 require("commands")
 require("misc")
-require('winline')
 require('quickfix')
 require("textobjs")
 
