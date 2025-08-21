@@ -83,9 +83,12 @@ vim.api.nvim_create_autocmd("LspProgress", {
     end,
 })
 
-vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufModifiedSet', 'WinScrolled', 'DiagnosticChanged' }, {
+vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufModifiedSet', 'DiagnosticChanged' }, {
     desc = "show file name with diagnostic hint in ruler",
     callback = function()
+        if not vim.bo.buflisted then
+            return
+        end
         local function group(bufnr)
             for _, name in ipairs({ "ERROR", "WARN", "INFO", "HINT" }) do
                 local n = #vim.diagnostic.count(bufnr, { severity = vim.diagnostic.severity[name] })
