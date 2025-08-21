@@ -50,7 +50,12 @@ vim.api.nvim_create_autocmd("LspProgress", {
     desc = "Show LSP Progress on cmdline",
     ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
     callback = function(ev)
-        if ev.data.params.value.kind == "end" then
+        --[[@as {percentage?: number, title?: string, message?: string, kind: "begin" | "report" | "end"}]]
+        local value = ev.data.params.value
+        if type(value) ~= "table" then
+            return
+        end
+        if value.kind == "end" then
             if lspprogress_buf ~= nil then
                 vim.api.nvim_buf_delete(lspprogress_buf, {})
                 lspprogress_buf = nil
@@ -71,7 +76,8 @@ vim.api.nvim_create_autocmd("LspProgress", {
             })
             vim.api.nvim_set_option_value("winhighlight", "Normal:Normal", { win = winid })
         end
-        vim.api.nvim_buf_set_lines(lspprogress_buf, 0, -1, false, { vim.lsp.status() })
+        local msg = ("%3d%%: %s %s"):format(value.percentage or 100, value.title or "", value.message or "")
+        vim.api.nvim_buf_set_lines(lspprogress_buf, 0, -1, false, { msg })
     end,
 })
 
