@@ -47,7 +47,7 @@ vim.api.nvim_create_autocmd('FocusGained', {
 
 local lspprogress_buf = nil
 vim.api.nvim_create_autocmd("LspProgress", {
-    desc = "Show LSP Progress on cmdline",
+    desc = "Show LSP Progress at bottom right corner",
     ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
     callback = function(ev)
         --[[@as {percentage?: number, title?: string, message?: string, kind: "begin" | "report" | "end"}]]
