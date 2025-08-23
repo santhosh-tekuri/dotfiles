@@ -9,7 +9,7 @@ local function terminals()
 end
 
 local function new_terminal(name)
-    vim.cmd.terminal()
+    vim.cmd.terminal(vim.o.shell)
     vim.cmd("file term://" .. name)
     vim.api.nvim_set_option_value("buflisted", false, { buf = 0 })
     vim.api.nvim_set_option_value("modified", true, { buf = 0 })
@@ -56,7 +56,7 @@ vim.keymap.set({ "n", "t" }, "<c-/>", function()
 end, { desc = "toggle terminal" })
 
 vim.keymap.set("t", "<c-n>", function()
-    local name = vim.fn.input("name:")
+    local name = vim.fn.input("name: ")
     if name ~= "" then
         new_terminal(name)
     end
@@ -123,3 +123,42 @@ vim.keymap.set("t", "<c-o>", function()
         end)
     end
 end, { desc = "pick terminal" })
+
+vim.api.nvim_create_autocmd('TermClose', {
+    desc = "explicity close terminal",
+    callback = function(ctx)
+        vim.cmd('stopinsert')
+        vim.keymap.set('n', 'q', function()
+            local buf = vim.api.nvim_get_current_buf()
+            go_to_term(1)
+            vim.api.nvim_buf_delete(buf, {})
+        end, { buffer = 0 })
+        vim.api.nvim_create_autocmd('TermEnter', {
+            desc = "prevent terminal mode",
+            callback = function()
+                vim.cmd('stopinsert')
+            end,
+            buffer = ctx.buf,
+        })
+    end,
+    nested = true,
+})
+
+vim.keymap.set("n", "<leader>q", function()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.bo[buf].buftype == "terminal" and vim.fn.bufloaded(buf) == 1 then
+            local pid = vim.b[buf].terminal_job_pid
+            local handle = io.popen("pgrep -P " .. pid)
+            if handle ~= nil then
+                local child_pids_string = handle:read("*a")
+                handle:close()
+                if #child_pids_string > 0 then
+                    vim.api.nvim_echo({ { vim.fn.bufname(buf) .. " has running process", "ErrorMsg" } }, false, {})
+                    lastTerm = buf
+                    return
+                end
+            end
+        end
+    end
+    vim.cmd.quit()
+end, { desc = "check running process before quit" })
