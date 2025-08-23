@@ -17,8 +17,10 @@ end
 
 local lastTerm = nil
 local function open_terminal()
-    local buf = lastTerm
-    if buf == nil then
+    local buf = nil
+    if lastTerm ~= nil and vim.fn.bufloaded(lastTerm) == 1 then
+        buf = lastTerm
+    else
         local terms = terminals()
         if #terms > 0 then
             buf = terms[1]
