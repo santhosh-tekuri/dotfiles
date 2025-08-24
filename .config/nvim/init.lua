@@ -40,7 +40,6 @@ require("lazy").setup {
     require("specs.blink"),
     require("specs.surround"),
     require("specs.colorizer"),
-    -- require("specs.whichkey"),
     require("specs.urlopen"),
     require("specs.coverage"),
     require("specs.autopairs"),
