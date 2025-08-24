@@ -145,6 +145,7 @@ vim.api.nvim_create_autocmd('TermClose', {
 })
 
 vim.keymap.set("n", "<leader>q", function()
+    -- check if any process is running in termimals
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.bo[buf].buftype == "terminal" and vim.fn.bufloaded(buf) == 1 then
             local pid = vim.b[buf].terminal_job_pid
@@ -160,5 +161,12 @@ vim.keymap.set("n", "<leader>q", function()
             end
         end
     end
-    vim.cmd.quit()
-end, { desc = "check running process before quit" })
+    -- detach if remoteUI else quit
+    for _, arg in ipairs(vim.v.argv) do
+        if arg == "--embed" then
+            vim.cmd.quit()
+            return
+        end
+    end
+    vim.cmd.detach()
+end, { desc = "safe exit" })
