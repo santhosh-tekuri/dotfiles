@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+if (($#==0)); then
+    >&2 echo "Usage: rvim <directory>"
+    exit 2
+fi
+
+servers=~/.local/state/nvim/servers
+mkdir -p "$servers"
+dir=$(cd "$1"; pwd)
+sock="${dir//\//%}"
+if [ ! -e "$servers/$sock" ]; then
+    cd "$1"
+    nohup nvim --headless --listen "$servers/$sock" &> /dev/null &
+    while [ ! -e "$servers/$sock" ]; do
+        sleep 0.250
+    done
+fi
+nvim --server "$servers/$sock" --remote-ui
+
