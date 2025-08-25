@@ -25,3 +25,15 @@ vim.opt.list = true
 
 -- fill deleted lines with spaces in diff-mode
 vim.opt.fillchars:append { diff = " " }
+
+vim.diagnostic.config({
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = '',
+            [vim.diagnostic.severity.WARN] = '',
+            [vim.diagnostic.severity.HINT] = '',
+            [vim.diagnostic.severity.INFO] = '',
+        },
+    },
+    severity_sort = true,
+})
