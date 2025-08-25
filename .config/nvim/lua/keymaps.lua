@@ -1,5 +1,8 @@
 vim.g.mapleader = " "
 
+vim.keymap.set("n", "gh", "^", { desc = "to first non-blank char of the line" })
+vim.keymap.set("n", "gl", "g_", { desc = "to last non-blank char of the line" })
+
 -- move current line up/down
 vim.keymap.set("n", "<M-j>", ":m .+1<CR>==")
 vim.keymap.set("n", "<M-k>", ":m .-2<CR>==")
