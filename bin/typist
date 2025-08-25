@@ -409,6 +409,8 @@ def read_input():
             sys.exit(1)
     else:
         lines = sys.stdin.readlines()
+
+    if not sys.stdin.isatty():
         with open("/dev/tty", "r+") as tty_file:
             os.dup2(tty_file.fileno(), 0)
 
