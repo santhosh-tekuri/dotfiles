@@ -19,10 +19,15 @@ function spec.config()
             menu = {
                 draw = {
                     treesitter = { 'lsp' },
-                    columns = {
-                        { "label", "label_detail", gap = 1 },
-                        { "kind" },
-                    },
+                    columns = function(ctx)
+                        if ctx.get_mode() == "cmdline" or ctx.get_mode() == "cmdwin" then
+                            return { { "label" } }
+                        end
+                        return {
+                            { "label", "label_detail", gap = 1 },
+                            { "kind" },
+                        }
+                    end,
                     components = {
                         label = {
                             text = function(ctx) return ctx.label end,
