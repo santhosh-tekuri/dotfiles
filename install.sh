@@ -14,13 +14,13 @@ function addline() {
 function link() {
     local src=$1
     local tgt=$2
-    local tgtfile=$tgt/$(basename $src)
+    local tgtfile=$tgt/$(basename "$src")
     if [ -e "$tgtfile" ]; then
-        if [ $(readlink "$tgtfile") == $src ]; then
+        if [ "$(readlink "$tgtfile")" == "$src" ]; then
             return 0
         fi
     fi
-    echo linking $src
+    echo linking "$src"
     ln -s "$src" "$tgt"
 }
 
@@ -28,12 +28,12 @@ function gitclone() {
     local url=$1
     local last=${url##*/}
     local name=${last%%.git}
-    if [ -d $name ]; then
-        echo pulling $name
-        cd $name && git pull && cd - > /dev/null
+    if [ -d "$name" ]; then
+        echo pulling "$name"
+        cd "$name" && git pull && cd - > /dev/null
     else
-        echo fetching $name
-        git clone $url
+        echo fetching "$name"
+        git clone "$url"
     fi
 }
 
@@ -45,8 +45,8 @@ addline "Include $PWD/.ssh/config" ~/.ssh/config
 
 # link .config subfolders
 mkdir -p ~/.config
-for dir in $PWD/.config/*; do
-    link $dir ~/.config
+for dir in "$PWD"/.config/*; do
+    link "$dir" ~/.config
 done
 
 # install zsh plugins
