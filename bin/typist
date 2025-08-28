@@ -8,7 +8,6 @@ import time
 import datetime
 import curses
 import subprocess
-import traceback
 
 char = str
 Pos = Tuple[int, int]
