@@ -4,10 +4,10 @@ set -e
 
 function addline() {
     if [ -f "$2" ]; then
-        grep -qxF "$1" "$2" || echo "$2" >> "$1"
+        grep -qxF "$1" "$2" || echo "$1" >> "$2"
     else
-        echo appending to $1
-        echo "$2" >> "$1"
+        echo appending to "$2"
+        echo "$1" >> "$2"
     fi
 }
 
