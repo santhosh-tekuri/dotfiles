@@ -3,8 +3,8 @@
 set -e
 
 function addline() {
-    if [ -f "$2" ]; then
-        grep -qxF "$1" "$2" || echo "$1" >> "$2"
+    if [ -f "$2" ] && grep -qxF "$1" "$2"; then
+        return
     else
         echo appending to "$2"
         echo "$1" >> "$2"
