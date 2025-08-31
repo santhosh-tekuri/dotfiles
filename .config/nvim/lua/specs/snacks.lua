@@ -3,23 +3,6 @@ local spec = { "folke/snacks.nvim" }
 function spec.config()
     require("snacks").setup {
         scroll = {},
-        terminal = {
-            win = {
-                position = "float",
-                backdrop = false,
-                wo = {
-                    winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator",
-                },
-                width = 0,
-                height = 0,
-                on_win = function()
-                    vim.o.cmdheight = 0
-                end,
-                on_close = function()
-                    vim.o.cmdheight = 1
-                end
-            },
-        },
         picker = {
             formatters = {
                 file = {
@@ -61,10 +44,6 @@ function spec.config()
         Snacks.picker.buffers { current = false }
     end, { desc = "Open buffer picker" })
     vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
-
-    vim.keymap.set('n', ' g', function()
-        Snacks.terminal('lazygit')
-    end)
 
     -- when LS attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {

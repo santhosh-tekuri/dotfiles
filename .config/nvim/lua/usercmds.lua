@@ -6,3 +6,44 @@ vim.api.nvim_create_user_command('SudoWrite', function()
 end, {})
 
 vim.api.nvim_create_user_command("W", "noautocmd w", {})
+
+local function runCommand(args, auto_close)
+    local buf = vim.api.nvim_create_buf(false, true)
+    if auto_close then
+        vim.o.cmdheight = 0
+    end
+    local win = vim.api.nvim_open_win(buf, true, {
+        relative = "editor",
+        width = vim.o.columns,
+        height = vim.o.lines - vim.o.cmdheight,
+        row = 0,
+        col = 0,
+        style = "minimal",
+
+    })
+    vim.api.nvim_set_option_value("winhighlight", "Normal:Normal", { win = win })
+    vim.cmd.terminal(args)
+    if auto_close then
+        vim.api.nvim_create_autocmd('TermClose', {
+            desc = "close terminal",
+            buffer = buf,
+            callback = function()
+                vim.api.nvim_buf_delete(buf, {})
+                vim.o.cmdheight = 1
+            end,
+        })
+    end
+end
+
+vim.api.nvim_create_user_command('RunCmd', function(args)
+    runCommand(args.args, false)
+end, { nargs = "+", desc = "Run Command" })
+
+vim.api.nvim_create_user_command('RunTui', function(args)
+    runCommand(args.args, true)
+end, {
+    nargs = "+",
+    desc = "Run TUI command"
+})
+
+vim.keymap.set('n', '<leader>g', "<cmd>RunTui lazygit<cr>", { desc = "launch lazygit" })
