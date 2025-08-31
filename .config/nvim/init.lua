@@ -4,6 +4,7 @@ require("usercmds")
 require("autocmds")
 require('quickfix')
 require("textobjs")
+require("stc")
 require("term")
 
 -- bootstrap lazy.nvim
