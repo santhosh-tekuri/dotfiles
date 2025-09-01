@@ -4,6 +4,10 @@ function spec.config()
     require("snacks").setup {
         scroll = {},
         picker = {
+            on_show = function()
+                -- workaround: when open in terminal mode, force insert mode
+                vim.schedule(vim.cmd.startinsert)
+            end,
             auto_confirm = true,
             formatters = {
                 file = {
