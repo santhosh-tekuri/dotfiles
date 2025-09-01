@@ -77,7 +77,7 @@ local function go_to_term(n)
                 i = 1
             end
             vim.api.nvim_win_set_buf(0, terms[i])
-            vim.cmd("startinsert")
+            vim.cmd.startinsert()
             return
         end
     end
@@ -108,7 +108,7 @@ vim.keymap.set("t", "<c-o>", function()
         vim.api.nvim_echo({ { "no other terminals found" } }, false, {})
     elseif #items == 1 then
         vim.api.nvim_win_set_buf(0, items[1].bufnr)
-        vim.cmd("startinsert")
+        vim.cmd.startinsert()
     else
         vim.ui.select(items, {
             prompt = "Terminals:",
@@ -119,7 +119,7 @@ vim.keymap.set("t", "<c-o>", function()
             if item ~= nil then
                 vim.api.nvim_win_set_buf(0, item.bufnr)
             end
-            vim.cmd("startinsert")
+            vim.cmd.startinsert()
         end)
     end
 end, { desc = "pick terminal" })
@@ -127,7 +127,7 @@ end, { desc = "pick terminal" })
 vim.api.nvim_create_autocmd('TermClose', {
     desc = "explicity close terminal",
     callback = function(ctx)
-        vim.cmd('stopinsert')
+        vim.cmd.stopinsert()
         vim.keymap.set('n', 'q', function()
             local buf = vim.api.nvim_get_current_buf()
             go_to_term(1)
@@ -136,7 +136,7 @@ vim.api.nvim_create_autocmd('TermClose', {
         vim.api.nvim_create_autocmd('TermEnter', {
             desc = "prevent terminal mode",
             callback = function()
-                vim.cmd('stopinsert')
+                vim.cmd.stopinsert()
             end,
             buffer = ctx.buf,
         })
