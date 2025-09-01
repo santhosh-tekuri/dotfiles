@@ -4,6 +4,7 @@ function spec.config()
     require("snacks").setup {
         scroll = {},
         picker = {
+            auto_confirm = true,
             formatters = {
                 file = {
                     filename_first = true,
