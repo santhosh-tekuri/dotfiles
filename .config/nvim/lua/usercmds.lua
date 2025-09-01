@@ -19,7 +19,6 @@ local function runCommand(args, auto_close)
         row = 0,
         col = 0,
         style = "minimal",
-
     })
     vim.api.nvim_set_option_value("winhighlight", "Normal:Normal", { win = win })
     vim.cmd.terminal(args)
