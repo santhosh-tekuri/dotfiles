@@ -72,11 +72,15 @@ function Select_node(type)
     end
 end
 
-for _, mode in ipairs({ 'x', 'o' }) do
-    vim.api.nvim_set_keymap(mode, 'ic', ':<c-u>lua Select_change()<cr>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap(mode, 'ac', ':<c-u>lua Select_change()<cr>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap(mode, 'ih', ':<c-u>lua Select_node("hunk")<cr>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap(mode, 'ah', ':<c-u>lua Select_node("hunk")<cr>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap(mode, 'if', ':<c-u>lua Select_node("block")<cr>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap(mode, 'af', ':<c-u>lua Select_node("block")<cr>', { noremap = true, silent = true })
+local function textobj(ltr, func)
+    local rhs = ':<c-u>lua ' .. func .. '<cr>'
+    local opts = { noremap = true, silent = true }
+    for _, mode in ipairs({ 'x', 'o' }) do
+        vim.api.nvim_buf_set_keymap(0, mode, 'i' .. ltr, rhs, opts)
+        vim.api.nvim_buf_set_keymap(0, mode, 'a' .. ltr, rhs, opts)
+    end
 end
+
+textobj('c', 'Select_change()');
+textobj('h', 'Select_node("hunk")');
+textobj('f', 'Select_node("block")');
