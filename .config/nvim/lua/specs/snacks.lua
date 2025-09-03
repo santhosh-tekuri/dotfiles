@@ -43,11 +43,11 @@ function spec.config()
         }
     }
     vim.keymap.set('n', ' h', Snacks.picker.help, { desc = "Open help picker" })
-    vim.keymap.set('n', ' f', Snacks.picker.files, { desc = "Open file picker" })
+    -- vim.keymap.set('n', ' f', Snacks.picker.files, { desc = "Open file picker" })
     vim.keymap.set('n', ' u', Snacks.picker.undo, { desc = "Open undo picker" })
-    vim.keymap.set('n', ' b', function()
-        Snacks.picker.buffers { current = false }
-    end, { desc = "Open buffer picker" })
+    -- vim.keymap.set('n', ' b', function()
+    --     Snacks.picker.buffers { current = false }
+    -- end, { desc = "Open buffer picker" })
     vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
 
     -- when LS attaches to the current buffer
