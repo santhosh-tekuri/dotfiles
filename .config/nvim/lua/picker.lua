@@ -1,3 +1,5 @@
+local M = {}
+
 local function tolines(items, opts)
     local func = nil
     if opts["key"] ~= nil then
@@ -14,11 +16,11 @@ local function tolines(items, opts)
     return items
 end
 
-local function pick(prompt, src, onclose, opts)
+function M.pick(prompt, src, onclose, opts)
     opts = vim.tbl_deep_extend("force", { matchseq = 1 }, opts or {})
     if type(src) == "function" then
         src(function(items)
-            pick(prompt, items, onclose, opts)
+            M.pick(prompt, items, onclose, opts)
         end)
         return
     end
@@ -161,8 +163,7 @@ local function pick(prompt, src, onclose, opts)
     })
 end
 
----@diagnostic disable-next-line: duplicate-set-field
-vim.ui.select = function(items, opts, on_choice)
+function M.select(items, opts, on_choice)
     local prompt = opts and opts["prompt"] or ""
     prompt = prompt:match("^%s*(.-)%s*$") or ""
     if #prompt > 1 and prompt:sub(-1) == ':' then
@@ -172,7 +173,7 @@ vim.ui.select = function(items, opts, on_choice)
     if opts and opts["format_item"] ~= nil then
         popts["text_cb"] = opts["format_item"]
     end
-    pick(prompt, items, on_choice, popts)
+    M.pick(prompt, items, on_choice, popts)
 end
 
 local function fileshorten(absname)
@@ -213,11 +214,9 @@ local function edit(item)
     end
 end
 
-local function pick_file()
-    pick("File", files(), edit)
+function M.pick_file()
+    M.pick("File", files(), edit)
 end
-
-vim.keymap.set('n', '<leader>f', pick_file)
 
 ------------------------------------------------------------------------
 
@@ -235,27 +234,27 @@ local function buffers()
     return items
 end
 
-local function pick_buffer()
-    pick("Buffer", buffers(), edit)
+function M.pick_buffer()
+    M.pick("Buffer", buffers(), edit)
 end
-
-vim.keymap.set('n', '<leader>b', pick_buffer)
 
 ------------------------------------------------------------------------
 
-local function definitions(on_list)
-    return vim.lsp.buf.definition({
-        on_list = function(result)
-            on_list(result.items)
-        end
-    })
+local function lsp_items(func)
+    return function(on_list)
+        return func({
+            on_list = function(result)
+                on_list(result.items)
+            end
+        })
+    end
 end
 
-local function definition_text(item)
+local function lsp_item_text(item)
     return string.format("%s:%d:%d %s", fileshorten(item["filename"]), item["lnum"], item["col"], item["text"])
 end
 
-local function open_lsp_location(item)
+local function open_lsp_item(item)
     if item ~= nil then
         vim.cmd.edit(item["filename"])
         vim.schedule(function()
@@ -264,11 +263,21 @@ local function open_lsp_location(item)
     end
 end
 
-local function pick_definition()
-    pick("Definition", definitions, open_lsp_location, { text_cb = definition_text })
+local function pick_lsp_item(prompt, func)
+    M.pick(prompt, lsp_items(func), open_lsp_item, { text_cb = lsp_item_text })
 end
 
-vim.keymap.set('n', '<leader>n', pick_definition)
+function M.pick_definition()
+    pick_lsp_item("Definition", vim.lsp.buf.definition)
+end
+
+function M.pick_type_definition()
+    pick_lsp_item("TypeDefinition", vim.lsp.buf.type_definition)
+end
+
+function M.pick_implementation()
+    pick_lsp_item("implementation", vim.lsp.buf.implementation)
+end
 
 ------------------------------------------------------------------------
 
@@ -306,8 +315,29 @@ local function symbol_text(item)
     return string.format("%-57s %11s", text, item["kind"])
 end
 
-local function pick_document_symbol()
-    pick("DocSymbol", document_symbols, open_lsp_location, { text_cb = symbol_text })
+function M.pick_document_symbol()
+    M.pick("DocSymbol", document_symbols, open_lsp_item, { text_cb = symbol_text })
 end
 
-vim.keymap.set('n', '<leader>m', pick_document_symbol)
+function M.setup()
+    vim.ui.select = M.select
+    vim.keymap.set('n', '<leader>f', M.pick_file)
+    vim.keymap.set('n', '<leader>b', M.pick_buffer)
+    vim.keymap.set('n', '<leader>n', M.pick_definition)
+    vim.keymap.set('n', '<leader>o', M.pick_type_definition)
+    vim.keymap.set('n', '<leader>m', M.pick_document_symbol)
+    vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('LspPickers', {}),
+        callback = function(ev)
+            local function opts(desc)
+                return { buffer = ev.buf, desc = desc }
+            end
+            vim.keymap.set('n', 'gd', M.pick_definition, opts("Goto definition"))
+            vim.keymap.set('n', 'gi', M.pick_implementation, opts("Goto implementation"))
+            vim.keymap.set('n', 'gy', M.pick_type_definition, opts("Goto type definition"))
+            vim.keymap.set('n', ' s', M.pick_document_symbol, opts("Open symbol picker"))
+        end,
+    });
+end
+
+return M

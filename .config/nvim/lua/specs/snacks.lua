@@ -4,6 +4,7 @@ function spec.config()
     require("snacks").setup {
         scroll = {},
         picker = {
+            ui_select = false,
             on_show = function()
                 -- workaround: when open in terminal mode, force insert mode
                 vim.schedule(vim.cmd.startinsert)
@@ -57,10 +58,6 @@ function spec.config()
             local function opts(desc)
                 return { buffer = ev.buf, desc = desc }
             end
-            vim.keymap.set('n', 'gd', Snacks.picker.lsp_definitions, opts("Goto definition"))
-            vim.keymap.set('n', 'gi', Snacks.picker.lsp_implementations, opts("Goto implementation"))
-            vim.keymap.set('n', 'gy', Snacks.picker.lsp_type_definitions, opts("Goto type definition"))
-            vim.keymap.set('n', ' s', Snacks.picker.lsp_symbols, opts("Open symbol picker"))
             vim.keymap.set('n', ' S', Snacks.picker.lsp_workspace_symbols, opts("Open workspace symbol picker"))
         end,
     });

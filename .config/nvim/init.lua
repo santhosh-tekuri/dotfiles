@@ -6,7 +6,7 @@ require('quickfix')
 require("textobjs")
 require("stc")
 require("term")
-require("pick")
+require("picker").setup()
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
