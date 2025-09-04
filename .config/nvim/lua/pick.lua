@@ -241,7 +241,7 @@ local function definition_text(item)
     return string.format("%s:%d:%d %s", fileshorten(item["filename"]), item["lnum"], item["col"], item["text"])
 end
 
-local function open_definition(item)
+local function open_lsp_location(item)
     if item ~= nil then
         vim.cmd.edit(item["filename"])
         vim.schedule(function()
@@ -251,7 +251,49 @@ local function open_definition(item)
 end
 
 local function pick_definition()
-    pick("Definition", definitions, open_definition, { text_cb = definition_text })
+    pick("Definition", definitions, open_lsp_location, { text_cb = definition_text })
 end
 
 vim.keymap.set('n', '<leader>n', pick_definition)
+
+------------------------------------------------------------------------
+
+local exclude_symbols = {
+    { "Constant", "Variable", "Object", "Number", "String", "Boolean", "Array" },
+    lua = {
+        "Package",
+    }
+}
+
+local function document_symbols(on_list)
+    return vim.lsp.buf.document_symbol({
+        on_list = function(result)
+            on_list(vim.tbl_filter(function(item)
+                local kind = item["kind"]
+                if vim.tbl_contains(exclude_symbols[1], kind) then
+                    return false
+                end
+                local tbl = exclude_symbols[vim.bo.filetype]
+                if tbl ~= nil and vim.tbl_contains(tbl, kind) then
+                    return false
+                end
+                return true
+            end, result.items))
+        end
+    })
+end
+
+local function symbol_text(item)
+    local text = item["text"]
+    local index = string.find(text, ' ')
+    if index then
+        text = string.sub(text, index) .. " " .. string.sub(text, 1, index - 1)
+    end
+    return text
+end
+
+local function pick_document_symbol()
+    pick("Definition", document_symbols, open_lsp_location, { text_cb = symbol_text })
+end
+
+vim.keymap.set('n', '<leader>m', pick_document_symbol)
