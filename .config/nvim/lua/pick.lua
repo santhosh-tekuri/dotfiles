@@ -164,6 +164,10 @@ end
 ---@diagnostic disable-next-line: duplicate-set-field
 vim.ui.select = function(items, opts, on_choice)
     local prompt = opts and opts["prompt"] or ""
+    prompt = prompt:match("^%s*(.-)%s*$") or ""
+    if #prompt > 1 and prompt:sub(-1) == ':' then
+        prompt = prompt:sub(1, -2)
+    end
     local popts = {}
     if opts and opts["format_item"] ~= nil then
         popts["text_cb"] = opts["format_item"]
