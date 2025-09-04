@@ -1,14 +1,14 @@
-local function pick(prompt, items, onpick)
-    local list = items
+local function pick(prompt, src, onclose)
+    local list = src
     if type(list) == "function" then
-        list = list()
+        list = src()
     end
     if #list == 0 then
         vim.api.nvim_echo({ { "No " .. prompt .. " to select", "WarningMsg" } }, false, {})
+        onclose(nil)
         return
-    end
-    if #list == 1 then
-        onpick(list[1])
+    elseif #list == 1 then
+        onclose(list[1])
         return
     end
     local pbuf = vim.api.nvim_create_buf(false, true)
@@ -66,9 +66,7 @@ local function pick(prompt, items, onpick)
         vim.cmd.stopinsert()
         vim.api.nvim_buf_delete(pbuf, {})
         vim.api.nvim_buf_delete(sbuf, {})
-        if confirm and item ~= nil then
-            onpick(item)
-        end
+        onclose(item)
     end
     local function move(i)
         local line = vim.api.nvim_win_get_cursor(swin)[1]
@@ -155,12 +153,14 @@ local function files()
     return vim.fn.systemlist(cmd)
 end
 
-local function onfile(item)
-    vim.cmd.edit(item)
+local function edit(item)
+    if item then
+        vim.cmd.edit(item)
+    end
 end
 
 vim.keymap.set('n', '<leader>f', function()
-    pick("File", files, onfile)
+    pick("File", files, edit)
 end)
 
 ------------------------------------------------------------------------
@@ -179,11 +179,7 @@ local function buffers()
     return items
 end
 
-local function onbuffer(item)
-    vim.cmd.edit(item)
-end
-
 vim.keymap.set('n', '<leader>b', function()
-    pick("Buffer", buffers, onbuffer)
+    pick("Buffer", buffers, edit)
 end)
 buffers()
