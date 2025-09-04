@@ -1,14 +1,15 @@
-local function pick(prompt, src, onclose)
-    local list = src
-    if type(list) == "function" then
-        list = src()
+local function pick(prompt, src, onclose, opts)
+    opts = opts or {}
+    local items = src
+    if type(items) == "function" then
+        items = src()
     end
-    if #list == 0 then
+    if #items == 0 then
         vim.api.nvim_echo({ { "No " .. prompt .. " to select", "WarningMsg" } }, false, {})
         onclose(nil)
         return
-    elseif #list == 1 then
-        onclose(list[1])
+    elseif #items == 1 then
+        onclose(items[1])
         return
     end
     local pbuf = vim.api.nvim_create_buf(false, true)
@@ -124,16 +125,16 @@ local function pick(prompt, src, onclose)
             end
         end
     end
-    setlist(list)
+    setlist(items)
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
             local s = vim.fn.getline(1)
             if #s > 0 then
-                local matched = vim.fn.matchfuzzypos(list, s, { matchseq = 1 })
+                local matched = vim.fn.matchfuzzypos(items, s, { matchseq = 1 })
                 setlist(matched[1], matched[2])
             else
-                setlist(list, nil)
+                setlist(items, nil)
             end
         end
     })
