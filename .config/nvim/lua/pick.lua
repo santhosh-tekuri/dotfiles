@@ -1,5 +1,5 @@
 local function pick(prompt, src, onclose, opts)
-    opts = opts or {}
+    opts = vim.tbl_deep_extend("force", { matchseq = 1 }, opts or {})
     local items = src
     if type(items) == "function" then
         items = src()
@@ -131,7 +131,7 @@ local function pick(prompt, src, onclose, opts)
         callback = function()
             local s = vim.fn.getline(1)
             if #s > 0 then
-                local matched = vim.fn.matchfuzzypos(items, s, { matchseq = 1 })
+                local matched = vim.fn.matchfuzzypos(items, s, opts)
                 setlist(matched[1], matched[2])
             else
                 setlist(items, nil)
