@@ -287,9 +287,9 @@ local function symbol_text(item)
     local text = item["text"]
     local index = string.find(text, ' ')
     if index then
-        text = string.sub(text, index) .. " " .. string.sub(text, 1, index - 1)
+        text = string.sub(text, index)
     end
-    return text
+    return string.format("%-57s %11s", text, item["kind"])
 end
 
 local function pick_document_symbol()
