@@ -1,9 +1,29 @@
+local function tolines(items, opts)
+    local func = nil
+    if opts["key"] ~= nil then
+        local key = opts["key"]
+        func = function(item)
+            return item[key]
+        end
+    elseif opts["text_cb"] ~= nil then
+        func = opts["text_cb"]
+    end
+    if func ~= nil then
+        return vim.tbl_map(func, items)
+    end
+    return items
+end
+
 local function pick(prompt, src, onclose, opts)
     opts = vim.tbl_deep_extend("force", { matchseq = 1 }, opts or {})
-    local items = src
-    if type(items) == "function" then
-        items = src()
+    if type(src) == "function" then
+        src(function(items)
+            pick(prompt, items, onclose, opts)
+        end)
+        return
     end
+    local items = src
+    local sitems = nil
     if #items == 0 then
         vim.api.nvim_echo({ { "No " .. prompt .. " to select", "WarningMsg" } }, false, {})
         onclose(nil)
@@ -59,9 +79,8 @@ local function pick(prompt, src, onclose, opts)
         local item = nil
         if confirm then
             local line = vim.fn.line('.', swin)
-            local lines = vim.api.nvim_buf_get_lines(sbuf, line - 1, line, false)
-            if #lines > 0 and #lines[1] > 0 then
-                item = lines[1]
+            if sitems ~= nil and line > 0 and line <= #sitems then
+                item = sitems[line]
             end
         end
         vim.cmd.stopinsert()
@@ -94,7 +113,9 @@ local function pick(prompt, src, onclose, opts)
     vim.keymap.set("i", "<up>", function()
         move(-1)
     end, { buffer = pbuf })
-    local function setlist(lines, pos)
+    local function setitems(lines, pos)
+        sitems = lines
+        lines = tolines(lines, opts)
         vim.api.nvim_buf_clear_namespace(sbuf, ns, 0, -1)
         vim.api.nvim_buf_set_lines(sbuf, 0, -1, false, lines)
         if #lines == 0 then
@@ -125,19 +146,37 @@ local function pick(prompt, src, onclose, opts)
             end
         end
     end
-    setlist(items)
+    setitems(items)
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
             local s = vim.fn.getline(1)
             if #s > 0 then
                 local matched = vim.fn.matchfuzzypos(items, s, opts)
-                setlist(matched[1], matched[2])
+                setitems(matched[1], matched[2])
             else
-                setlist(items, nil)
+                setitems(items, nil)
             end
         end
     })
+end
+
+local function fileshorten(absname)
+    local fname = vim.fn.fnamemodify(absname, ":.")
+    if fname == absname then
+        fname = vim.fn.fnamemodify(fname, ":~")
+    end
+    local width = 50
+    fname = #fname > width and vim.fn.pathshorten(fname, 3) or fname
+    if #fname > width then
+        local dir = vim.fn.fnamemodify(fname, ":h")
+        local file = vim.fn.fnamemodify(fname, ":t")
+        if dir and file then
+            file = file:sub(-(width - #dir - 2))
+            fname = dir .. "/…" .. file
+        end
+    end
+    return fname
 end
 
 ------------------------------------------------------------------------
@@ -160,9 +199,11 @@ local function edit(item)
     end
 end
 
-vim.keymap.set('n', '<leader>f', function()
-    pick("File", files, edit)
-end)
+local function pick_file()
+    pick("File", files(), edit)
+end
+
+vim.keymap.set('n', '<leader>f', pick_file)
 
 ------------------------------------------------------------------------
 
@@ -180,7 +221,37 @@ local function buffers()
     return items
 end
 
-vim.keymap.set('n', '<leader>b', function()
-    pick("Buffer", buffers, edit)
-end)
-buffers()
+local function pick_buffer()
+    pick("Buffer", buffers(), edit)
+end
+
+vim.keymap.set('n', '<leader>b', pick_buffer)
+
+------------------------------------------------------------------------
+
+local function definitions(on_list)
+    return vim.lsp.buf.definition({
+        on_list = function(result)
+            on_list(result.items)
+        end
+    })
+end
+
+local function definition_text(item)
+    return string.format("%s:%d:%d %s", fileshorten(item["filename"]), item["lnum"], item["col"], item["text"])
+end
+
+local function open_definition(item)
+    if item ~= nil then
+        vim.cmd.edit(item["filename"])
+        vim.schedule(function()
+            vim.fn.cursor(item["lnum"], item["col"])
+        end)
+    end
+end
+
+local function pick_definition()
+    pick("Definition", definitions, open_definition, { text_cb = definition_text })
+end
+
+vim.keymap.set('n', '<leader>n', pick_definition)
