@@ -2,15 +2,14 @@ local M = {}
 
 local function tolines(items, opts)
     local func = nil
-    if opts["key"] ~= nil then
-        local key = opts["key"]
+    if opts["key"] then
         func = function(item)
-            return item[key]
+            return item[opts["key"]]
         end
-    elseif opts["text_cb"] ~= nil then
+    elseif opts["text_cb"] then
         func = opts["text_cb"]
     end
-    if func ~= nil then
+    if func then
         return vim.tbl_map(func, items)
     end
     return items
@@ -251,7 +250,8 @@ local function lsp_items(func)
 end
 
 local function lsp_item_text(item)
-    return string.format("%s:%d:%d %s", fileshorten(item["filename"]), item["lnum"], item["col"], item["text"])
+    local text = item["text"]:match("^%s*(.-)$") or ""
+    return string.format("%s:%d:%d  %s", fileshorten(item["filename"]), item["lnum"], item["col"], text)
 end
 
 local function open_lsp_item(item)
@@ -276,7 +276,13 @@ function M.pick_type_definition()
 end
 
 function M.pick_implementation()
-    pick_lsp_item("implementation", vim.lsp.buf.implementation)
+    pick_lsp_item("Implementation", vim.lsp.buf.implementation)
+end
+
+function M.pick_references()
+    pick_lsp_item("Reference", function(opts)
+        return vim.lsp.buf.references({}, opts)
+    end)
 end
 
 ------------------------------------------------------------------------
@@ -298,7 +304,7 @@ local function document_symbols(on_list)
                 end
                 local tbl = exclude_symbols[vim.bo.filetype]
                 if tbl ~= nil and vim.tbl_contains(tbl, kind) then
-                    return false
+
                 end
                 return true
             end, result.items))
@@ -319,6 +325,8 @@ function M.pick_document_symbol()
     M.pick("DocSymbol", document_symbols, open_lsp_item, { text_cb = symbol_text })
 end
 
+------------------------------------------------------------------------
+
 function M.setup()
     vim.ui.select = M.select
     vim.keymap.set('n', '<leader>f', M.pick_file)
@@ -335,6 +343,7 @@ function M.setup()
             vim.keymap.set('n', 'gd', M.pick_definition, opts("Goto definition"))
             vim.keymap.set('n', 'gi', M.pick_implementation, opts("Goto implementation"))
             vim.keymap.set('n', 'gy', M.pick_type_definition, opts("Goto type definition"))
+            vim.keymap.set('n', 'grr', M.pick_references, opts("Goto reference"))
             vim.keymap.set('n', ' s', M.pick_document_symbol, opts("Open symbol picker"))
         end,
     });
