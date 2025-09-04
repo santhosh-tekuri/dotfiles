@@ -343,7 +343,7 @@ function M.setup()
             vim.keymap.set('n', 'gd', M.pick_definition, opts("Goto definition"))
             vim.keymap.set('n', 'gi', M.pick_implementation, opts("Goto implementation"))
             vim.keymap.set('n', 'gy', M.pick_type_definition, opts("Goto type definition"))
-            vim.keymap.set('n', 'grr', M.pick_references, opts("Goto reference"))
+            vim.keymap.set('n', '<leader>r', M.pick_references, opts("Goto reference"))
             vim.keymap.set('n', ' s', M.pick_document_symbol, opts("Open symbol picker"))
         end,
     });
