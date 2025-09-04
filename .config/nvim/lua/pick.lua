@@ -150,15 +150,25 @@ local function pick(prompt, src, onclose, opts)
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
-            local s = vim.fn.getline(1)
-            if #s > 0 then
-                local matched = vim.fn.matchfuzzypos(items, s, opts)
+            local query = vim.fn.getline(1)
+            if #query > 0 then
+                local matched = vim.fn.matchfuzzypos(items, query, opts)
                 setitems(matched[1], matched[2])
             else
                 setitems(items, nil)
             end
         end
     })
+end
+
+---@diagnostic disable-next-line: duplicate-set-field
+vim.ui.select = function(items, opts, on_choice)
+    local prompt = opts and opts["prompt"] or ""
+    local popts = {}
+    if opts and opts["format_item"] ~= nil then
+        popts["text_cb"] = opts["format_item"]
+    end
+    pick(prompt, items, on_choice, popts)
 end
 
 local function fileshorten(absname)
@@ -293,7 +303,7 @@ local function symbol_text(item)
 end
 
 local function pick_document_symbol()
-    pick("Definition", document_symbols, open_lsp_location, { text_cb = symbol_text })
+    pick("DocSymbol", document_symbols, open_lsp_location, { text_cb = symbol_text })
 end
 
 vim.keymap.set('n', '<leader>m', pick_document_symbol)
