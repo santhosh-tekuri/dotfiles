@@ -294,20 +294,22 @@ local exclude_symbols = {
     }
 }
 
+local function filter_symbol(item)
+    local kind = item["kind"]
+    if vim.tbl_contains(exclude_symbols[1], kind) then
+        return false
+    end
+    local tbl = exclude_symbols[vim.bo.filetype]
+    if tbl ~= nil and vim.tbl_contains(tbl, kind) then
+        return false
+    end
+    return true
+end
+
 local function document_symbols(on_list)
     return vim.lsp.buf.document_symbol({
         on_list = function(result)
-            on_list(vim.tbl_filter(function(item)
-                local kind = item["kind"]
-                if vim.tbl_contains(exclude_symbols[1], kind) then
-                    return false
-                end
-                local tbl = exclude_symbols[vim.bo.filetype]
-                if tbl ~= nil and vim.tbl_contains(tbl, kind) then
-
-                end
-                return true
-            end, result.items))
+            on_list(vim.tbl_filter(filter_symbol, result.items))
         end
     })
 end
@@ -323,6 +325,18 @@ end
 
 function M.pick_document_symbol()
     M.pick("DocSymbol", document_symbols, open_lsp_item, { text_cb = symbol_text })
+end
+
+local function workspace_symbols(on_list, query)
+    return vim.lsp.buf.workspace_symbol(query, {
+        on_list = function(result)
+            on_list(vim.tbl_filter(filter_symbol, result.items))
+        end
+    })
+end
+
+function M.pick_workspace_symbol()
+    M.pick("WorkSymbol", workspace_symbols, open_lsp_item, { text_cb = symbol_text })
 end
 
 ------------------------------------------------------------------------
@@ -345,6 +359,7 @@ function M.setup()
             vim.keymap.set('n', 'gy', M.pick_type_definition, opts("Goto type definition"))
             vim.keymap.set('n', '<leader>r', M.pick_references, opts("Goto reference"))
             vim.keymap.set('n', ' s', M.pick_document_symbol, opts("Open symbol picker"))
+            vim.keymap.set('n', ' S', M.pick_workspace_symbol, opts("Open workspace symbol picker"))
         end,
     });
 end

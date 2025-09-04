@@ -46,17 +46,6 @@ function spec.config()
     vim.keymap.set('n', ' h', Snacks.picker.help, { desc = "Open help picker" })
     vim.keymap.set('n', ' u', Snacks.picker.undo, { desc = "Open undo picker" })
     vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
-
-    -- when LS attaches to the current buffer
-    vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('TelescopeLspConfig', {}),
-        callback = function(ev)
-            local function opts(desc)
-                return { buffer = ev.buf, desc = desc }
-            end
-            vim.keymap.set('n', ' S', Snacks.picker.lsp_workspace_symbols, opts("Open workspace symbol picker"))
-        end,
-    });
 end
 
 return spec
