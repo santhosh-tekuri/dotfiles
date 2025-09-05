@@ -51,7 +51,7 @@ function M.pick(prompt, src, onclose, opts)
         row = row,
         col = col,
         style = "minimal",
-        border = { '', '', '', '', '-', '-', '-', ' ' },
+        border = { '', '', '', '', ' ', '-', ' ', ' ' },
     })
 
     -- show prompt
