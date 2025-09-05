@@ -1,7 +1,6 @@
 local M = {}
 
 local function tolines(items, opts)
-    items = items or {}
     local func = nil
     if opts["key"] then
         func = function(item)
@@ -165,6 +164,7 @@ function M.pick(prompt, src, onclose, opts)
             local query = vim.fn.getline(1)
             if #query > 0 then
                 if opts["live"] then
+                    vim.print("query:" .. query)
                     vim.api.nvim_set_current_buf(lspbuf)
                     src(function(result)
                         setitems(result, nil)
@@ -175,7 +175,7 @@ function M.pick(prompt, src, onclose, opts)
                     setitems(matched[1], matched[2])
                 end
             else
-                setitems(items, nil)
+                setitems(items or {}, nil)
             end
         end
     })
