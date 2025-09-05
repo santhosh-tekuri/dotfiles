@@ -79,10 +79,7 @@ function M.pick(prompt, src, onclose, opts)
         vim.api.nvim_set_option_value("cursorline", true, { win = swin })
         return swin
     end
-    local swin = -1
-    if not opts["live"] then
-        swin = create_select_win()
-    end
+    local swin = create_select_win()
     vim.cmd.startinsert()
     local function close(confirm)
         local item = nil
@@ -155,9 +152,7 @@ function M.pick(prompt, src, onclose, opts)
             end
         end
     end
-    if not opts["live"] then
-        setitems(items)
-    end
+    setitems(items or {})
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
