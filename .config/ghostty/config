@@ -21,6 +21,7 @@ foreground = 75869a
 selection-background = 1e293b
 selection-foreground = 75869a
 cursor-color = dcd7ba
+split-divider-color = 424b56
 
 palette = 0=#2E3436
 palette = 1=#b00400
