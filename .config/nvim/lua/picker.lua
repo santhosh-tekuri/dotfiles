@@ -1,6 +1,7 @@
 local M = {}
 
 local function tolines(items, opts)
+    items = items or {}
     local func = nil
     if opts["key"] then
         func = function(item)
@@ -16,22 +17,27 @@ local function tolines(items, opts)
 end
 
 function M.pick(prompt, src, onclose, opts)
+    local lspbuf = vim.api.nvim_get_current_buf()
     opts = vim.tbl_deep_extend("force", { matchseq = 1 }, opts or {})
-    if type(src) == "function" then
-        src(function(items)
-            M.pick(prompt, items, onclose, opts)
-        end)
-        return
-    end
-    local items = src
+    local items = nil
     local sitems = nil
-    if #items == 0 then
-        vim.api.nvim_echo({ { "No " .. prompt .. " to select", "WarningMsg" } }, false, {})
-        onclose(nil)
-        return
-    elseif #items == 1 then
-        onclose(items[1])
-        return
+    if not opts["live"] then
+        if type(src) == "function" then
+            src(function(result)
+                opts["src"] = src
+                M.pick(prompt, result, onclose, opts)
+            end)
+            return
+        end
+        items = src
+        if #items == 0 then
+            vim.api.nvim_echo({ { "No " .. prompt .. " to select", "WarningMsg" } }, false, {})
+            onclose(nil)
+            return
+        elseif #items == 1 then
+            onclose(items[1])
+            return
+        end
     end
     local pbuf = vim.api.nvim_create_buf(false, true)
     vim.b[pbuf].completion = false
@@ -74,7 +80,10 @@ function M.pick(prompt, src, onclose, opts)
         vim.api.nvim_set_option_value("cursorline", true, { win = swin })
         return swin
     end
-    local swin = create_select_win()
+    local swin = -1
+    if not opts["live"] then
+        swin = create_select_win()
+    end
     vim.cmd.startinsert()
     local function close(confirm)
         local item = nil
@@ -147,14 +156,24 @@ function M.pick(prompt, src, onclose, opts)
             end
         end
     end
-    setitems(items)
+    if not opts["live"] then
+        setitems(items)
+    end
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
             local query = vim.fn.getline(1)
             if #query > 0 then
-                local matched = vim.fn.matchfuzzypos(items, query, opts)
-                setitems(matched[1], matched[2])
+                if opts["live"] then
+                    vim.api.nvim_set_current_buf(lspbuf)
+                    src(function(result)
+                        setitems(result, nil)
+                    end, query)
+                    vim.api.nvim_set_current_buf(pbuf)
+                else
+                    local matched = vim.fn.matchfuzzypos(items, query, opts)
+                    setitems(matched[1], matched[2])
+                end
             else
                 setitems(items, nil)
             end
@@ -336,7 +355,7 @@ local function workspace_symbols(on_list, query)
 end
 
 function M.pick_workspace_symbol()
-    M.pick("WorkSymbol", workspace_symbols, open_lsp_item, { text_cb = symbol_text })
+    M.pick("WorkSymbol", workspace_symbols, open_lsp_item, { text_cb = symbol_text, live = true })
 end
 
 ------------------------------------------------------------------------
