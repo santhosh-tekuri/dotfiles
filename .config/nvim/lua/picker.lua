@@ -334,7 +334,7 @@ local function symbol_text(item)
     local text = item["text"]
     local index = string.find(text, ' ')
     if index then
-        text = string.sub(text, index)
+        text = string.sub(text, index + 1)
     end
     return string.format("%-57s %11s", text, item["kind"])
 end
