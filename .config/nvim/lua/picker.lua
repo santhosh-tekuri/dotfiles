@@ -93,8 +93,7 @@ function M.pick(prompt, src, onclose, opts)
         onclose(item)
     end
     local function move(i)
-        local line = vim.api.nvim_win_get_cursor(swin)[1]
-        line = line + i
+        local line = vim.api.nvim_win_get_cursor(swin)[1] + i
         if line > 0 and line <= vim.api.nvim_buf_line_count(sbuf) then
             vim.api.nvim_win_set_cursor(swin, { line, 0 })
         end
@@ -308,9 +307,7 @@ end
 
 local exclude_symbols = {
     { "Constant", "Variable", "Object", "Number", "String", "Boolean", "Array" },
-    lua = {
-        "Package",
-    }
+    lua = { "Package" },
 }
 
 local function filter_symbol(item)
