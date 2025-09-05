@@ -62,8 +62,6 @@ function M.pick(prompt, src, onclose, opts)
         strict = false,
     })
 
-    ns = vim.api.nvim_create_namespace("fuzzyhl")
-
     local sbuf = vim.api.nvim_create_buf(false, true)
     local function create_select_win()
         local swin = vim.api.nvim_open_win(sbuf, false, {
@@ -119,6 +117,7 @@ function M.pick(prompt, src, onclose, opts)
     vim.keymap.set("i", "<up>", function()
         move(-1)
     end, { buffer = pbuf })
+    ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function setitems(lines, pos)
         sitems = lines
         lines = tolines(lines, opts)
