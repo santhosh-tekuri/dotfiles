@@ -153,18 +153,24 @@ function M.pick(prompt, src, onclose, opts)
         end
     end
     setitems(items or {})
+    local timer = nil
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
             local query = vim.fn.getline(1)
             if #query > 0 then
                 if opts["live"] then
-                    vim.print("query:" .. query)
-                    vim.api.nvim_set_current_buf(lspbuf)
-                    src(function(result)
-                        setitems(result, nil)
-                    end, query)
-                    vim.api.nvim_set_current_buf(pbuf)
+                    if timer then
+                        vim.fn.timer_stop(timer)
+                        timer = nil
+                    end
+                    timer = vim.fn.timer_start(250, function()
+                        vim.api.nvim_set_current_buf(lspbuf)
+                        src(function(result)
+                            setitems(result, nil)
+                        end, query)
+                        vim.api.nvim_set_current_buf(pbuf)
+                    end)
                 else
                     local matched = vim.fn.matchfuzzypos(items, query, opts)
                     setitems(matched[1], matched[2])
