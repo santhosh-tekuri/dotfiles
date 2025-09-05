@@ -364,9 +364,6 @@ function M.setup()
     vim.ui.select = M.select
     vim.keymap.set('n', '<leader>f', M.pick_file)
     vim.keymap.set('n', '<leader>b', M.pick_buffer)
-    vim.keymap.set('n', '<leader>n', M.pick_definition)
-    vim.keymap.set('n', '<leader>o', M.pick_type_definition)
-    vim.keymap.set('n', '<leader>m', M.pick_document_symbol)
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('LspPickers', {}),
         callback = function(ev)
