@@ -79,9 +79,9 @@ function M.pick(prompt, src, onclose, opts)
     end
     local swin = create_select_win()
     vim.cmd.startinsert()
-    local function close(confirm)
+    local function close(copts)
         local item = nil
-        if confirm then
+        if copts then
             local line = vim.fn.line('.', swin)
             if sitems ~= nil and line > 0 and line <= #sitems then
                 item = sitems[line]
@@ -90,7 +90,7 @@ function M.pick(prompt, src, onclose, opts)
         vim.cmd.stopinsert()
         vim.api.nvim_buf_delete(pbuf, {})
         vim.api.nvim_buf_delete(sbuf, {})
-        onclose(item)
+        onclose(item, copts)
     end
     local function move(i)
         local line = vim.api.nvim_win_get_cursor(swin)[1] + i
@@ -99,10 +99,16 @@ function M.pick(prompt, src, onclose, opts)
         end
     end
     vim.keymap.set("i", "<cr>", function()
-        close(true)
+        close({ edit = "edit" })
+    end, { buffer = pbuf })
+    vim.keymap.set("i", "<c-s>", function()
+        close({ edit = "split" })
+    end, { buffer = pbuf })
+    vim.keymap.set("i", "<c-v>", function()
+        close({ edit = "vsplit" })
     end, { buffer = pbuf })
     vim.keymap.set("i", "<esc>", function()
-        close(false)
+        close(nil)
     end, { buffer = pbuf })
     vim.keymap.set("i", "<c-n>", function()
         move(1)
@@ -225,9 +231,9 @@ local function files()
     return vim.fn.systemlist(cmd)
 end
 
-local function edit(item)
+local function edit(item, opts)
     if item then
-        vim.cmd.edit(item)
+        vim.cmd[opts["edit"]](item)
     end
 end
 
@@ -272,9 +278,9 @@ local function lsp_item_text(item)
     return string.format("%s:%d:%d  %s", fileshorten(item["filename"]), item["lnum"], item["col"], text)
 end
 
-local function open_lsp_item(item)
+local function open_lsp_item(item, opts)
     if item ~= nil then
-        vim.cmd.edit(item["filename"])
+        vim.cmd[opts["edit"]](item["filename"])
         vim.schedule(function()
             vim.fn.cursor(item["lnum"], item["col"])
         end)
