@@ -151,13 +151,13 @@ function M.pick(prompt, src, onclose, opts)
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
+            if timer then
+                vim.fn.timer_stop(timer)
+                timer = nil
+            end
             local query = vim.fn.getline(1)
             if #query > 0 then
                 if opts["live"] then
-                    if timer then
-                        vim.fn.timer_stop(timer)
-                        timer = nil
-                    end
                     timer = vim.fn.timer_start(250, function()
                         vim.api.nvim_set_current_buf(lspbuf)
                         src(function(result)
