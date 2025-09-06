@@ -98,10 +98,10 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufModifiedSet', 'DiagnosticChange
             end
             return ""
         end
-        local s = "%l,%c%="
-        s = s .. group(nil) .. "%t"
+        local s = "%=" .. group(nil) .. "%t"
         s = s .. (vim.bo.modified and '*' or ' ')
-        s = "%36(" .. s .. "%)"
+        s = s .. "%0* %l,%c"
+        s = "%60(" .. s .. "%)"
         if vim.o.rulerformat ~= s then
             vim.opt.rulerformat = s
         end
