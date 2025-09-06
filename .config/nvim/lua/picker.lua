@@ -31,10 +31,10 @@ function M.pick(prompt, src, onclose, opts)
         items = src
         if #items == 0 then
             vim.api.nvim_echo({ { "No " .. prompt .. " to select", "WarningMsg" } }, false, {})
-            onclose(nil)
+            onclose(nil, {})
             return
         elseif #items == 1 then
-            onclose(items[1])
+            onclose(items[1], { open = vim.cmd.edit })
             return
         end
     end
