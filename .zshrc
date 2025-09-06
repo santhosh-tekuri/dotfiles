@@ -96,6 +96,9 @@ fi
 if command -v kubectl >/dev/null 2>&1; then
     source <(kubectl completion zsh)
 fi
+if command -v docker >/dev/null 2>&1; then
+    source <(docker completion zsh)
+fi
 
 # misc --
 source $dir/bin/docker.sh
