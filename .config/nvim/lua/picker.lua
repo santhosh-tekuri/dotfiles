@@ -98,30 +98,20 @@ function M.pick(prompt, src, onclose, opts)
             vim.api.nvim_win_set_cursor(swin, { line, 0 })
         end
     end
-    vim.keymap.set("i", "<cr>", function()
-        close({ edit = "edit" })
-    end, { buffer = pbuf })
-    vim.keymap.set("i", "<c-s>", function()
-        close({ edit = "split" })
-    end, { buffer = pbuf })
-    vim.keymap.set("i", "<c-v>", function()
-        close({ edit = "vsplit" })
-    end, { buffer = pbuf })
-    vim.keymap.set("i", "<esc>", function()
-        close(nil)
-    end, { buffer = pbuf })
-    vim.keymap.set("i", "<c-n>", function()
-        move(1)
-    end, { buffer = pbuf })
-    vim.keymap.set("i", "<c-p>", function()
-        move(-1)
-    end, { buffer = pbuf })
-    vim.keymap.set("i", "<down>", function()
-        move(1)
-    end, { buffer = pbuf })
-    vim.keymap.set("i", "<up>", function()
-        move(-1)
-    end, { buffer = pbuf })
+    local function keymap(lhs, func, args)
+        vim.keymap.set("i", lhs, function()
+            func(unpack(args))
+        end, { buffer = pbuf })
+    end
+    keymap("<cr>", close, { { open = vim.cmd.edit } })
+    keymap("<c-s>", close, { { open = vim.cmd.split } })
+    keymap("<c-v>", close, { { open = vim.cmd.vsplit } })
+    keymap("<c-t>", close, { { open = vim.cmd.tabedit } })
+    keymap("<esc>", close, { nil })
+    keymap("<c-n>", move, { 1 })
+    keymap("<c-p>", move, { -1 })
+    keymap("<down>", move, { 1 })
+    keymap("<up>", move, { -1 })
     ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function setitems(lines, pos)
         sitems = lines
@@ -233,7 +223,7 @@ end
 
 local function edit(item, opts)
     if item then
-        vim.cmd[opts["edit"]](item)
+        opts["open"](item)
     end
 end
 
@@ -280,7 +270,7 @@ end
 
 local function open_lsp_item(item, opts)
     if item ~= nil then
-        vim.cmd[opts["edit"]](item["filename"])
+        opts["open"](item["filename"])
         vim.schedule(function()
             vim.fn.cursor(item["lnum"], item["col"])
         end)
