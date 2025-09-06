@@ -74,7 +74,6 @@ function M.pick(prompt, src, onclose, opts)
             border = { '', '', '', ' ', '', '', '', ' ' },
             focusable = false,
         })
-        vim.api.nvim_set_option_value("cursorline", true, { win = swin })
         return swin
     end
     local swin = create_select_win()
@@ -118,15 +117,16 @@ function M.pick(prompt, src, onclose, opts)
         lines = tolines(lines, opts)
         vim.api.nvim_buf_clear_namespace(sbuf, ns, 0, -1)
         vim.api.nvim_buf_set_lines(sbuf, 0, -1, false, lines)
+        vim.api.nvim_set_option_value("cursorline", #lines > 0, { win = swin })
         if #lines == 0 then
-            if swin ~= -1 then
-                vim.api.nvim_win_hide(swin)
-                swin = -1
-            end
+            vim.api.nvim_buf_set_extmark(sbuf, ns, 0, 0, {
+                virt_text = { { "nothing to show", "Comment" } },
+                virt_text_pos = "right_align",
+                strict = false,
+            })
+            vim.api.nvim_win_set_width(swin, width)
+            vim.api.nvim_win_set_height(swin, 1)
         else
-            if swin == -1 then
-                swin = create_select_win()
-            end
             vim.api.nvim_win_set_height(swin, math.min(height - 2, #lines))
             local w = width
             for _, line in ipairs(lines) do
