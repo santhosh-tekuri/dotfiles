@@ -195,14 +195,33 @@ local function fileshorten(absname)
         fname = vim.fn.fnamemodify(fname, ":~")
     end
     local width = 50
-    fname = #fname > width and vim.fn.pathshorten(fname, 3) or fname
     if #fname > width then
-        local dir = vim.fn.fnamemodify(fname, ":h")
-        local file = vim.fn.fnamemodify(fname, ":t")
-        if dir and file then
-            file = file:sub(-(width - #dir - 2))
-            fname = dir .. "/…" .. file
+        local i = #fname
+        for t = 3, #fname do
+            if fname:sub(t, t) == '/' then
+                i = t
+                break
+            end
         end
+        local j = i + 1
+        while #fname - ((j - i - 1) == 0 and 0 or (j - i)) > width do
+            local temp
+            for t = j + 1, #fname do
+                if fname:sub(t, t) == '/' then
+                    temp = t
+                    break
+                end
+            end
+            if temp then
+                j = temp
+            else
+                break
+            end
+        end
+        if j - i - 1 == 0 then
+            return fname
+        end
+        return fname:sub(1, i) .. "…" .. fname:sub(j)
     end
     return fname
 end
