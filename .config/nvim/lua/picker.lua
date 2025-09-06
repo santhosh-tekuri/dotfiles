@@ -51,13 +51,13 @@ function M.pick(prompt, src, onclose, opts)
         row = row,
         col = col,
         style = "minimal",
-        border = { '', '', '', '', ' ', '-', ' ', ' ' },
+        border = { '', '', '', ' ', ' ', '-', ' ', ' ' },
     })
 
     -- show prompt
     local ns = vim.api.nvim_create_namespace("picker-prompt")
     vim.api.nvim_buf_set_extmark(pbuf, ns, 0, 0, {
-        virt_text = { { prompt .. " ", "Comment" } },
+        virt_text = { { prompt, "Comment" } },
         virt_text_pos = "right_align",
         strict = false,
     })
@@ -71,7 +71,7 @@ function M.pick(prompt, src, onclose, opts)
             row = row + 2,
             col = col,
             style = "minimal",
-            border = { '', '', '', '', '', '', '', ' ' },
+            border = { '', '', '', ' ', '', '', '', ' ' },
             focusable = false,
         })
         vim.api.nvim_set_option_value("cursorline", true, { win = swin })
@@ -332,7 +332,7 @@ local function symbol_text(item)
     if index then
         text = string.sub(text, index + 1)
     end
-    return string.format("%-57s %11s", text, item["kind"])
+    return string.format("%-58s %11s", text, item["kind"])
 end
 
 function M.pick_document_symbol()
