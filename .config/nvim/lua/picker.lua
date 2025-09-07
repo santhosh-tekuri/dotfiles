@@ -15,6 +15,62 @@ local function tolines(items, opts)
     return items
 end
 
+local function match(items, query, opts)
+    local w = 0
+    local pos = nil
+    for word in query:gmatch("%S+") do
+        if w == 0 then
+            items, pos = unpack(vim.fn.matchfuzzypos(items, word, opts))
+        elseif w == 1 then
+            assert(pos ~= nil)
+            local temp = {}
+            for i, item in ipairs(items) do
+                table.insert(temp, { item = item, pos = pos[i] })
+            end
+            items = temp
+            local func
+            if opts["key"] then
+                local key = opts["key"]
+                func = function(item)
+                    return item["item"][key]
+                end
+            elseif opts["text_cb"] then
+                local text_cb = opts["text_cb"]
+                func = function(item)
+                    return text_cb(item["item"])
+                end
+            else
+                func = function(item)
+                    return item["item"]
+                end
+            end
+            opts = { text_cb = func, matchseq = 1 }
+            items, pos = unpack(vim.fn.matchfuzzypos(items, word, opts))
+        else
+            assert(pos ~= nil)
+            for i, item in ipairs(items) do
+                for _, p in ipairs(pos[i]) do
+                    table.insert(item["pos"], p)
+                end
+            end
+            items, pos = unpack(vim.fn.matchfuzzypos(items, word, opts))
+        end
+        w = w + 1
+    end
+    if w > 1 then
+        local temp = {}
+        for i, item in ipairs(items) do
+            table.insert(temp, item["item"])
+            for _, p in ipairs(pos[i]) do
+                table.insert(item["pos"], p)
+            end
+            pos[i] = item["pos"]
+        end
+        items = temp
+    end
+    return { items, pos }
+end
+
 function M.pick(prompt, src, onclose, opts)
     local lspbuf = vim.api.nvim_get_current_buf()
     opts = vim.tbl_deep_extend("force", { matchseq = 1 }, opts or {})
@@ -166,7 +222,7 @@ function M.pick(prompt, src, onclose, opts)
                         vim.api.nvim_set_current_buf(pbuf)
                     end)
                 else
-                    local matched = vim.fn.matchfuzzypos(items, query, opts)
+                    local matched = match(items, query, opts)
                     setitems(matched[1], matched[2])
                 end
             else
