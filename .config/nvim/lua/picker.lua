@@ -278,35 +278,6 @@ local function fileshorten(absname)
     if fname == absname then
         fname = vim.fn.fnamemodify(fname, ":~")
     end
-    local width = 50
-    if #fname > width then
-        local i = #fname
-        for t = 3, #fname do
-            if fname:sub(t, t) == '/' then
-                i = t
-                break
-            end
-        end
-        local j = i + 1
-        while #fname - ((j - i - 1) == 0 and 0 or (j - i)) > width do
-            local temp
-            for t = j + 1, #fname do
-                if fname:sub(t, t) == '/' then
-                    temp = t
-                    break
-                end
-            end
-            if temp then
-                j = temp
-            else
-                break
-            end
-        end
-        if j - i - 1 == 0 then
-            return fname
-        end
-        return fname:sub(1, i) .. "…" .. fname:sub(j)
-    end
     return fname
 end
 
@@ -341,10 +312,11 @@ local function buffers()
     local alt = vim.fn.bufnr("#")
     local items = {}
     for _, bufinfo in ipairs(vim.fn.getbufinfo({ bufloaded = 1, buflisted = 1 })) do
+        local fname = fileshorten(bufinfo.name)
         if bufinfo.bufnr == alt then
-            table.insert(items, 1, vim.fn.fnamemodify(bufinfo.name, ":."))
+            table.insert(items, 1, fname)
         elseif bufinfo.bufnr ~= cur then
-            table.insert(items, vim.fn.fnamemodify(bufinfo.name, ":."))
+            table.insert(items, fname)
         end
     end
     return items
