@@ -15,13 +15,36 @@ local function tolines(items, opts)
     return items
 end
 
+local function match_single(items, str, opts)
+    if str:sub(1, 1) == "'" then
+        str = str:sub(2)
+        local func = nil
+        if opts["key"] then
+            func = function(item)
+                return item[opts["key"]]
+            end
+        elseif opts["text_cb"] then
+            func = opts["text_cb"]
+        end
+        local result = { {}, {} }
+        for _, item in ipairs(items) do
+            local text = func and func(item) or item
+            local from, to = text:find(str, 1, true)
+            if from then
+                table.insert(result[1], item)
+                table.insert(result[2], { { from - 1, to - 1 } })
+            end
+        end
+        return result
+    end
+    return vim.fn.matchfuzzypos(items, str, opts)
+end
+
 local function match(items, query, opts)
     local w = 0
     local pos = nil
     for word in query:gmatch("%S+") do
-        if w == 0 then
-            items, pos = unpack(vim.fn.matchfuzzypos(items, word, opts))
-        elseif w == 1 then
+        if w == 1 then
             assert(pos ~= nil)
             local temp = {}
             for i, item in ipairs(items) do
@@ -45,16 +68,15 @@ local function match(items, query, opts)
                 end
             end
             opts = { text_cb = func, matchseq = 1 }
-            items, pos = unpack(vim.fn.matchfuzzypos(items, word, opts))
-        else
+        elseif w > 1 then
             assert(pos ~= nil)
             for i, item in ipairs(items) do
                 for _, p in ipairs(pos[i]) do
                     table.insert(item["pos"], p)
                 end
             end
-            items, pos = unpack(vim.fn.matchfuzzypos(items, word, opts))
         end
+        items, pos = unpack(match_single(items, word, opts))
         w = w + 1
     end
     if w > 1 then
@@ -192,8 +214,14 @@ function M.pick(prompt, src, onclose, opts)
             if pos ~= nil then
                 for line, arr in ipairs(pos) do
                     for _, p in ipairs(arr) do
-                        vim.api.nvim_buf_set_extmark(sbuf, ns, line - 1, p, {
-                            end_col = p + 1,
+                        local from, to
+                        if type(p) == "table" then
+                            from, to = p[1], p[2] + 1
+                        else
+                            from, to = p, p + 1
+                        end
+                        vim.api.nvim_buf_set_extmark(sbuf, ns, line - 1, from, {
+                            end_col = to,
                             hl_group = "Special",
                             strict = false,
                         })
