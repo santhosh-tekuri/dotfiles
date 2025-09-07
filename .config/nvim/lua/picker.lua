@@ -319,7 +319,7 @@ local function files()
     elseif vim.fn.executable("rg") == 1 then
         cmd = 'rg --files --no-messages --color=never'
     else
-        cmd = "find . -type f -not -path '*/git/*'"
+        cmd = "find . -type f -not -path '*/.git/*'"
     end
     return vim.fn.systemlist(cmd)
 end
