@@ -20,6 +20,7 @@ local groups = {
     Comment = { fg = dull, italic = true },
     Conceal = { fg = dull },
     Visual = { bg = "#1e293b" },
+    CursorLine = { link = "Visual" },
     QuickFixLine = { link = "Visual" },
     qfFileName = { link = "@keyword" },
     qfLineNr = { link = "Operator" },
