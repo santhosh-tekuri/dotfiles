@@ -115,7 +115,8 @@ function M.pick(prompt, src, onclose, opts)
         end
         items = src
         if #items == 0 then
-            vim.api.nvim_echo({ { "No " .. prompt .. " to select", "WarningMsg" } }, false, {})
+            local name = prompt:sub(-1) == ':' and prompt:sub(1, -2) or prompt
+            vim.api.nvim_echo({ { "No " .. name .. " to select", "WarningMsg" } }, false, {})
             onclose(nil, {})
             return
         elseif #items == 1 then
@@ -144,7 +145,7 @@ function M.pick(prompt, src, onclose, opts)
     local sconfig = {
         relative = "editor",
         style = "minimal",
-        border = { '', '', '', '', '', '', '', ' ' },
+        border = { '', '', '', ' ', '', '', '', ' ' },
         focusable = false,
     }
     local swin = -1
