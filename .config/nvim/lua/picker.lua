@@ -18,6 +18,10 @@ end
 local function match_single(items, str, opts)
     if str:sub(1, 1) == "'" then
         str = str:sub(2)
+        local ignorecase = not str:match("%u")
+        if ignorecase then
+            str = str:lower()
+        end
         local func = nil
         if opts["key"] then
             func = function(item)
@@ -29,7 +33,10 @@ local function match_single(items, str, opts)
         local result = { {}, {} }
         for _, item in ipairs(items) do
             local text = func and func(item) or item
-            local from, to = text:lower():find(str:lower(), 1, true)
+            if ignorecase then
+                text = text:lower()
+            end
+            local from, to = text:find(str, 1, true)
             if from then
                 table.insert(result[1], item)
                 table.insert(result[2], { { from - 1, to - 1 } })
