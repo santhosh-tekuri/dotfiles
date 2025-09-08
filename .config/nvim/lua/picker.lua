@@ -203,7 +203,7 @@ function M.pick(prompt, src, onclose, opts)
             end
         else
             local ht = math.min(10, #lines)
-            local w = 1
+            local w = 15
             for _, line in ipairs(lines) do
                 w = math.max(w, #line)
             end
