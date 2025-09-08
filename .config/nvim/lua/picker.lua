@@ -16,8 +16,13 @@ local function tolines(items, opts)
 end
 
 local function match_single(items, str, opts)
-    if str:sub(1, 1) == "'" then
-        str = str:sub(2)
+    local ch = nil
+    if str:sub(1, 1) == "'" or str:sub(1, 1) == "^" then
+        ch, str = str:sub(1, 1), str:sub(2)
+    elseif str:sub(-1) == "$" then
+        ch, str = "$", str:sub(1, -2)
+    end
+    if ch then
         local ignorecase = not str:match("%u")
         if ignorecase then
             str = str:lower()
@@ -30,13 +35,20 @@ local function match_single(items, str, opts)
         elseif opts["text_cb"] then
             func = opts["text_cb"]
         end
+        local from, to
         local result = { {}, {} }
         for _, item in ipairs(items) do
             local text = func and func(item) or item
             if ignorecase then
                 text = text:lower()
             end
-            local from, to = text:find(str, 1, true)
+            if ch == "'" then
+                from, to = text:find(str, 1, true)
+            elseif ch == "^" then
+                from, to = text:sub(1, #str) == str and 1 or nil, #str
+            else
+                from, to = text:sub(- #str) == str and #text - #str + 1 or nil, #text
+            end
             if from then
                 table.insert(result[1], item)
                 table.insert(result[2], { { from - 1, to - 1 } })
