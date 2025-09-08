@@ -116,21 +116,20 @@ function M.pick(prompt, src, onclose, opts)
             return
         end
     end
+    local cmdheight = vim.o.cmdheight
+    vim.o.cmdheight = 0
     local pbuf = vim.api.nvim_create_buf(false, true)
     vim.b[pbuf].completion = false
-    local width = math.min(70, vim.o.columns - 10)
-    local height = 11
-    local row = math.floor((vim.o.lines - height) / 2)
-    local col = math.floor((vim.o.columns - width) / 2)
     vim.api.nvim_open_win(pbuf, true, {
         relative = "editor",
-        width = width,
+        width = vim.o.columns,
         height = 1,
-        row = row,
-        col = col,
+        row = vim.o.lines,
+        col = 0,
         style = "minimal",
-        border = { '', '', '', ' ', ' ', '-', ' ', ' ' },
+        border = { '', '', '', ' ', '', '', '', ':' },
     })
+    vim.cmd("setlocal winhighlight=Normal:MsgArea,FloatBorder:Normal")
 
     -- show prompt
     local ns = vim.api.nvim_create_namespace("picker-prompt")
@@ -139,24 +138,18 @@ function M.pick(prompt, src, onclose, opts)
         virt_text_pos = "right_align",
         strict = false,
     })
+    vim.cmd.startinsert()
 
     local sbuf = vim.api.nvim_create_buf(false, true)
-    local function create_select_win()
-        local swin = vim.api.nvim_open_win(sbuf, false, {
-            relative = "editor",
-            width = width,
-            height = height - 2,
-            row = row + 2,
-            col = col,
-            style = "minimal",
-            border = { '', '', '', ' ', '', '', '', ' ' },
-            focusable = false,
-        })
-        return swin
-    end
-    local swin = create_select_win()
-    vim.cmd.startinsert()
+    local sconfig = {
+        relative = "editor",
+        style = "minimal",
+        border = { '', '', '', '', '', '', '', ' ' },
+        focusable = false,
+    }
+    local swin = -1
     local function close(copts)
+        vim.o.cmdheight = cmdheight
         local item = nil
         if copts then
             local line = vim.fn.line('.', swin)
@@ -180,6 +173,7 @@ function M.pick(prompt, src, onclose, opts)
             func(unpack(args))
         end, { buffer = pbuf })
     end
+    keymap("<tab>", function() end, {})
     keymap("<cr>", close, { { open = vim.cmd.edit } })
     keymap("<c-s>", close, { { open = vim.cmd.split } })
     keymap("<c-v>", close, { { open = vim.cmd.vsplit } })
@@ -195,22 +189,29 @@ function M.pick(prompt, src, onclose, opts)
         lines = tolines(lines, opts)
         vim.api.nvim_buf_clear_namespace(sbuf, ns, 0, -1)
         vim.api.nvim_buf_set_lines(sbuf, 0, -1, false, lines)
-        vim.api.nvim_set_option_value("cursorline", #lines > 0, { win = swin })
         if #lines == 0 then
-            vim.api.nvim_buf_set_extmark(sbuf, ns, 0, 0, {
-                virt_text = { { "nothing to show", "Comment" } },
-                virt_text_pos = "right_align",
-                strict = false,
-            })
-            vim.api.nvim_win_set_width(swin, width)
-            vim.api.nvim_win_set_height(swin, 1)
+            if swin ~= -1 then
+                vim.api.nvim_win_hide(swin)
+                swin = -1
+            end
         else
-            vim.api.nvim_win_set_height(swin, math.min(height - 2, #lines))
-            local w = width
+            local ht = math.min(10, #lines)
+            local w = 1
             for _, line in ipairs(lines) do
                 w = math.max(w, #line)
             end
-            vim.api.nvim_win_set_width(swin, w)
+            sconfig = vim.tbl_extend("force", sconfig, {
+                width = w,
+                height = ht,
+                row = vim.o.lines - ht - 1,
+                col = 0,
+            })
+            if swin == -1 then
+                swin = vim.api.nvim_open_win(sbuf, false, sconfig)
+            else
+                vim.api.nvim_win_set_config(swin, sconfig)
+            end
+            vim.api.nvim_set_option_value("cursorline", true, { win = swin })
             if pos ~= nil then
                 for line, arr in ipairs(pos) do
                     for _, p in ipairs(arr) do
@@ -407,7 +408,7 @@ local function symbol_text(item)
     if index then
         text = string.sub(text, index + 1)
     end
-    return string.format("%-58s %11s", text, item["kind"])
+    return string.format("%-80s %11s", text, item["kind"])
 end
 
 function M.pick_document_symbol()
