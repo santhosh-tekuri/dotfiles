@@ -29,7 +29,7 @@ local function match_single(items, str, opts)
         local result = { {}, {} }
         for _, item in ipairs(items) do
             local text = func and func(item) or item
-            local from, to = text:find(str, 1, true)
+            local from, to = text:lower():find(str:lower(), 1, true)
             if from then
                 table.insert(result[1], item)
                 table.insert(result[2], { { from - 1, to - 1 } })
