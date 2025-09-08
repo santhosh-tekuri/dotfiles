@@ -127,24 +127,17 @@ function M.pick(prompt, src, onclose, opts)
     vim.o.cmdheight = 0
     local pbuf = vim.api.nvim_create_buf(false, true)
     vim.b[pbuf].completion = false
-    vim.api.nvim_open_win(pbuf, true, {
+    local pwin = vim.api.nvim_open_win(pbuf, true, {
         relative = "editor",
         width = vim.o.columns,
         height = 1,
         row = vim.o.lines,
         col = 0,
         style = "minimal",
-        border = { '', '', '', ' ', '', '', '', ':' },
     })
+    vim.api.nvim_set_option_value("statuscolumn", prompt .. ' ', { win = pwin })
     vim.cmd("setlocal winhighlight=Normal:MsgArea,FloatBorder:Normal")
 
-    -- show prompt
-    local ns = vim.api.nvim_create_namespace("picker-prompt")
-    vim.api.nvim_buf_set_extmark(pbuf, ns, 0, 0, {
-        virt_text = { { prompt, "Comment" } },
-        virt_text_pos = "right_align",
-        strict = false,
-    })
     vim.cmd.startinsert()
 
     local sbuf = vim.api.nvim_create_buf(false, true)
@@ -201,7 +194,7 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<c-p>", move, { -1 })
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
-    ns = vim.api.nvim_create_namespace("fuzzyhl")
+    local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function setitems(lines, pos)
         sitems = lines
         lines = tolines(lines, opts)
@@ -281,10 +274,6 @@ end
 
 function M.select(items, opts, on_choice)
     local prompt = opts and opts["prompt"] or ""
-    prompt = prompt:match("^%s*(.-)%s*$") or ""
-    if #prompt > 1 and prompt:sub(-1) == ':' then
-        prompt = prompt:sub(1, -2)
-    end
     local popts = {}
     if opts and opts["format_item"] ~= nil then
         popts["text_cb"] = opts["format_item"]
@@ -321,7 +310,7 @@ local function edit(item, opts)
 end
 
 function M.pick_file()
-    M.pick("File", files(), edit)
+    M.pick("File:", files(), edit)
 end
 
 ------------------------------------------------------------------------
@@ -342,7 +331,7 @@ local function buffers()
 end
 
 function M.pick_buffer()
-    M.pick("Buffer", buffers(), edit)
+    M.pick("Buffer:", buffers(), edit)
 end
 
 ------------------------------------------------------------------------
@@ -376,19 +365,19 @@ local function pick_lsp_item(prompt, func)
 end
 
 function M.pick_definition()
-    pick_lsp_item("Definition", vim.lsp.buf.definition)
+    pick_lsp_item("Definition:", vim.lsp.buf.definition)
 end
 
 function M.pick_type_definition()
-    pick_lsp_item("TypeDefinition", vim.lsp.buf.type_definition)
+    pick_lsp_item("TypeDefinition:", vim.lsp.buf.type_definition)
 end
 
 function M.pick_implementation()
-    pick_lsp_item("Implementation", vim.lsp.buf.implementation)
+    pick_lsp_item("Implementation:", vim.lsp.buf.implementation)
 end
 
 function M.pick_references()
-    pick_lsp_item("Reference", function(opts)
+    pick_lsp_item("Reference:", function(opts)
         return vim.lsp.buf.references({}, opts)
     end)
 end
@@ -430,7 +419,7 @@ local function symbol_text(item)
 end
 
 function M.pick_document_symbol()
-    M.pick("DocSymbol", document_symbols, open_lsp_item, { text_cb = symbol_text })
+    M.pick("DocSymbol:", document_symbols, open_lsp_item, { text_cb = symbol_text })
 end
 
 local function workspace_symbols(on_list, query)
@@ -442,7 +431,7 @@ local function workspace_symbols(on_list, query)
 end
 
 function M.pick_workspace_symbol()
-    M.pick("WorkSymbol", workspace_symbols, open_lsp_item, { text_cb = symbol_text, live = true })
+    M.pick("WorkSymbol:", workspace_symbols, open_lsp_item, { text_cb = symbol_text, live = true })
 end
 
 ------------------------------------------------------------------------
