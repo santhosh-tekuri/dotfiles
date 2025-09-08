@@ -165,8 +165,8 @@ function M.pick(prompt, src, onclose, opts)
             end
         end
         vim.cmd.stopinsert()
-        vim.api.nvim_buf_delete(pbuf, {})
         vim.api.nvim_buf_delete(sbuf, {})
+        vim.api.nvim_buf_delete(pbuf, {})
         onclose(item, copts)
     end
     local function move(i)
@@ -180,6 +180,17 @@ function M.pick(prompt, src, onclose, opts)
             func(unpack(args))
         end, { buffer = pbuf })
     end
+    vim.api.nvim_create_autocmd('WinLeave', {
+        buffer = pbuf,
+        callback = function()
+            if vim.api.nvim_buf_is_valid(pbuf) then
+                vim.api.nvim_buf_delete(pbuf, {})
+            end
+            if vim.api.nvim_buf_is_valid(sbuf) then
+                vim.api.nvim_buf_delete(sbuf, {})
+            end
+        end
+    })
     keymap("<tab>", function() end, {})
     keymap("<cr>", close, { { open = vim.cmd.edit } })
     keymap("<c-s>", close, { { open = vim.cmd.split } })
