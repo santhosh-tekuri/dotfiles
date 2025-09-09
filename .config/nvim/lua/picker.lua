@@ -161,17 +161,21 @@ function M.pick(prompt, src, onclose, opts)
     }
     local swin = -1
     local function close(copts)
-        local item = nil
-        if copts then
-            local line = vim.fn.line('.', swin)
-            if sitems ~= nil and line > 0 and line <= #sitems then
-                item = sitems[line]
-            end
-        end
+        local line = vim.fn.line('.', swin)
         vim.cmd.stopinsert()
         vim.api.nvim_buf_delete(sbuf, {})
         vim.api.nvim_buf_delete(pbuf, {})
-        onclose(item, copts)
+        if copts and copts["qflist"] then
+            onclose(sitems, copts)
+        else
+            local item = nil
+            if copts then
+                if sitems ~= nil and line > 0 and line <= #sitems then
+                    item = sitems[line]
+                end
+            end
+            onclose(item, copts)
+        end
     end
     local function move(i)
         local line = vim.api.nvim_win_get_cursor(swin)[1] + i
@@ -196,6 +200,9 @@ function M.pick(prompt, src, onclose, opts)
         end
     })
     keymap("<tab>", function() end, {})
+    if opts and opts["qflist"] then
+        keymap("<c-q>", close, { { qflist = true } })
+    end
     keymap("<cr>", close, { { open = vim.cmd.edit } })
     keymap("<c-s>", close, { { open = vim.cmd.split } })
     keymap("<c-v>", close, { { open = vim.cmd.vsplit } })
@@ -364,15 +371,20 @@ end
 
 local function open_lsp_item(item, opts)
     if item ~= nil then
-        opts["open"](item["filename"])
-        vim.schedule(function()
-            vim.fn.cursor(item["lnum"], item["col"])
-        end)
+        if opts["qflist"] then
+            vim.fn.setqflist(item)
+            vim.cmd.copen()
+        else
+            opts["open"](item["filename"])
+            vim.schedule(function()
+                vim.fn.cursor(item["lnum"], item["col"])
+            end)
+        end
     end
 end
 
 local function pick_lsp_item(prompt, func)
-    M.pick(prompt, lsp_items(func), open_lsp_item, { text_cb = lsp_item_text })
+    M.pick(prompt, lsp_items(func), open_lsp_item, { text_cb = lsp_item_text, qflist = true })
 end
 
 function M.pick_definition()
