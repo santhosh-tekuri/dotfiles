@@ -380,9 +380,31 @@ end
 
 local function grep(on_list, query)
     local cmd = { "rg", "--column", "--line-number", "--no-heading", "--color=never" }
-    table.insert(cmd, "--")
+    while query:sub(1, 1) == '-' do
+        local i, j = query:find("%s+")
+        if not i then
+            on_list({})
+            return
+        end
+        table.insert(cmd, query:sub(1, i - 1))
+        query = query:sub(j + 1)
+        if cmd[#cmd] ~= "--" then
+            table.insert(cmd, "--")
+        end
+    end
+    if query == "" then
+        on_list({})
+        return
+    end
+    if cmd[#cmd] ~= "--" then
+        table.insert(cmd, "--")
+    end
     table.insert(cmd, query)
     local list = vim.fn.systemlist(cmd)
+    if vim.v.shell_error ~= 0 then
+        on_list({})
+        return
+    end
     local items = {}
     for _, line in ipairs(list) do
         local i = line:find(":", 1, true)
