@@ -347,12 +347,24 @@ end
 
 local function edit(item, opts)
     if item then
-        opts["open"](item)
+        if opts["qflist"] then
+            vim.fn.setqflist(vim.tbl_map(function(file)
+                return {
+                    filename = file,
+                    lnum = 1,
+                    col = 1,
+                    text = file,
+                }
+            end, item))
+            vim.cmd.copen()
+        else
+            opts["open"](item)
+        end
     end
 end
 
 function M.pick_file()
-    M.pick("File:", files(), edit)
+    M.pick("File:", files(), edit, { qflist = true })
 end
 
 ------------------------------------------------------------------------
@@ -373,7 +385,7 @@ local function buffers()
 end
 
 function M.pick_buffer()
-    M.pick("Buffer:", buffers(), edit)
+    M.pick("Buffer:", buffers(), edit, { qflist = true })
 end
 
 ------------------------------------------------------------------------
