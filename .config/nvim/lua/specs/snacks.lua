@@ -45,7 +45,6 @@ function spec.config()
     }
     vim.keymap.set('n', ' h', Snacks.picker.help, { desc = "Open help picker" })
     vim.keymap.set('n', ' u', Snacks.picker.undo, { desc = "Open undo picker" })
-    vim.keymap.set('n', ' /', Snacks.picker.grep, { desc = "Global search in workspace folder" })
 end
 
 return spec

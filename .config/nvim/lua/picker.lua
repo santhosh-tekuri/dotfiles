@@ -290,6 +290,8 @@ function M.pick(prompt, src, onclose, opts)
     })
 end
 
+------------------------------------------------------------------------
+
 function M.select(items, opts, on_choice)
     local prompt = opts and opts["prompt"] or ""
     local popts = {}
@@ -299,12 +301,34 @@ function M.select(items, opts, on_choice)
     M.pick(prompt, items, on_choice, popts)
 end
 
-local function fileshorten(absname)
-    local fname = vim.fn.fnamemodify(absname, ":.")
-    if fname == absname then
-        fname = vim.fn.fnamemodify(fname, ":~")
+local function fileshorten(fname)
+    if vim.fn.isabsolutepath(fname) == 0 then
+        return fname
     end
-    return fname
+    local name = vim.fn.fnamemodify(fname, ":.")
+    if name == fname then
+        name = vim.fn.fnamemodify(name, ":~")
+    end
+    return name
+end
+
+local function qfentry_text(item)
+    local text = item["text"]:match("^%s*(.-)$") or ""
+    return string.format("%s:%d:%d  %s", fileshorten(item["filename"]), item["lnum"], item["col"], text)
+end
+
+local function open_qfentry(item, opts)
+    if item ~= nil then
+        if opts["qflist"] then
+            vim.fn.setqflist(item)
+            vim.cmd.copen()
+        else
+            opts["open"](item["filename"])
+            vim.schedule(function()
+                vim.fn.cursor(item["lnum"], item["col"])
+            end)
+        end
+    end
 end
 
 ------------------------------------------------------------------------
@@ -354,6 +378,34 @@ end
 
 ------------------------------------------------------------------------
 
+local function grep(on_list, query)
+    local cmd = "rg --column --line-number --no-heading --color=never"
+    cmd = cmd .. " -- " .. query
+    local list = vim.fn.systemlist(cmd)
+    local items = {}
+    for _, line in ipairs(list) do
+        local i = line:find(":", 1, true)
+        assert(i ~= nil)
+        local j = line:find(":", i + 1, true)
+        assert(j ~= nil)
+        local k = line:find(":", j + 1, true)
+        assert(k ~= nil)
+        table.insert(items, {
+            filename = line:sub(1, i - 1),
+            lnum = line:sub(i + 1, j - 1),
+            col = line:sub(j + 1, k - 1),
+            text = line:sub(k + 1),
+        })
+    end
+    on_list(items)
+end
+
+function M.pick_grep()
+    M.pick("Grep:", grep, open_qfentry, { text_cb = qfentry_text, live = true, qflist = true })
+end
+
+------------------------------------------------------------------------
+
 local function lsp_items(func)
     return function(on_list)
         return func({
@@ -364,27 +416,8 @@ local function lsp_items(func)
     end
 end
 
-local function lsp_item_text(item)
-    local text = item["text"]:match("^%s*(.-)$") or ""
-    return string.format("%s:%d:%d  %s", fileshorten(item["filename"]), item["lnum"], item["col"], text)
-end
-
-local function open_lsp_item(item, opts)
-    if item ~= nil then
-        if opts["qflist"] then
-            vim.fn.setqflist(item)
-            vim.cmd.copen()
-        else
-            opts["open"](item["filename"])
-            vim.schedule(function()
-                vim.fn.cursor(item["lnum"], item["col"])
-            end)
-        end
-    end
-end
-
 local function pick_lsp_item(prompt, func)
-    M.pick(prompt, lsp_items(func), open_lsp_item, { text_cb = lsp_item_text, qflist = true })
+    M.pick(prompt, lsp_items(func), open_qfentry, { text_cb = qfentry_text, qflist = true })
 end
 
 function M.pick_definition()
@@ -442,7 +475,7 @@ local function symbol_text(item)
 end
 
 function M.pick_document_symbol()
-    M.pick("DocSymbol:", document_symbols, open_lsp_item, { text_cb = symbol_text })
+    M.pick("DocSymbol:", document_symbols, open_qfentry, { text_cb = symbol_text })
 end
 
 local function workspace_symbols(on_list, query)
@@ -454,7 +487,7 @@ local function workspace_symbols(on_list, query)
 end
 
 function M.pick_workspace_symbol()
-    M.pick("WorkSymbol:", workspace_symbols, open_lsp_item, { text_cb = symbol_text, live = true })
+    M.pick("WorkSymbol:", workspace_symbols, open_qfentry, { text_cb = symbol_text, live = true })
 end
 
 ------------------------------------------------------------------------
@@ -463,6 +496,7 @@ function M.setup()
     vim.ui.select = M.select
     vim.keymap.set('n', '<leader>f', M.pick_file)
     vim.keymap.set('n', '<leader>b', M.pick_buffer)
+    vim.keymap.set('n', '<leader>/', M.pick_grep)
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('LspPickers', {}),
         callback = function(ev)
