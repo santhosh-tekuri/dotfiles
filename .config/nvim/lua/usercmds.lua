@@ -9,16 +9,14 @@ vim.api.nvim_create_user_command("W", "noautocmd w", {})
 
 local function runCommand(args, auto_close)
     local buf = vim.api.nvim_create_buf(false, true)
-    if auto_close then
-        vim.o.cmdheight = 0
-    end
     local win = vim.api.nvim_open_win(buf, true, {
         relative = "editor",
         width = vim.o.columns,
-        height = vim.o.lines - vim.o.cmdheight,
+        height = vim.o.lines,
         row = 0,
         col = 0,
         style = "minimal",
+        zindex = 250,
     })
     vim.api.nvim_set_option_value("winhighlight", "Normal:Normal", { win = win })
     vim.cmd.terminal(args)
@@ -28,7 +26,6 @@ local function runCommand(args, auto_close)
             buffer = buf,
             callback = function()
                 vim.api.nvim_buf_delete(buf, {})
-                vim.o.cmdheight = 1
             end,
         })
     end
