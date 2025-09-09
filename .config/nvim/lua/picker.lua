@@ -379,8 +379,9 @@ end
 ------------------------------------------------------------------------
 
 local function grep(on_list, query)
-    local cmd = "rg --column --line-number --no-heading --color=never"
-    cmd = cmd .. " -- " .. query
+    local cmd = { "rg", "--column", "--line-number", "--no-heading", "--color=never" }
+    table.insert(cmd, "--")
+    table.insert(cmd, query)
     local list = vim.fn.systemlist(cmd)
     local items = {}
     for _, line in ipairs(list) do
