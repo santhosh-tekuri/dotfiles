@@ -9,11 +9,13 @@ function _G.StatusColumn()
     local git = nil
     local lnum = { vim.v.lnum - 1, 0 }
     for _, extmark in ipairs(vim.api.nvim_buf_get_extmarks(buf, -1, lnum, lnum, { details = true, type = "sign" })) do
-        local name = extmark[4].sign_hl_group or extmark[4].sign_name or ""
-        if name:find("Git") then
-            git = extmark[4]
-        elseif sign == nil or extmark[4].priority > sign.priority then
-            sign = extmark[4]
+        if extmark[4].sign_text then
+            local name = extmark[4].sign_hl_group or extmark[4].sign_name or ""
+            if name:find("Git") then
+                git = extmark[4]
+            elseif sign == nil or extmark[4].priority > sign.priority then
+                sign = extmark[4]
+            end
         end
     end
 
