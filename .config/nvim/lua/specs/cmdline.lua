@@ -1,3 +1,13 @@
 -- editable command line
 
-return { "smilhey/ed-cmd.nvim", opts = {} }
+local spec = { "smilhey/ed-cmd.nvim" }
+
+function spec.config()
+    require("ed-cmd").setup({
+        cmdline = {
+            keymaps = { close = '<esc>' }
+        }
+    })
+end
+
+return spec
