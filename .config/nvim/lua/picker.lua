@@ -136,8 +136,6 @@ function M.pick(prompt, src, onclose, opts)
             return
         end
     end
-    local cmdheight = vim.o.cmdheight
-    vim.o.cmdheight = 0
     local pbuf = vim.api.nvim_create_buf(false, true)
     vim.b[pbuf].completion = false
     local pwin = vim.api.nvim_open_win(pbuf, true, {
@@ -147,6 +145,7 @@ function M.pick(prompt, src, onclose, opts)
         row = vim.o.lines,
         col = 0,
         style = "minimal",
+        zindex = 250,
     })
     vim.api.nvim_set_option_value("statuscolumn", prompt .. ' ', { win = pwin })
     vim.cmd("setlocal winhighlight=Normal:MsgArea,FloatBorder:Normal")
@@ -162,7 +161,6 @@ function M.pick(prompt, src, onclose, opts)
     }
     local swin = -1
     local function close(copts)
-        vim.o.cmdheight = cmdheight
         local item = nil
         if copts then
             local line = vim.fn.line('.', swin)
