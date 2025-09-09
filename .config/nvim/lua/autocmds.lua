@@ -83,49 +83,9 @@ vim.api.nvim_create_autocmd("LspProgress", {
     end,
 })
 
-local function fileshorten(absname)
-    local fname = vim.fn.fnamemodify(absname, ":.")
-    if fname == absname then
-        fname = vim.fn.fnamemodify(fname, ":~")
-    end
-    local width = 50
-    if #fname > width then
-        local i = #fname
-        for t = 3, #fname do
-            if fname:sub(t, t) == '/' then
-                i = t
-                break
-            end
-        end
-        local j = i + 1
-        while #fname - ((j - i - 1) == 0 and 0 or (j - i)) > width do
-            local temp
-            for t = j + 1, #fname do
-                if fname:sub(t, t) == '/' then
-                    temp = t
-                    break
-                end
-            end
-            if temp then
-                j = temp
-            else
-                break
-            end
-        end
-        if j - i - 1 == 0 then
-            return fname
-        end
-        return fname:sub(1, i) .. "…" .. fname:sub(j)
-    end
-    return fname
-end
-
 vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufModifiedSet', 'DiagnosticChanged' }, {
     desc = "show file name with diagnostic hint in ruler",
     callback = function()
-        if not vim.bo.buflisted then
-            return
-        end
         local function group(bufnr)
             for _, name in ipairs({ "ERROR", "WARN", "INFO", "HINT" }) do
                 local n = #vim.diagnostic.count(bufnr, { severity = vim.diagnostic.severity[name] })
@@ -135,7 +95,7 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufModifiedSet', 'DiagnosticChange
             end
             return ""
         end
-        local s = "%=" .. group(nil) .. fileshorten(vim.api.nvim_buf_get_name(0))
+        local s = "%=" .. group(nil) .. "%t"
         s = s .. (vim.bo.modified and '*' or ' ')
         s = s .. "%0* %7(%l,%c%)"
         s = "%60(" .. s .. "%)"
