@@ -121,6 +121,7 @@ vim.keymap.set("t", "<c-o>", function()
             end
             vim.cmd.startinsert()
         end)
+        vim.schedule(vim.cmd.startinsert)
     end
 end, { desc = "pick terminal" })
 
