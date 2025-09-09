@@ -273,11 +273,11 @@ function M.pick(prompt, src, onclose, opts)
             if #query > 0 then
                 if opts["live"] then
                     timer = vim.fn.timer_start(250, function()
-                        vim.api.nvim_set_current_buf(lspbuf)
-                        src(function(result)
-                            setitems(result, nil)
-                        end, query)
-                        vim.api.nvim_set_current_buf(pbuf)
+                        vim.api.nvim_buf_call(lspbuf, function()
+                            src(function(result)
+                                setitems(result, nil)
+                            end, query)
+                        end)
                     end)
                 else
                     local matched = match(items, query, opts)
