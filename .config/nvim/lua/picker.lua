@@ -16,11 +16,20 @@ local function tolines(items, opts)
 end
 
 local function match_single(items, str, opts)
-    local ch = nil
-    if str:sub(1, 1) == "'" or str:sub(1, 1) == "^" then
-        ch, str = str:sub(1, 1), str:sub(2)
-    elseif str:sub(-1) == "$" then
-        ch, str = "$", str:sub(1, -2)
+    local ch, inverse = nil, nil
+    if str:sub(1, 1) == "!" then
+        ch, inverse, str = "'", true, str:sub(2)
+        if str:sub(1, 1) == "^" then
+            ch, str = str:sub(1, 1), str:sub(2)
+        elseif str:sub(-1) == "$" then
+            ch, str = "$", str:sub(1, -2)
+        end
+    else
+        if str:sub(1, 1) == "'" or str:sub(1, 1) == "^" then
+            ch, str = str:sub(1, 1), str:sub(2)
+        elseif str:sub(-1) == "$" then
+            ch, str = "$", str:sub(1, -2)
+        end
     end
     if ch then
         local ignorecase = not str:match("%u")
@@ -49,7 +58,11 @@ local function match_single(items, str, opts)
             else
                 from, to = text:sub(- #str) == str and #text - #str + 1 or nil, #text
             end
-            if from then
+            if inverse then
+                if not from then
+                    table.insert(result[1], item)
+                end
+            elseif from then
                 table.insert(result[1], item)
                 table.insert(result[2], { { from - 1, to - 1 } })
             end
