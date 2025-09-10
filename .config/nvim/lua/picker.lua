@@ -286,6 +286,13 @@ function M.pick(prompt, src, onclose, opts)
                     end
                 end
             end
+            if opts["add_highlights"] then
+                for i, line in ipairs(lines) do
+                    opts["add_highlights"](line, function(col, ext_opts)
+                        vim.api.nvim_buf_set_extmark(sbuf, ns, i - 1, col, ext_opts)
+                    end)
+                end
+            end
         end
     end
     setitems(items or {})
@@ -477,8 +484,34 @@ local function grep(on_list, query)
     on_list(items)
 end
 
+local function grep_add_highlights(line, add_highlight)
+    local i = line:find(":", 1, true)
+    if i then
+        add_highlight(0, {
+            end_col = i - 1,
+            hl_group = "qfFilename",
+            strict = false,
+        })
+        local j = line:find(":", i + 1, true)
+        assert(j ~= nil)
+        add_highlight(i, {
+            end_col = j - 1,
+            hl_group = "qfLineNr",
+            strict = false,
+        })
+        local k = line:find(" ", j + 1, true)
+        assert(k ~= nil)
+        add_highlight(j, {
+            end_col = k - 1,
+            hl_group = "qfLineNr",
+            strict = false,
+        })
+    end
+end
+
 function M.pick_grep()
-    M.pick("Grep:", grep, open_qfentry, { text_cb = qfentry_text, live = true, qflist = true })
+    M.pick("Grep:", grep, open_qfentry,
+        { text_cb = qfentry_text, live = true, add_highlights = grep_add_highlights, qflist = true })
 end
 
 ------------------------------------------------------------------------
