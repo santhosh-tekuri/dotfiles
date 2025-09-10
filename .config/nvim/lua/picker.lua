@@ -483,6 +483,10 @@ local function pick_lsp_item(prompt, func)
     M.pick(prompt, lsp_items(func), open_qfentry, { text_cb = qfentry_text, qflist = true })
 end
 
+function M.pick_declaration()
+    pick_lsp_item("Declaration:", vim.lsp.buf.declaration)
+end
+
 function M.pick_definition()
     pick_lsp_item("Definition:", vim.lsp.buf.definition)
 end
@@ -495,7 +499,7 @@ function M.pick_implementation()
     pick_lsp_item("Implementation:", vim.lsp.buf.implementation)
 end
 
-function M.pick_references()
+function M.pick_reference()
     pick_lsp_item("Reference:", function(opts)
         return vim.lsp.buf.references({}, opts)
     end)
@@ -566,10 +570,11 @@ function M.setup()
             local function opts(desc)
                 return { buffer = ev.buf, desc = desc }
             end
+            vim.keymap.set('n', 'gD', M.pick_declaration, opts("Goto declaration"))
             vim.keymap.set('n', 'gd', M.pick_definition, opts("Goto definition"))
             vim.keymap.set('n', 'gi', M.pick_implementation, opts("Goto implementation"))
             vim.keymap.set('n', 'gy', M.pick_type_definition, opts("Goto type definition"))
-            vim.keymap.set('n', '<leader>r', M.pick_references, opts("Goto reference"))
+            vim.keymap.set('n', '<leader>r', M.pick_reference, opts("Goto reference"))
             vim.keymap.set('n', '<leader>s', M.pick_document_symbol, opts("Open symbol picker"))
             vim.keymap.set('n', '<leader>S', M.pick_workspace_symbol, opts("Open workspace symbol picker"))
         end,
