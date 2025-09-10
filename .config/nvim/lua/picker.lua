@@ -218,6 +218,21 @@ function M.pick(prompt, src, onclose, opts)
         lines = tolines(lines, opts)
         vim.api.nvim_buf_clear_namespace(sbuf, ns, 0, -1)
         vim.api.nvim_buf_set_lines(sbuf, 0, -1, false, lines)
+
+        -- show counts
+        local counts = ""
+        if items then
+            counts = string.format("%d/%d", #sitems, #items)
+        elseif #sitems > 0 then
+            counts = counts .. #sitems
+        end
+        vim.api.nvim_buf_clear_namespace(pbuf, ns, 0, -1)
+        vim.api.nvim_buf_set_extmark(pbuf, ns, 0, 0, {
+            virt_text = { { counts, "Comment" } },
+            virt_text_pos = "right_align",
+            strict = false,
+        })
+
         if #lines == 0 then
             if swin ~= -1 then
                 vim.api.nvim_win_hide(swin)
