@@ -341,8 +341,17 @@ local function fileshorten(fname)
 end
 
 local function qfentry_text(item)
-    local text = item["text"]:match("^%s*(.-)$") or ""
-    return string.format("%s:%d:%d  %s", fileshorten(item["filename"]), item["lnum"], item["col"], text)
+    local text = fileshorten(item["filename"])
+    if item["lnum"] then
+        text = text .. ":" .. item["lnum"]
+        if item["col"] then
+            text = text .. ":" .. item["col"]
+        end
+    end
+    if item["text"] then
+        text = text .. " " .. (item["text"]:match("^%s*(.-)$") or "")
+    end
+    return text
 end
 
 local function open_qfentry(item, opts)
@@ -448,17 +457,22 @@ local function grep(on_list, query)
     local items = {}
     for _, line in ipairs(list) do
         local i = line:find(":", 1, true)
-        assert(i ~= nil)
-        local j = line:find(":", i + 1, true)
-        assert(j ~= nil)
-        local k = line:find(":", j + 1, true)
-        assert(k ~= nil)
-        table.insert(items, {
-            filename = line:sub(1, i - 1),
-            lnum = line:sub(i + 1, j - 1),
-            col = line:sub(j + 1, k - 1),
-            text = line:sub(k + 1),
-        })
+        if i then
+            local j = line:find(":", i + 1, true)
+            assert(j ~= nil)
+            local k = line:find(":", j + 1, true)
+            assert(k ~= nil)
+            table.insert(items, {
+                filename = line:sub(1, i - 1),
+                lnum = line:sub(i + 1, j - 1),
+                col = line:sub(j + 1, k - 1),
+                text = line:sub(k + 1),
+            })
+        else
+            table.insert(items, {
+                filename = line,
+            })
+        end
     end
     on_list(items)
 end
