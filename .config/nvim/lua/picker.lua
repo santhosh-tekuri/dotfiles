@@ -480,6 +480,10 @@ local function grep(on_list, query)
                     break
                 end
                 local m, n = t:find("[0m", y + 1, true)
+                if not m then
+                    text = text .. t
+                    break
+                end
                 table.insert(matches, { #text + x, #text + x + m - y - 2 })
                 text = text .. t:sub(1, x - 1) .. t:sub(y + 1, m - 1)
                 t = t:sub(n + 1)
