@@ -2,6 +2,7 @@ vim.cmd("autocmd TermOpen * startinsert")
 
 vim.api.nvim_create_autocmd("BufWritePre", {
     desc = "Format on save",
+    group = vim.api.nvim_create_augroup("Format", {}),
     callback = function()
         if #vim.lsp.get_clients({ bufnr = 0 }) > 0 then
             vim.lsp.buf.format()
