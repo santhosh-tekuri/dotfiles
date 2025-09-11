@@ -13,6 +13,7 @@ local function get_lines(ttt)
 end
 
 local function apply_highlights(bufnr, ttt)
+    vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
     for i, tt in ipairs(ttt) do
         local col = 0
         for _, t in ipairs(tt) do
