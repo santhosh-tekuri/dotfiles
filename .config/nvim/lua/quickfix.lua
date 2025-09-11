@@ -1,5 +1,3 @@
-local M = {}
-
 local ns = vim.api.nvim_create_namespace("qflist")
 
 local function get_lines(ttt)
@@ -32,7 +30,7 @@ local typeHilights = {
     H = 'DiagnosticSignHint',
 }
 
-function M.quickfix_text(info)
+function QuickfixText(info)
     local list
     local what = { id = info.id, items = 1, qfbufnr = 1 }
     if info.quickfix == 1 then
@@ -43,72 +41,29 @@ function M.quickfix_text(info)
 
     local ttt = {}
     for _, item in ipairs(list.items) do
-        local tt = { { '  ', 'qfText' } }
+        local tt = {}
         if item.bufnr == 0 then
-            table.insert(tt, { item.text, 'qfText' })
+            table.insert(tt, { item.text, "qfText" })
         else
-            table.insert(tt, { '' .. item.lnum .. ': ', 'qfLineNr' })
-            local text = item.text:match "^%s*(.-)%s*$" -- trim item.text
-            local hl = typeHilights[item.type] or 'qfText'
-            table.insert(tt, { text, hl })
+            local fname = vim.fn.bufname(item.bufnr)
+            fname = vim.fn.fnamemodify(fname, ':p:.')
+            table.insert(tt, { fname, "qfFilename" })
+            table.insert(tt, { ":" .. item.lnum, "qfLineNr" })
+            if item.end_col ~= 0 and item.end_lnum == item.lnum then
+                table.insert(tt, { item.text:sub(1, item.col - 1), 'qfText' })
+                table.insert(tt,
+                    { item.text:sub(item.col, item.end_col - 1), typeHilights[item.type] or typeHilights["W"] })
+                table.insert(tt, { item.text:sub(item.end_col), 'qfText' })
+            else
+                table.insert(tt, { item.text, typeHilights[item.type] or 'qfText' })
+            end
         end
         table.insert(ttt, tt)
     end
-
     vim.schedule(function()
         apply_highlights(list.qfbufnr, ttt)
     end)
     return get_lines(ttt)
 end
 
-vim.o.quickfixtextfunc = "v:lua.require'quickfix'.quickfix_text"
-
----------------------------------------------------------------------------------------------
-
-local function add_virt_lines()
-    if vim.bo[0].buftype ~= 'quickfix' then
-        return
-    end
-    local list = vim.fn.getqflist({ id = 0, winid = 1, qfbufnr = 1, items = 1 })
-    vim.api.nvim_buf_clear_namespace(list.qfbufnr, ns, 0, -1)
-    local lastfname = ''
-    for i, item in ipairs(list.items) do
-        local fname = vim.fn.bufname(item.bufnr)
-        fname = vim.fn.fnamemodify(fname, ':p:.')
-        if fname ~= "" and fname ~= lastfname then
-            lastfname = fname
-            vim.api.nvim_buf_set_extmark(list.qfbufnr, ns, i - 1, 0, {
-                virt_lines = { { { fname .. ":", "qfFilename" } } },
-                virt_lines_above = true,
-                strict = false,
-            })
-        end
-    end
-end
-
-vim.api.nvim_create_autocmd('BufReadPost', {
-    desc = "filename as virt_lines",
-    callback = add_virt_lines,
-})
-
----------------------------------------------------------------------------------------------
-
--- workaround for:
---      cannot scroll to see virtual line before first line
---      see https://github.com/neovim/neovim/issues/16166
-local function scrollup()
-    if vim.bo[0].buftype ~= 'quickfix' then
-        return
-    end
-    local row = unpack(vim.api.nvim_win_get_cursor(0))
-    if row == 1 then
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-u>', true, false, true), 'm', true)
-    end
-end
-
-vim.api.nvim_create_autocmd('CursorMoved', {
-    desc = "scroll up beyond first line",
-    callback = scrollup,
-})
-
-return M
+vim.o.quickfixtextfunc = "v:lua.QuickfixText"
