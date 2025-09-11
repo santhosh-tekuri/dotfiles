@@ -399,7 +399,7 @@ local function edit(item, opts)
     if item then
         if opts["qflist"] then
             vim.fn.setqflist(vim.tbl_map(function(file)
-                return { filename = file }
+                return { filename = file, text = file }
             end, item))
             vim.cmd.copen()
         else
