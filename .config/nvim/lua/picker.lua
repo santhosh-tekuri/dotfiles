@@ -174,11 +174,15 @@ function M.pick(prompt, src, onclose, opts)
     }
     local swin = -1
     local closed = nil
+    local timer = nil
     local function close(copts)
         if closed then
             return
         end
         closed = true
+        if timer then
+            vim.fn.timer_stop(timer)
+        end
         local line = vim.fn.line('.', swin)
         vim.cmd.stopinsert()
         vim.api.nvim_buf_delete(pbuf, {})
@@ -227,6 +231,9 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<up>", move, { -1 })
     local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function setitems(lines, pos)
+        if closed then
+            return
+        end
         sitems = lines
         lines = tolines(lines, opts)
         vim.api.nvim_buf_clear_namespace(sbuf, ns, 0, -1)
@@ -296,7 +303,6 @@ function M.pick(prompt, src, onclose, opts)
         end
     end
     setitems(items or {})
-    local timer = nil
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
@@ -488,10 +494,13 @@ local function grep(on_list, query)
                 text = text .. t:sub(1, x - 1) .. t:sub(y + 1, m - 1)
                 t = t:sub(n + 1)
             end
+            local lnum = tonumber(line:sub(i + 10, j - 5))
             table.insert(items, {
                 filename = line:sub(10, i - 1 - 4),
-                lnum = line:sub(i + 10, j - 5),
+                lnum = lnum,
                 col = col,
+                end_lnum = lnum,
+                end_col = matches[1][2],
                 matches = matches,
                 text = text,
             })
