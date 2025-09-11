@@ -151,7 +151,7 @@ function M.pick(prompt, src, onclose, opts)
     end
     local pbuf = vim.api.nvim_create_buf(false, true)
     vim.b[pbuf].completion = false
-    local pwin = vim.api.nvim_open_win(pbuf, true, {
+    vim.api.nvim_open_win(pbuf, true, {
         relative = "editor",
         width = vim.o.columns,
         height = 1,
@@ -160,7 +160,7 @@ function M.pick(prompt, src, onclose, opts)
         style = "minimal",
         zindex = 250,
     })
-    vim.api.nvim_set_option_value("statuscolumn", prompt .. ' ', { win = pwin })
+    vim.cmd("setlocal statuscolumn=" .. prompt .. "\\ ")
     vim.cmd("setlocal winhighlight=Normal:MsgArea,FloatBorder:Normal")
 
     vim.cmd.startinsert()
