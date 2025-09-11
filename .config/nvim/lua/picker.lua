@@ -435,7 +435,7 @@ end
 ------------------------------------------------------------------------
 
 local function grep(on_list, query)
-    local cmd = { "rg", "--column", "--line-number", "--no-heading", "--color=always" }
+    local cmd = { "rg", "--column", "--line-number", "--no-heading", "--color=always", "--no-config" }
     while query:sub(1, 1) == '-' do
         local i, j = query:find("%s+")
         if not i then
