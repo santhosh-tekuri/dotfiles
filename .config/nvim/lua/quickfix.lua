@@ -57,7 +57,7 @@ function QuickfixText(info)
                 if item.end_col ~= 0 and item.end_lnum == item.lnum then
                     table.insert(tt, { item.text:sub(1, item.col - 1), 'qfText' })
                     table.insert(tt,
-                        { item.text:sub(item.col, item.end_col - 1), typeHilights[item.type] or typeHilights["W"] })
+                        { item.text:sub(item.col, item.end_col - 1), typeHilights[item.type] or typeHilights["E"] })
                     table.insert(tt, { item.text:sub(item.end_col), 'qfText' })
                 else
                     table.insert(tt, { item.text, typeHilights[item.type] or 'qfText' })
