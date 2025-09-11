@@ -493,7 +493,7 @@ local function grep(on_list, query)
             })
         else
             table.insert(items, {
-                filename = line,
+                filename = line:sub(10, -5),
             })
         end
     end
