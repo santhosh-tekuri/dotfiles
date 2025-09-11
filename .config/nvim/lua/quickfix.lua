@@ -49,9 +49,11 @@ function QuickfixText(info)
             fname = vim.fn.fnamemodify(fname, ':p:.')
             table.insert(tt, { fname, "qfFilename" })
             if item.lnum == 0 then
+                table.insert(tt, { " ", "Default" })
                 table.insert(tt, { item.text, typeHilights[item.type] or 'qfText' })
             else
                 table.insert(tt, { ":" .. item.lnum, "qfLineNr" })
+                table.insert(tt, { " ", "Default" })
                 if item.end_col ~= 0 and item.end_lnum == item.lnum then
                     table.insert(tt, { item.text:sub(1, item.col - 1), 'qfText' })
                     table.insert(tt,
