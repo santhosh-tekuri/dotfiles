@@ -173,11 +173,16 @@ function M.pick(prompt, src, onclose, opts)
         focusable = false,
     }
     local swin = -1
+    local closed = nil
     local function close(copts)
+        if closed then
+            return
+        end
+        closed = true
         local line = vim.fn.line('.', swin)
         vim.cmd.stopinsert()
-        vim.api.nvim_buf_delete(sbuf, {})
         vim.api.nvim_buf_delete(pbuf, {})
+        vim.api.nvim_buf_delete(sbuf, {})
         if copts and copts["qflist"] then
             onclose(sitems, copts)
         else
@@ -204,12 +209,7 @@ function M.pick(prompt, src, onclose, opts)
     vim.api.nvim_create_autocmd('WinLeave', {
         buffer = pbuf,
         callback = function()
-            if vim.api.nvim_buf_is_valid(pbuf) then
-                vim.api.nvim_buf_delete(pbuf, {})
-            end
-            if vim.api.nvim_buf_is_valid(sbuf) then
-                vim.api.nvim_buf_delete(sbuf, {})
-            end
+            close(nil)
         end
     })
     keymap("<tab>", function() end, {})
