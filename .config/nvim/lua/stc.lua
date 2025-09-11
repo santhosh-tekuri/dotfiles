@@ -31,7 +31,9 @@ function _G.StatusColumn()
         end
     end
 
-    append(sign)
+    if vim.wo[win].signcolumn ~= "no" then
+        append(sign)
+    end
     if vim.v.virtnum == 0 then
         local nu = vim.wo[win].number
         local rnu = vim.wo[win].relativenumber
@@ -45,7 +47,9 @@ function _G.StatusColumn()
         end
         table.insert(comp, "%=" .. num .. " ")
     end
-    append(git)
+    if vim.wo[win].signcolumn ~= "no" then
+        append(git)
+    end
 
     return table.concat(comp, "")
 end

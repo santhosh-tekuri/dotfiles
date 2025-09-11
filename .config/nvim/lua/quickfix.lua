@@ -48,14 +48,18 @@ function QuickfixText(info)
             local fname = vim.fn.bufname(item.bufnr)
             fname = vim.fn.fnamemodify(fname, ':p:.')
             table.insert(tt, { fname, "qfFilename" })
-            table.insert(tt, { ":" .. item.lnum, "qfLineNr" })
-            if item.end_col ~= 0 and item.end_lnum == item.lnum then
-                table.insert(tt, { item.text:sub(1, item.col - 1), 'qfText' })
-                table.insert(tt,
-                    { item.text:sub(item.col, item.end_col - 1), typeHilights[item.type] or typeHilights["W"] })
-                table.insert(tt, { item.text:sub(item.end_col), 'qfText' })
-            else
+            if item.lnum == 0 then
                 table.insert(tt, { item.text, typeHilights[item.type] or 'qfText' })
+            else
+                table.insert(tt, { ":" .. item.lnum, "qfLineNr" })
+                if item.end_col ~= 0 and item.end_lnum == item.lnum then
+                    table.insert(tt, { item.text:sub(1, item.col - 1), 'qfText' })
+                    table.insert(tt,
+                        { item.text:sub(item.col, item.end_col - 1), typeHilights[item.type] or typeHilights["W"] })
+                    table.insert(tt, { item.text:sub(item.end_col), 'qfText' })
+                else
+                    table.insert(tt, { item.text, typeHilights[item.type] or 'qfText' })
+                end
             end
         end
         table.insert(ttt, tt)
