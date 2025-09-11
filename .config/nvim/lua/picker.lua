@@ -288,7 +288,7 @@ function M.pick(prompt, src, onclose, opts)
             end
             if opts["add_highlights"] then
                 for i, line in ipairs(lines) do
-                    opts["add_highlights"](line, function(col, ext_opts)
+                    opts["add_highlights"](sitems[i], line, function(col, ext_opts)
                         vim.api.nvim_buf_set_extmark(sbuf, ns, i - 1, col, ext_opts)
                     end)
                 end
@@ -356,7 +356,7 @@ local function qfentry_text(item)
         end
     end
     if item["text"] then
-        text = text .. " " .. (item["text"]:match("^%s*(.-)$") or "")
+        text = text .. " " .. item["text"]
     end
     return text
 end
@@ -435,7 +435,7 @@ end
 ------------------------------------------------------------------------
 
 local function grep(on_list, query)
-    local cmd = { "rg", "--column", "--line-number", "--no-heading", "--color=never" }
+    local cmd = { "rg", "--column", "--line-number", "--no-heading", "--color=always" }
     while query:sub(1, 1) == '-' do
         local i, j = query:find("%s+")
         if not i then
@@ -469,11 +469,27 @@ local function grep(on_list, query)
             assert(j ~= nil)
             local k = line:find(":", j + 1, true)
             assert(k ~= nil)
+            local col = tonumber(line:sub(j + 5, k - 5))
+            local t = line:sub(k + 1)
+            local text = ""
+            local matches = {}
+            while true do
+                local x, y = t:find("[0m[1m[31m", 1, true)
+                if not x then
+                    text = text .. t
+                    break
+                end
+                local m, n = t:find("[0m", y + 1, true)
+                table.insert(matches, { #text + x, #text + x + m - y - 2 })
+                text = text .. t:sub(1, x - 1) .. t:sub(y + 1, m - 1)
+                t = t:sub(n + 1)
+            end
             table.insert(items, {
-                filename = line:sub(1, i - 1),
-                lnum = line:sub(i + 1, j - 1),
-                col = line:sub(j + 1, k - 1),
-                text = line:sub(k + 1),
+                filename = line:sub(10, i - 1 - 4),
+                lnum = line:sub(i + 10, j - 5),
+                col = col,
+                matches = matches,
+                text = text,
             })
         else
             table.insert(items, {
@@ -484,7 +500,7 @@ local function grep(on_list, query)
     on_list(items)
 end
 
-local function grep_add_highlights(line, add_highlight)
+local function grep_add_highlights(item, line, add_highlight)
     local i = line:find(":", 1, true)
     if i then
         add_highlight(0, {
@@ -506,6 +522,13 @@ local function grep_add_highlights(line, add_highlight)
             hl_group = "qfLineNr",
             strict = false,
         })
+        for _, m in ipairs(item["matches"]) do
+            add_highlight(k + m[1] - 1, {
+                end_col = k + m[2],
+                hl_group = "ErrorMsg",
+                strict = false,
+            })
+        end
     end
 end
 
