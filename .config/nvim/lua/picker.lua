@@ -495,7 +495,7 @@ local function grep(on_list, query)
                 lnum = lnum,
                 col = col,
                 end_lnum = lnum,
-                end_col = matches[1][2],
+                end_col = matches[1][2] + 1,
                 matches = matches,
                 text = text,
             })
