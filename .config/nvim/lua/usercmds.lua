@@ -8,6 +8,7 @@ end, {})
 vim.api.nvim_create_user_command("W", "noautocmd w", {})
 
 local function runCommand(args, auto_close)
+    args = vim.fn.expandcmd(args)
     local buf = vim.api.nvim_create_buf(false, true)
     local win = vim.api.nvim_open_win(buf, true, {
         relative = "editor",
