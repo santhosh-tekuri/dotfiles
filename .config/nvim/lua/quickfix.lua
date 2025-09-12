@@ -31,6 +31,17 @@ local typeHilights = {
     H = 'DiagnosticSignHint',
 }
 
+local function fileshorten(fname)
+    if vim.fn.isabsolutepath(fname) == 0 then
+        return fname
+    end
+    local name = vim.fn.fnamemodify(fname, ":.")
+    if name == fname then
+        name = vim.fn.fnamemodify(name, ":~")
+    end
+    return name
+end
+
 function QuickfixText(info)
     local list
     local what = { id = info.id, items = 1, qfbufnr = 1 }
@@ -47,7 +58,7 @@ function QuickfixText(info)
             table.insert(tt, { item.text, "qfText" })
         else
             local fname = vim.fn.bufname(item.bufnr)
-            fname = vim.fn.fnamemodify(fname, ':p:.')
+            fname = fileshorten(fname)
             table.insert(tt, { fname, "qfFilename" })
             if item.lnum > 0 then
                 table.insert(tt, { ":" .. item.lnum, "qfLineNr" })
