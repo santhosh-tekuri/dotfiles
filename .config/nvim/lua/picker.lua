@@ -170,7 +170,7 @@ function M.pick(prompt, src, onclose, opts)
             onclose(nil, {})
             return
         elseif #items == 1 then
-            onclose(items[1], { open = vim.cmd.edit })
+            onclose(items[1], { open = openfunc("edit") })
             return
         end
     end
