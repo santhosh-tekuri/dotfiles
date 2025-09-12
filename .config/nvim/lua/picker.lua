@@ -380,6 +380,7 @@ local function open_qfentry(item, opts)
             vim.fn.setqflist(item)
             vim.cmd.copen()
         else
+            vim.cmd("normal! m'")
             opts["open"](item["filename"])
             vim.schedule(function()
                 vim.fn.cursor(item["lnum"], item["col"])
