@@ -1,5 +1,30 @@
 local M = {}
 
+local function openfunc(how)
+    return function(item)
+        if type(item) == "string" then
+            item = vim.fn.bufadd(item)
+            vim.bo[item].buflisted = true
+        end
+        if how == "tab" then
+            vim.cmd("tabnew | buffer " .. item)
+        elseif how == "edit" then
+            local w = vim.fn.win_findbuf(item)[1]
+            if w then
+                if w ~= vim.api.nvim_get_current_win() then
+                    vim.api.nvim_set_current_win(w)
+                    return
+                end
+            end
+            vim.cmd("buffer " .. item)
+        elseif how == "split" then
+            vim.cmd("sbuffer " .. item)
+        elseif how == "vsplit" then
+            vim.cmd("vertical sbuffer " .. item)
+        end
+    end
+end
+
 local function tolines(items, opts)
     local func = nil
     if opts["key"] then
@@ -220,34 +245,10 @@ function M.pick(prompt, src, onclose, opts)
     if opts and opts["qflist"] then
         keymap("<c-q>", close, { { qflist = true } })
     end
-    local function open(how)
-        return function(item)
-            if type(item) == "string" then
-                item = vim.fn.bufadd(item)
-                vim.bo[item].buflisted = true
-            end
-            if how == "tab" then
-                vim.cmd("tabnew | buffer " .. item)
-            elseif how == "edit" then
-                local w = vim.fn.win_findbuf(item)[1]
-                if w then
-                    if w ~= vim.api.nvim_get_current_win() then
-                        vim.api.nvim_set_current_win(w)
-                        return
-                    end
-                end
-                vim.cmd("buffer " .. item)
-            elseif how == "split" then
-                vim.cmd("sbuffer " .. item)
-            elseif how == "vsplit" then
-                vim.cmd("vertical sbuffer " .. item)
-            end
-        end
-    end
-    keymap("<cr>", close, { { open = open("edit") } })
-    keymap("<c-s>", close, { { open = open("split") } })
-    keymap("<c-v>", close, { { open = open("vsplit") } })
-    keymap("<c-t>", close, { { open = open("tab") } })
+    keymap("<cr>", close, { { open = openfunc("edit") } })
+    keymap("<c-s>", close, { { open = openfunc("split") } })
+    keymap("<c-v>", close, { { open = openfunc("vsplit") } })
+    keymap("<c-t>", close, { { open = openfunc("tab") } })
     keymap("<esc>", close, { nil })
     keymap("<c-n>", move, { 1 })
     keymap("<c-p>", move, { -1 })
