@@ -379,17 +379,47 @@ local function fileshorten(fname)
 end
 
 local function qfentry_text(item)
-    local text = fileshorten(item["filename"])
-    if item["lnum"] then
-        text = text .. ":" .. item["lnum"]
-        if item["col"] then
-            text = text .. ":" .. item["col"]
-        end
+    local text = fileshorten(item["filename"]) .. ":"
+    if item.lnum and item.lnum > 0 then
+        text = text .. item.lnum
     end
     if item["text"] then
         text = text .. " " .. item["text"]
     end
     return text
+end
+
+local function qfentry_add_highlights(item, line, add_highlight)
+    local i = line:find(":", 1, true)
+    if i then
+        add_highlight(0, {
+            end_col = i - 1,
+            hl_group = "qfFilename",
+            strict = false,
+        })
+        local k = line:find(" ", i + 1, true)
+        assert(k ~= nil)
+        add_highlight(i, {
+            end_col = k - 1,
+            hl_group = "qfLineNr",
+            strict = false,
+        })
+        local matches = item.matches
+        if not matches then
+            if item.lnum and item.col and item.end_col then
+                if item.lnum > 0 and item.col > 0 and item.end_col > 0 then
+                    matches = { { item.col, item.end_col } }
+                end
+            end
+        end
+        for _, m in ipairs(matches or {}) do
+            add_highlight(k + m[1] - 1, {
+                end_col = k + m[2],
+                hl_group = "ErrorMsg",
+                strict = false,
+            })
+        end
+    end
 end
 
 local function open_qfentry(item, opts)
@@ -541,41 +571,9 @@ local function grep(on_list, query)
     on_list(items)
 end
 
-local function grep_add_highlights(item, line, add_highlight)
-    local i = line:find(":", 1, true)
-    if i then
-        add_highlight(0, {
-            end_col = i - 1,
-            hl_group = "qfFilename",
-            strict = false,
-        })
-        local j = line:find(":", i + 1, true)
-        assert(j ~= nil)
-        add_highlight(i, {
-            end_col = j - 1,
-            hl_group = "qfLineNr",
-            strict = false,
-        })
-        local k = line:find(" ", j + 1, true)
-        assert(k ~= nil)
-        add_highlight(j, {
-            end_col = k - 1,
-            hl_group = "qfLineNr",
-            strict = false,
-        })
-        for _, m in ipairs(item["matches"]) do
-            add_highlight(k + m[1] - 1, {
-                end_col = k + m[2],
-                hl_group = "ErrorMsg",
-                strict = false,
-            })
-        end
-    end
-end
-
 function M.pick_grep()
     M.pick("Grep:", grep, open_qfentry,
-        { text_cb = qfentry_text, live = true, add_highlights = grep_add_highlights, qflist = true })
+        { text_cb = qfentry_text, live = true, add_highlights = qfentry_add_highlights, qflist = true })
 end
 
 ------------------------------------------------------------------------
@@ -591,7 +589,8 @@ local function lsp_items(func)
 end
 
 local function pick_lsp_item(prompt, func)
-    M.pick(prompt, lsp_items(func), open_qfentry, { text_cb = qfentry_text, qflist = true })
+    M.pick(prompt, lsp_items(func), open_qfentry,
+        { text_cb = qfentry_text, add_highlights = qfentry_add_highlights, qflist = true })
 end
 
 function M.pick_declaration()
