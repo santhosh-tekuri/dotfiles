@@ -52,10 +52,13 @@ function QuickfixText(info)
             if item.lnum > 0 then
                 table.insert(tt, { ":" .. item.lnum, "qfLineNr" })
                 table.insert(tt, { " ", "Default" })
-                if item.end_col ~= 0 and item.end_lnum == item.lnum then
+                local hl = typeHilights[item.type]
+                if hl then
+                    table.insert(tt, { item.text, hl })
+                elseif item.end_col ~= 0 and item.end_lnum == item.lnum then
                     table.insert(tt, { item.text:sub(1, item.col - 1), 'qfText' })
                     table.insert(tt,
-                        { item.text:sub(item.col, item.end_col - 1), typeHilights[item.type] or typeHilights["E"] })
+                        { item.text:sub(item.col, item.end_col - 1), typeHilights["E"] })
                     table.insert(tt, { item.text:sub(item.end_col), 'qfText' })
                 else
                     table.insert(tt, { item.text, typeHilights[item.type] or 'qfText' })
