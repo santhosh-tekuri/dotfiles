@@ -220,7 +220,14 @@ function M.pick(prompt, src, onclose, opts)
     if opts and opts["qflist"] then
         keymap("<c-q>", close, { { qflist = true } })
     end
-    keymap("<cr>", close, { { open = vim.cmd.edit } })
+    keymap("<cr>", close, { {
+        open = function(fname)
+            if vim.fn.bufadd(fname) == vim.fn.bufnr("%") then
+                return
+            end
+            vim.cmd.edit(fname)
+        end
+    } })
     keymap("<c-s>", close, { { open = vim.cmd.split } })
     keymap("<c-v>", close, { { open = vim.cmd.vsplit } })
     keymap("<c-t>", close, { { open = vim.cmd.tabedit } })
