@@ -457,7 +457,7 @@ end
 local function buffer_text(item)
     local name = vim.fn.bufname(item)
     if name == "" then
-        name = string.format("%d: %s", item, vim.bo[item].buftype)
+        name = string.format("%q", vim.bo[item].buftype)
     end
     return name
 end
