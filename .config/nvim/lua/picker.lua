@@ -220,17 +220,34 @@ function M.pick(prompt, src, onclose, opts)
     if opts and opts["qflist"] then
         keymap("<c-q>", close, { { qflist = true } })
     end
-    keymap("<cr>", close, { {
-        open = function(fname)
-            if vim.fn.bufadd(fname) == vim.fn.bufnr("%") then
-                return
+    local function open(how)
+        return function(item)
+            if type(item) == "string" then
+                item = vim.fn.bufadd(item)
+                vim.bo[item].buflisted = true
             end
-            vim.cmd.edit(fname)
+            if how == "tab" then
+                vim.cmd("tabnew | buffer " .. item)
+            elseif how == "edit" then
+                local w = vim.fn.win_findbuf(item)[1]
+                if w then
+                    if w ~= vim.api.nvim_get_current_win() then
+                        vim.api.nvim_set_current_win(w)
+                        return
+                    end
+                end
+                vim.cmd("buffer " .. item)
+            elseif how == "split" then
+                vim.cmd("sbuffer " .. item)
+            elseif how == "vsplit" then
+                vim.cmd("vertical sbuffer " .. item)
+            end
         end
-    } })
-    keymap("<c-s>", close, { { open = vim.cmd.split } })
-    keymap("<c-v>", close, { { open = vim.cmd.vsplit } })
-    keymap("<c-t>", close, { { open = vim.cmd.tabedit } })
+    end
+    keymap("<cr>", close, { { open = open("edit") } })
+    keymap("<c-s>", close, { { open = open("split") } })
+    keymap("<c-v>", close, { { open = open("vsplit") } })
+    keymap("<c-t>", close, { { open = open("tab") } })
     keymap("<esc>", close, { nil })
     keymap("<c-n>", move, { 1 })
     keymap("<c-p>", move, { -1 })
@@ -427,18 +444,25 @@ local function buffers()
     local alt = vim.fn.bufnr("#")
     local items = {}
     for _, bufinfo in ipairs(vim.fn.getbufinfo({ bufloaded = 1, buflisted = 1 })) do
-        local fname = fileshorten(bufinfo.name)
         if bufinfo.bufnr == alt then
-            table.insert(items, 1, fname)
+            table.insert(items, 1, bufinfo.bufnr)
         elseif bufinfo.bufnr ~= cur then
-            table.insert(items, fname)
+            table.insert(items, bufinfo.bufnr)
         end
     end
     return items
 end
 
+local function buffer_text(item)
+    local name = vim.fn.bufname(item)
+    if name == "" then
+        name = string.format("%d: %s", item, vim.bo[item].buftype)
+    end
+    return name
+end
+
 function M.pick_buffer()
-    M.pick("Buffer:", buffers(), edit, { qflist = true })
+    M.pick("Buffer:", buffers(), edit, { text_cb = buffer_text })
 end
 
 ------------------------------------------------------------------------
