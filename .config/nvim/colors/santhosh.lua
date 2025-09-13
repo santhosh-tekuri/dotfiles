@@ -39,6 +39,7 @@ local groups = {
     NormalFloat = { bg = float },
     -- NormalFloat = { bg = "#202830" },
     StatusLine = { bg = float },
+    Tabline = { link = "Visual" },
     WinSeparator = { fg = dull },
     Search = { bg = "#2a2827" },
     -- Search = { bg = "#2c2e33" },
