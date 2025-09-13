@@ -65,17 +65,19 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local function opts(desc)
             return { buffer = ev.buf, desc = desc }
         end
-        vim.keymap.set({ 'n', 'v' }, ' a', vim.lsp.buf.code_action, opts("Perform code action"))
-        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Goto declaration"))
-        vim.keymap.set('n', ' n', vim.lsp.buf.rename, opts("Rename symbol"))
-        vim.keymap.set({ 'n', 'v' }, 'K', function()
-            vim.lsp.buf.hover { max_width = 80 }
-        end, opts("Show docs for item under cursor"))
-        vim.keymap.set({ 'n', 'i' }, '<c-k>', vim.lsp.buf.signature_help, opts("Show signature"))
-        vim.keymap.set('n', ' l', vim.lsp.codelens.run, opts("Perform codelens"))
+        vim.keymap.set({ 'n', 'v' }, '<leader>a', vim.lsp.buf.code_action, opts("Perform code action"))
+        vim.keymap.set('n', '<leader>n', vim.lsp.buf.rename, opts("Rename symbol"))
+        local function with_maxwidth(func)
+            return function()
+                func({ max_width = 80 })
+            end
+        end
+        vim.keymap.set({ 'n', 'v' }, 'K', with_maxwidth(vim.lsp.buf.hover), opts("Show docs for item under cursor"))
+        vim.keymap.set({ 'n', 'i' }, '<c-k>', with_maxwidth(vim.lsp.buf.signature_help), opts("Show signature"))
+        vim.keymap.set('n', '<leader>l', vim.lsp.codelens.run, opts("Perform codelens"))
         vim.keymap.set('n', ' D', vim.diagnostic.setqflist, opts("show diagnostics"))
 
-        vim.keymap.set('n', ' d', function()
+        vim.keymap.set('n', '<leader>k', function()
             if vim.diagnostic.config().virtual_lines then
                 vim.diagnostic.config({ virtual_lines = false })
                 vim.api.nvim_clear_autocmds({ group = "hideDiag" })
