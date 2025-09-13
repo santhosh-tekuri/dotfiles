@@ -176,7 +176,7 @@ function M.pick(prompt, src, onclose, opts)
     end
     local pbuf = vim.api.nvim_create_buf(false, true)
     vim.b[pbuf].completion = false
-    vim.api.nvim_open_win(pbuf, true, {
+    local pwin = vim.api.nvim_open_win(pbuf, true, {
         relative = "editor",
         width = vim.o.columns,
         height = 1,
@@ -185,8 +185,8 @@ function M.pick(prompt, src, onclose, opts)
         style = "minimal",
         zindex = 250,
     })
-    vim.cmd("setlocal statuscolumn=" .. prompt .. "\\ ")
-    vim.cmd("setlocal winhighlight=Normal:MsgArea,FloatBorder:Normal")
+    vim.api.nvim_set_option_value("statuscolumn", prompt .. " ", { scope = "local", win = pwin })
+    vim.api.nvim_set_option_value("winhighlight", "Normal:MsgArea,FloatBorder:Normal", { scope = "local", win = pwin })
 
     vim.cmd.startinsert()
 
@@ -300,7 +300,7 @@ function M.pick(prompt, src, onclose, opts)
             else
                 vim.api.nvim_win_set_config(swin, sconfig)
             end
-            vim.api.nvim_set_option_value("cursorline", true, { win = swin })
+            vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = swin })
             if pos ~= nil then
                 for line, arr in ipairs(pos) do
                     for _, p in ipairs(arr) do
