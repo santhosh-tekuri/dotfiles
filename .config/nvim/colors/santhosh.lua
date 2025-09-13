@@ -1,9 +1,11 @@
+-- check some visual colors from https://github.com/mvllow/modes.nvim
+
 local black = "#0d0f18"
 local white = "#75869a"
 local red = "#dd6777"
 local dull = "#424b56"
 local green = "#659239"
-local float = "#181825" -- "#0f191f" --"#181820"
+local float = "#0f191f" --"#181825" -- "#0f191f" --"#181820"
 local greenLight = "#90ceaa"
 
 ---@type table<string, vim.api.keyset.highlight>
@@ -65,8 +67,8 @@ local groups = {
     ["@constructor"] = { link = "Default" },
     ["@lsp.type.namespace.go"] = { link = "String" },
     ["@variable"] = { link = "Default" },
-    ["@keyword"] = { fg = "#6699cc" },
-    -- ["@keyword"] = { fg = "#6388c4" },
+    -- ["@keyword"] = { fg = "#6699cc" },
+    ["@keyword"] = { fg = "#6388c4" },
     ["@type"] = { fg = "#7b9695" },
     ["@type.builtin"] = { link = "@keyword" },
     ["@variable.builtin"] = { link = "@keyword" },
