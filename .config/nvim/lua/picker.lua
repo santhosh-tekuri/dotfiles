@@ -212,12 +212,15 @@ function M.pick(prompt, src, onclose, opts)
         focusable = false,
         zindex = 50,
     }
+    local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function show_preview()
         if not opts.preview then
             return
         end
         if gwin then
+            vim.api.nvim_buf_clear_namespace(vim.api.nvim_win_get_buf(gwin), ns, 0, -1)
             vim.api.nvim_win_hide(gwin)
+            gwin = nil
         end
         if not sitems or #sitems == 0 then
             return
@@ -234,6 +237,13 @@ function M.pick(prompt, src, onclose, opts)
         if item.lnum and item.lnum > 0 then
             vim.api.nvim_win_call(gwin, function()
                 vim.api.nvim_win_set_cursor(gwin, { item.lnum, item.col })
+                local gbuf = vim.api.nvim_win_get_buf(gwin)
+                vim.api.nvim_buf_set_extmark(gbuf, ns, item.lnum - 1, item.col - 1, {
+                    end_col = item.end_col - 1,
+                    hl_group = "Incsearch",
+                    strict = false,
+                    priority = 900,
+                })
                 vim.cmd("normal! zz")
             end)
         end
@@ -250,6 +260,7 @@ function M.pick(prompt, src, onclose, opts)
         if gwin then
             vim.api.nvim_set_option_value("winhighlight", nil, { scope = "local", win = gwin })
             vim.api.nvim_set_option_value("cursorline", nil, { scope = "local", win = gwin })
+            vim.api.nvim_buf_clear_namespace(vim.api.nvim_win_get_buf(gwin), ns, 0, -1)
             vim.api.nvim_win_close(gwin, true)
         end
         local line = vim.fn.line('.', swin)
@@ -300,7 +311,6 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
 
-    local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function setitems(lines, pos)
         if closed then
             return
