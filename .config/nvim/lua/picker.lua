@@ -196,10 +196,49 @@ function M.pick(prompt, src, onclose, opts)
         style = "minimal",
         border = { '', '', '', ' ', '', '', '', ' ' },
         focusable = false,
+        zindex = 100,
     }
     local swin = -1
     local closed = nil
     local timer = nil
+
+    local gwin = nil
+    local gconfig = {
+        relative = "editor",
+        row = 0,
+        col = 0,
+        width = vim.o.columns,
+        height = vim.o.lines - 1,
+        focusable = false,
+        zindex = 50,
+    }
+    local function show_preview()
+        if not opts.preview then
+            return
+        end
+        if gwin then
+            vim.api.nvim_win_hide(gwin)
+        end
+        if not sitems or #sitems == 0 then
+            return
+        end
+        local line = vim.fn.line('.', swin)
+        local item = sitems[line]
+        item = opts.preview(item)
+        if not item then
+            return
+        end
+        gwin = vim.api.nvim_open_win(item.bufnr, false, gconfig)
+        vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", { scope = "local", win = gwin })
+        vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = gwin })
+        if item.lnum and item.lnum > 0 then
+            vim.api.nvim_win_call(gwin, function()
+                vim.api.nvim_win_set_cursor(gwin, { item.lnum, item.col })
+                vim.cmd("normal! zz")
+            end)
+        end
+    end
+
     local function close(copts)
         if closed then
             return
@@ -207,6 +246,11 @@ function M.pick(prompt, src, onclose, opts)
         closed = true
         if timer then
             vim.fn.timer_stop(timer)
+        end
+        if gwin then
+            vim.api.nvim_set_option_value("winhighlight", nil, { scope = "local", win = gwin })
+            vim.api.nvim_set_option_value("cursorline", nil, { scope = "local", win = gwin })
+            vim.api.nvim_win_close(gwin, true)
         end
         local line = vim.fn.line('.', swin)
         vim.cmd.stopinsert()
@@ -228,6 +272,7 @@ function M.pick(prompt, src, onclose, opts)
         local line = vim.api.nvim_win_get_cursor(swin)[1] + i
         if line > 0 and line <= vim.api.nvim_buf_line_count(sbuf) then
             vim.api.nvim_win_set_cursor(swin, { line, 0 })
+            show_preview()
         end
     end
     local function keymap(lhs, func, args)
@@ -254,6 +299,7 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<c-p>", move, { -1 })
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
+
     local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function setitems(lines, pos)
         if closed then
@@ -328,6 +374,7 @@ function M.pick(prompt, src, onclose, opts)
                 end
             end
         end
+        show_preview()
     end
     setitems(items or {})
     vim.api.nvim_create_autocmd("TextChangedI", {
@@ -424,6 +471,20 @@ local function qfentry_add_highlights(item, line, add_highlight)
     end
 end
 
+local function qfentry_preview(item)
+    local bufnr = item.bufnr
+    if not bufnr then
+        bufnr = vim.fn.bufadd(item.filename)
+    end
+    return {
+        bufnr = bufnr,
+        lnum = item.lnum,
+        col = item.col,
+        end_col = item.end_col,
+        matches = item.matches,
+    }
+end
+
 local function open_qfentry(item, opts)
     if item ~= nil then
         if opts["qflist"] then
@@ -432,9 +493,8 @@ local function open_qfentry(item, opts)
         else
             vim.cmd("normal! m'")
             opts["open"](item["filename"])
-            vim.schedule(function()
-                vim.fn.cursor(item["lnum"], item["col"])
-            end)
+            vim.fn.cursor(item["lnum"], item["col"] + 1)
+            vim.cmd("normal! zz")
         end
     end
 end
@@ -575,7 +635,7 @@ end
 
 function M.pick_grep()
     M.pick("Grep:", grep, open_qfentry,
-        { text_cb = qfentry_text, live = true, add_highlights = qfentry_add_highlights, qflist = true })
+        { text_cb = qfentry_text, live = true, add_highlights = qfentry_add_highlights, preview = qfentry_preview, qflist = true })
 end
 
 ------------------------------------------------------------------------
@@ -592,7 +652,7 @@ end
 
 local function pick_lsp_item(prompt, func)
     M.pick(prompt, lsp_items(func), open_qfentry,
-        { text_cb = qfentry_text, add_highlights = qfentry_add_highlights, qflist = true })
+        { text_cb = qfentry_text, add_highlights = qfentry_add_highlights, preview = qfentry_preview, qflist = true })
 end
 
 function M.pick_declaration()
