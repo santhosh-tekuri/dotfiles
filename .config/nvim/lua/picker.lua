@@ -301,6 +301,14 @@ function M.pick(prompt, src, onclose, opts)
                 vim.api.nvim_win_set_config(swin, sconfig)
             end
             vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = swin })
+            if opts["add_highlights"] then
+                for i, line in ipairs(lines) do
+                    opts["add_highlights"](sitems[i], line, function(col, ext_opts)
+                        ext_opts.priority = 800
+                        vim.api.nvim_buf_set_extmark(sbuf, ns, i - 1, col, ext_opts)
+                    end)
+                end
+            end
             if pos ~= nil then
                 for line, arr in ipairs(pos) do
                     for _, p in ipairs(arr) do
@@ -314,15 +322,9 @@ function M.pick(prompt, src, onclose, opts)
                             end_col = to,
                             hl_group = "Special",
                             strict = false,
+                            priority = 900,
                         })
                     end
-                end
-            end
-            if opts["add_highlights"] then
-                for i, line in ipairs(lines) do
-                    opts["add_highlights"](sitems[i], line, function(col, ext_opts)
-                        vim.api.nvim_buf_set_extmark(sbuf, ns, i - 1, col, ext_opts)
-                    end)
                 end
             end
         end
