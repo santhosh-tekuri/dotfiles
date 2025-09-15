@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-if [ $# -eq 0 ]; then
-    git commit --amend --no-edit
-else
-    git commit --fixup $1
+if [ $# = 0 ]; then
+    >&2 echo 'usage: git fixup <commit>'
+    exit 1
 fi
+
+git commit --fixup "$1"

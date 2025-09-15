@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
-
 if [ $# = 0 ]; then
-    >&2 echo 'usage: go pr ID'
+    >&2 echo 'usage: git pr <id>'
     exit 1
 fi
-git fetch origin pull/$1/head:pr-$1
-git switch pr-$1
+git fetch origin pull/"$1"/head:pr-"$1"
+git switch pr-"$1"
