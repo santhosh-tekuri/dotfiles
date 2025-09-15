@@ -46,7 +46,7 @@ local groups = {
     Search = { bg = "#2a2827" },
     -- Search = { bg = "#2c2e33" },
     -- Search = { bg = "#202830" },
-    CurSearch = { bg = "NvimLightYellow", fg = black },
+    CurSearch = { bg = white, fg = black },
     PMenu = { link = "NormalFloat" },
     -- PmenuSel = { bg = white, fg = black },
     PmenuSel = { link = "Visual" },
