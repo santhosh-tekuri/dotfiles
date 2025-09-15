@@ -571,7 +571,15 @@ end
 ------------------------------------------------------------------------
 
 local function grep(on_list, query)
-    local cmd = { "rg", "--column", "--line-number", "--no-heading", "--color=always", "--no-config", "--smart-case" }
+    local cmd = {
+        "rg", "--column", "--line-number",
+        "--no-heading", "--color=always",
+        "--no-config", "--smart-case",
+        "--colors=path:fg:magenta",
+        "--colors=line:fg:green",
+        "--colors=match:fg:red",
+        "--colors=match:style:bold",
+    }
     while query:sub(1, 1) == '-' do
         local i, j = query:find("%s+")
         if not i then
@@ -580,8 +588,8 @@ local function grep(on_list, query)
         end
         table.insert(cmd, query:sub(1, i - 1))
         query = query:sub(j + 1)
-        if cmd[#cmd] ~= "--" then
-            table.insert(cmd, "--")
+        if cmd[#cmd] == "--" then
+            break
         end
     end
     if query == "" then
