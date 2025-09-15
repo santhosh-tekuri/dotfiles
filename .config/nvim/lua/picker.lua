@@ -724,7 +724,7 @@ local function symbol_text(item)
 end
 
 function M.pick_document_symbol()
-    M.pick("DocSymbol:", document_symbols, open_qfentry, { text_cb = symbol_text })
+    M.pick("DocSymbol:", document_symbols, open_qfentry, { text_cb = symbol_text, preview = qfentry_preview })
 end
 
 local function workspace_symbols(on_list, query)
@@ -736,7 +736,8 @@ local function workspace_symbols(on_list, query)
 end
 
 function M.pick_workspace_symbol()
-    M.pick("WorkSymbol:", workspace_symbols, open_qfentry, { text_cb = symbol_text, live = true })
+    M.pick("WorkSymbol:", workspace_symbols, open_qfentry,
+        { text_cb = symbol_text, preview = qfentry_preview, live = true })
 end
 
 ------------------------------------------------------------------------
