@@ -427,8 +427,9 @@ except Exception as ex:
 
 # ensure stdin is tty
 if not sys.stdin.isatty():
-    with open("/dev/tty", "r+") as tty_file:
-        os.dup2(tty_file.fileno(), 0)
+    tty_file = os.open("/dev/tty", os.O_RDWR)
+    os.dup2(tty_file, 0)
+    os.close(tty_file)
 
 try:
     results = curses.wrapper(lambda scr: Screen(scr, lines).run())
