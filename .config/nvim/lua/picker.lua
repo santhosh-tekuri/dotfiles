@@ -722,17 +722,17 @@ local function document_symbols(on_list)
     })
 end
 
-local function symbol_text(item)
+local function document_symbol_text(item)
     local text = item["text"]
     local index = string.find(text, ' ')
     if index then
         text = string.sub(text, index + 1)
     end
-    return string.format("%-80s %11s", text, item["kind"])
+    return string.format("%-80s %13s", text, item["kind"])
 end
 
 function M.pick_document_symbol()
-    M.pick("DocSymbol:", document_symbols, open_qfentry, { text_cb = symbol_text, preview = qfentry_preview })
+    M.pick("DocSymbol:", document_symbols, open_qfentry, { text_cb = document_symbol_text, preview = qfentry_preview })
 end
 
 local function workspace_symbols(on_list, query)
@@ -743,9 +743,21 @@ local function workspace_symbols(on_list, query)
     })
 end
 
+local function workspace_symbol_text(item)
+    local text = item["text"]
+    local index = string.find(text, ' ')
+    if index then
+        text = string.sub(text, index + 1)
+    end
+    local line = string.format("%-13s %s", item.kind, text)
+    local file = fileshorten(item.filename)
+    local w = vim.o.columns - #line - #file - 3
+    return string.format("%s %s%s", line, string.rep(" ", w), file)
+end
+
 function M.pick_workspace_symbol()
     M.pick("WorkSymbol:", workspace_symbols, open_qfentry,
-        { text_cb = symbol_text, preview = qfentry_preview, live = true })
+        { text_cb = workspace_symbol_text, preview = qfentry_preview, live = true })
 end
 
 ------------------------------------------------------------------------
