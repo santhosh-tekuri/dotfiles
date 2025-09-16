@@ -7,7 +7,7 @@ font-family = 0xProto
 font-size = 18
 font-variation = wght=100
 adjust-cell-height = 20%
-adjust-underline-position=60%
+adjust-underline-position=20%
 mouse-hide-while-typing = true
 
 keybind=ctrl+left_bracket=text:\x1b
