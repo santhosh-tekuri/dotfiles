@@ -681,8 +681,13 @@ local function grep(on_list, query)
 end
 
 function M.pick_grep()
-    M.pick("Grep:", grep, open_qfentry,
-        { text_cb = qfentry_text, live = true, add_highlights = qfentry_add_highlights, preview = qfentry_preview, qflist = true })
+    M.pick("Grep:", grep, open_qfentry, {
+        text_cb = qfentry_text,
+        live = true,
+        add_highlights = qfentry_add_highlights,
+        preview = qfentry_preview,
+        qflist = true,
+    })
 end
 
 ------------------------------------------------------------------------
@@ -698,15 +703,13 @@ local function lsp_items(func)
 end
 
 local function pick_lsp_item(prompt, func, filter)
-    M.pick(prompt, lsp_items(func), open_qfentry,
-        {
-            text_cb = qfentry_text,
-            add_highlights = qfentry_add_highlights,
-            preview = qfentry_preview,
-            qflist = true,
-            filter =
-                filter
-        })
+    M.pick(prompt, lsp_items(func), open_qfentry, {
+        text_cb = qfentry_text,
+        add_highlights = qfentry_add_highlights,
+        preview = qfentry_preview,
+        qflist = true,
+        filter = filter,
+    })
 end
 
 function M.pick_declaration()
@@ -768,7 +771,10 @@ local function document_symbol_text(item)
 end
 
 function M.pick_document_symbol()
-    M.pick("DocSymbol:", document_symbols, open_qfentry, { text_cb = document_symbol_text, preview = qfentry_preview })
+    M.pick("DocSymbol:", document_symbols, open_qfentry, {
+        text_cb = document_symbol_text,
+        preview = qfentry_preview,
+    })
 end
 
 local function workspace_symbols(on_list, query)
@@ -792,8 +798,12 @@ local function workspace_symbol_text(item)
 end
 
 function M.pick_workspace_symbol()
-    M.pick("WorkSymbol:", workspace_symbols, open_qfentry,
-        { text_cb = workspace_symbol_text, preview = qfentry_preview, live = true, filter = { func = qfentry_filter_cwd, enabled = true } })
+    M.pick("WorkSymbol:", workspace_symbols, open_qfentry, {
+        text_cb = workspace_symbol_text,
+        preview = qfentry_preview,
+        live = true,
+        filter = { func = qfentry_filter_cwd, enabled = true },
+    })
 end
 
 ------------------------------------------------------------------------
