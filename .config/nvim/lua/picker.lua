@@ -153,8 +153,17 @@ end
 function M.pick(prompt, src, onclose, opts)
     local lspbuf = vim.api.nvim_get_current_buf()
     opts = vim.tbl_deep_extend("force", { matchseq = 1 }, opts or {})
-    local items = nil
-    local sitems = nil
+
+    local ritems, items, sitems = {}, {}, {}
+    local function setitems(arr)
+        ritems = arr
+        if opts.filter and opts.filter.enabled then
+            items = vim.tbl_filter(opts.filter.func, ritems)
+        else
+            items = ritems
+        end
+    end
+
     if not opts["live"] then
         if type(src) == "function" then
             src(function(result)
@@ -163,7 +172,7 @@ function M.pick(prompt, src, onclose, opts)
             end)
             return
         end
-        items = src
+        setitems(src)
         if #items == 0 then
             local name = prompt:sub(-1) == ':' and prompt:sub(1, -2) or prompt
             vim.api.nvim_echo({ { "No " .. name .. " to select", "WarningMsg" } }, false, {})
@@ -288,7 +297,7 @@ function M.pick(prompt, src, onclose, opts)
     end
     local function keymap(lhs, func, args)
         vim.keymap.set("i", lhs, function()
-            func(unpack(args))
+            func(unpack(args or {}))
         end, { buffer = pbuf })
     end
     vim.api.nvim_create_autocmd('WinLeave', {
@@ -311,7 +320,7 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
 
-    local function setitems(lines, pos)
+    local function showitems(lines, pos)
         if closed then
             return
         end
@@ -322,7 +331,7 @@ function M.pick(prompt, src, onclose, opts)
 
         -- show counts
         local counts = ""
-        if items then
+        if items and #items > #sitems then
             counts = string.format("%d/%d", #sitems, #items)
         elseif #sitems > 0 then
             counts = counts .. #sitems
@@ -386,7 +395,20 @@ function M.pick(prompt, src, onclose, opts)
         end
         show_preview()
     end
-    setitems(items or {})
+    if opts and opts.filter then
+        keymap("<c-h>", function()
+            opts.filter.enabled = not opts.filter.enabled
+            setitems(ritems)
+            local query = vim.fn.getline(1)
+            if #query == 0 or opts.live then
+                showitems(items)
+            else
+                local matched = match(items, query, opts)
+                showitems(matched[1], matched[2])
+            end
+        end)
+    end
+    showitems(items or {})
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = pbuf,
         callback = function()
@@ -400,16 +422,17 @@ function M.pick(prompt, src, onclose, opts)
                     timer = vim.fn.timer_start(250, function()
                         vim.api.nvim_buf_call(lspbuf, function()
                             src(function(result)
-                                setitems(result, nil)
+                                setitems(result)
+                                showitems(items, nil)
                             end, query)
                         end)
                     end)
                 else
                     local matched = match(items, query, opts)
-                    setitems(matched[1], matched[2])
+                    showitems(matched[1], matched[2])
                 end
             else
-                setitems(items or {}, nil)
+                showitems(items or {}, nil)
             end
         end
     })
@@ -479,6 +502,12 @@ local function qfentry_add_highlights(item, line, add_highlight)
             })
         end
     end
+end
+
+local function qfentry_filter_cwd(item)
+    local file = item.filename
+    file = vim.fn.fnamemodify(file, ":.")
+    return vim.fn.isabsolutepath(file) == 0
 end
 
 local function qfentry_preview(item)
@@ -668,9 +697,16 @@ local function lsp_items(func)
     end
 end
 
-local function pick_lsp_item(prompt, func)
+local function pick_lsp_item(prompt, func, filter)
     M.pick(prompt, lsp_items(func), open_qfentry,
-        { text_cb = qfentry_text, add_highlights = qfentry_add_highlights, preview = qfentry_preview, qflist = true })
+        {
+            text_cb = qfentry_text,
+            add_highlights = qfentry_add_highlights,
+            preview = qfentry_preview,
+            qflist = true,
+            filter =
+                filter
+        })
 end
 
 function M.pick_declaration()
@@ -692,7 +728,7 @@ end
 function M.pick_reference()
     pick_lsp_item("Reference:", function(opts)
         return vim.lsp.buf.references({}, opts)
-    end)
+    end, { func = qfentry_filter_cwd, enabled = true })
 end
 
 ------------------------------------------------------------------------
@@ -757,7 +793,7 @@ end
 
 function M.pick_workspace_symbol()
     M.pick("WorkSymbol:", workspace_symbols, open_qfentry,
-        { text_cb = workspace_symbol_text, preview = qfentry_preview, live = true })
+        { text_cb = workspace_symbol_text, preview = qfentry_preview, live = true, filter = { func = qfentry_filter_cwd, enabled = true } })
 end
 
 ------------------------------------------------------------------------
