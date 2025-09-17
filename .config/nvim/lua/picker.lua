@@ -681,6 +681,10 @@ local function grep(on_list, query)
 end
 
 function M.pick_grep()
+    if vim.fn.executable("rg") == 0 then
+        vim.api.nvim_echo({ { "ripgrep is not available", "ErrorMsg" } }, false, {})
+        return
+    end
     M.pick("Grep:", grep, open_qfentry, {
         text_cb = qfentry_text,
         live = true,
