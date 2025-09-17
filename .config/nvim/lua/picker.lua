@@ -157,7 +157,7 @@ function M.pick(prompt, src, onclose, opts)
     local ritems, items, sitems = {}, {}, {}
     local function setitems(arr)
         ritems = arr
-        if opts.filter and opts.filter.enabled then
+        if opts.filter and opts.filter.func and opts.filter.enabled then
             items = vim.tbl_filter(opts.filter.func, ritems)
         else
             items = ritems
@@ -166,10 +166,14 @@ function M.pick(prompt, src, onclose, opts)
 
     if not opts["live"] then
         if type(src) == "function" then
+            local srcopts = {}
+            if opts.filter and not opts.filter.func then
+                srcopts.filter = opts.filter.enabled
+            end
             src(function(result)
                 opts["src"] = src
                 M.pick(prompt, result, onclose, opts)
-            end)
+            end, srcopts)
             return
         end
         setitems(src)
@@ -398,13 +402,22 @@ function M.pick(prompt, src, onclose, opts)
     if opts and opts.filter then
         keymap("<c-h>", function()
             opts.filter.enabled = not opts.filter.enabled
-            setitems(ritems)
-            local query = vim.fn.getline(1)
-            if #query == 0 or opts.live then
-                showitems(items)
+            local function refresh(result)
+                setitems(result)
+                local query = vim.fn.getline(1)
+                if #query == 0 or opts.live then
+                    showitems(items)
+                else
+                    local matched = match(items, query, opts)
+                    showitems(matched[1], matched[2])
+                end
+            end
+            if opts.filter.func then
+                refresh(ritems)
             else
-                local matched = match(items, query, opts)
-                showitems(matched[1], matched[2])
+                opts.src(function(result)
+                    refresh(result)
+                end, { filter = opts.filter.enabled })
             end
         end)
     end
@@ -540,16 +553,12 @@ end
 
 ------------------------------------------------------------------------
 
-local function files()
-    local cmd
-    if vim.fn.executable("fd") == 1 then
-        cmd = 'fd --type f --type l --color=never -E .git'
-    elseif vim.fn.executable("rg") == 1 then
-        cmd = 'rg --files --no-messages --color=never'
-    else
-        cmd = "find . -type f -not -path '*/.git/*'"
+local function files(on_list, opts)
+    local cmd = 'fd --type f --type l --color=never -E .git'
+    if not opts.filter then
+        cmd = cmd .. ' --hidden'
     end
-    return vim.fn.systemlist(cmd)
+    on_list(vim.fn.systemlist(cmd))
 end
 
 local function edit(item, opts)
@@ -566,7 +575,11 @@ local function edit(item, opts)
 end
 
 function M.pick_file()
-    M.pick("File:", files(), edit, { qflist = true })
+    if vim.fn.executable("fd") == 0 then
+        vim.api.nvim_echo({ { "fd is not available", "ErrorMsg" } }, false, {})
+        return
+    end
+    M.pick("File:", files, edit, { qflist = true, filter = { enabled = true } })
 end
 
 ------------------------------------------------------------------------
