@@ -788,10 +788,19 @@ local function document_symbol_text(item)
     return string.format("%-80s %13s", text, item["kind"])
 end
 
+local function document_symbol_add_highlights(item, line, add_highlight)
+    add_highlight(#line - 13, {
+        end_col = #line,
+        hl_group = "Comment",
+        strict = false,
+    })
+end
+
 function M.pick_document_symbol()
     M.pick("DocSymbol:", document_symbols, open_qfentry, {
         text_cb = document_symbol_text,
         preview = qfentry_preview,
+        add_highlights = document_symbol_add_highlights,
     })
 end
 
@@ -815,10 +824,29 @@ local function workspace_symbol_text(item)
     return string.format("%s %s%s", line, string.rep(" ", w), file)
 end
 
+local function workspace_symbol_add_highlights(item, line, add_highlight)
+    add_highlight(0, {
+        end_col = 13,
+        hl_group = "Comment",
+        strict = false,
+    })
+    local text = item.text
+    local index = string.find(text, ' ')
+    if index then
+        text = string.sub(text, index + 1)
+    end
+    add_highlight(14 + #text, {
+        end_col = vim.o.columns,
+        hl_group = "qfFilename",
+        strict = false,
+    })
+end
+
 function M.pick_workspace_symbol()
     M.pick("WorkSymbol:", workspace_symbols, open_qfentry, {
         text_cb = workspace_symbol_text,
         preview = qfentry_preview,
+        add_highlights = workspace_symbol_add_highlights,
         live = true,
         filter = { func = qfentry_filter_cwd, enabled = true },
     })
