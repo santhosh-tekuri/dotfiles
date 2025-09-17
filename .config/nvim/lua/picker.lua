@@ -424,7 +424,7 @@ function M.pick(prompt, src, onclose, opts)
                             src(function(result)
                                 setitems(result)
                                 showitems(items, nil)
-                            end, query)
+                            end, { query = query })
                         end)
                     end)
                 else
@@ -599,7 +599,7 @@ end
 
 ------------------------------------------------------------------------
 
-local function grep(on_list, query)
+local function grep(on_list, opts)
     local cmd = {
         "rg", "--column", "--line-number",
         "--no-heading", "--color=always",
@@ -609,6 +609,7 @@ local function grep(on_list, query)
         "--colors=match:fg:red",
         "--colors=match:style:bold",
     }
+    local query = opts.query
     while query:sub(1, 1) == '-' do
         local i, j = query:find("%s+")
         if not i then
@@ -781,8 +782,8 @@ function M.pick_document_symbol()
     })
 end
 
-local function workspace_symbols(on_list, query)
-    return vim.lsp.buf.workspace_symbol(query, {
+local function workspace_symbols(on_list, opts)
+    return vim.lsp.buf.workspace_symbol(opts.query, {
         on_list = function(result)
             on_list(vim.tbl_filter(filter_symbol, result.items))
         end
