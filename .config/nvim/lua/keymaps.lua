@@ -75,7 +75,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set({ 'n', 'v' }, 'K', with_maxwidth(vim.lsp.buf.hover), opts("Show docs for item under cursor"))
         vim.keymap.set({ 'n', 'i' }, '<c-k>', with_maxwidth(vim.lsp.buf.signature_help), opts("Show signature"))
         vim.keymap.set('n', '<leader>l', vim.lsp.codelens.run, opts("Perform codelens"))
-        vim.keymap.set('n', ' D', vim.diagnostic.setqflist, opts("show diagnostics"))
 
         vim.keymap.set('n', '<leader>k', function()
             if vim.diagnostic.config().virtual_lines then

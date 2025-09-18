@@ -871,6 +871,33 @@ end
 
 ------------------------------------------------------------------------
 
+local function diagnostics(bufnr)
+    return function(on_list)
+        on_list(vim.diagnostic.toqflist(vim.diagnostic.get(bufnr)))
+    end
+end
+
+function M.pick_document_diagnostic()
+    return M.pick("DocDiagnostic", diagnostics(0), open_qfentry, {
+        text_cb = qfentry_text,
+        preview = qfentry_preview,
+        add_highlights = qfentry_add_highlights,
+        qflist = true,
+    })
+end
+
+function M.pick_workspace_diagnostic()
+    return M.pick("WorkDiagnostic", diagnostics(nil), open_qfentry, {
+        text_cb = qfentry_text,
+        preview = qfentry_preview,
+        add_highlights = qfentry_add_highlights,
+        qflist = true,
+        filter = { func = qfentry_filter_cwd, enabled = true },
+    })
+end
+
+------------------------------------------------------------------------
+
 function M.setup()
     vim.ui.select = M.select
     vim.keymap.set('n', '<leader>f', M.pick_file)
@@ -889,6 +916,8 @@ function M.setup()
             vim.keymap.set('n', '<leader>r', M.pick_reference, opts("Goto reference"))
             vim.keymap.set('n', '<leader>s', M.pick_document_symbol, opts("Open symbol picker"))
             vim.keymap.set('n', '<leader>S', M.pick_workspace_symbol, opts("Open workspace symbol picker"))
+            vim.keymap.set('n', '<leader>d', M.pick_document_diagnostic, opts("Open diagnostic picker"))
+            vim.keymap.set('n', '<leader>D', M.pick_workspace_diagnostic, opts("Open workspace diagnostic picker"))
         end,
     });
 end
