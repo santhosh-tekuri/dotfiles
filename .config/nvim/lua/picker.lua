@@ -485,6 +485,14 @@ local function qfentry_text(item)
     return text
 end
 
+local typeHilights = {
+    E = 'DiagnosticSignError',
+    W = 'DiagnosticSignWarn',
+    I = 'DiagnosticSignInfo',
+    N = 'DiagnosticSignHint',
+    H = 'DiagnosticSignHint',
+}
+
 local function qfentry_add_highlights(item, line, add_highlight)
     local i = line:find(":", 1, true)
     if i then
@@ -500,20 +508,28 @@ local function qfentry_add_highlights(item, line, add_highlight)
             hl_group = "qfLineNr",
             strict = false,
         })
-        local matches = item.matches
-        if not matches then
-            if item.lnum and item.col and item.end_col then
-                if item.lnum > 0 and item.col > 0 and item.end_col > 0 then
-                    matches = { { item.col, item.end_col } }
-                end
-            end
-        end
-        for _, m in ipairs(matches or {}) do
-            add_highlight(k + m[1] - 1, {
-                end_col = k + m[2],
-                hl_group = "ErrorMsg",
+        if item.type then
+            add_highlight(k, {
+                end_col = #line,
+                hl_group = typeHilights[item.type],
                 strict = false,
             })
+        else
+            local matches = item.matches
+            if not matches then
+                if item.lnum and item.col and item.end_col then
+                    if item.lnum > 0 and item.col > 0 and item.end_col > 0 then
+                        matches = { { item.col, item.end_col } }
+                    end
+                end
+            end
+            for _, m in ipairs(matches or {}) do
+                add_highlight(k + m[1] - 1, {
+                    end_col = k + m[2],
+                    hl_group = "ErrorMsg",
+                    strict = false,
+                })
+            end
         end
     end
 end
