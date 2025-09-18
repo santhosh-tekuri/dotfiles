@@ -474,7 +474,8 @@ local function fileshorten(fname)
 end
 
 local function qfentry_text(item)
-    local text = fileshorten(item["filename"]) .. ":"
+    local file = item.filename or vim.fn.bufname(item.bufnr)
+    local text = fileshorten(file) .. ":"
     if item.lnum and item.lnum > 0 then
         text = text .. item.lnum
     end
@@ -544,7 +545,7 @@ local function open_qfentry(item, opts)
             vim.cmd.copen()
         else
             vim.cmd("normal! m'")
-            opts["open"](item["filename"])
+            opts["open"](item.bufnr or item.filename)
             vim.fn.cursor(item["lnum"], item["col"] + 1)
             vim.cmd("normal! zz")
         end
