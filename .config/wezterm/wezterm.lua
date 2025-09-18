@@ -21,7 +21,7 @@ return {
     scrollback_lines = 99999,
     color_scheme = "Tango (terminal.sexy)",
     colors = {
-        foreground = '#a5b6cf',
+        foreground = '#75869a',
         background = '#0d0f18',
         selection_bg = '#1e293b',
         cursor_bg = "#dcd7ba",
