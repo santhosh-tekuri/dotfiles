@@ -674,23 +674,23 @@ local function grep(on_list, opts)
         if i then
             local j = line:find(":", i + 1, true)
             assert(j ~= nil)
-            local t = line:sub(j + 1)
+            local t, from = j, j + 1
             local text = ""
             local matches = {}
             while true do
-                local x, y = t:find("[0m[1m[31m", 1, true)
+                local x, y = line:find("[0m[1m[31m", from, true)
                 if not x then
-                    text = text .. t
+                    text = text .. line:sub(from)
                     break
                 end
-                local m, n = t:find("[0m", y + 1, true)
+                local m, n = line:find("[0m", y + 1, true)
                 if not m then
-                    text = text .. t
+                    text = text .. line:sub(from)
                     break
                 end
-                table.insert(matches, { #text + x, #text + x + m - y - 2 })
-                text = text .. t:sub(1, x - 1) .. t:sub(y + 1, m - 1)
-                t = t:sub(n + 1)
+                table.insert(matches, { #text + x - t, #text + x + m - y - 2 - t })
+                text = text .. line:sub(from, x - 1) .. line:sub(y + 1, m - 1)
+                from = n + 1
             end
             local lnum = tonumber(line:sub(i + 10, j - 5))
             table.insert(items, {
