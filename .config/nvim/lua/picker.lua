@@ -373,6 +373,7 @@ function M.pick(prompt, src, onclose, opts)
                 vim.api.nvim_win_set_config(swin, sconfig)
             end
             vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = swin })
+            vim.api.nvim_set_option_value("scrolloff", 0, { scope = "local", win = swin })
             if opts["add_highlights"] then
                 for i, line in ipairs(lines) do
                     opts["add_highlights"](sitems[i], line, function(col, ext_opts)
