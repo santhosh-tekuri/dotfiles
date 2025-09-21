@@ -641,6 +641,7 @@ local function grep(on_list, opts)
         "--colors=line:none",
         "--colors=match:fg:red",
         "--colors=match:style:nobold",
+        "-g=!**/.git/**",
     }
     local query = opts.query
     while query:sub(1, 1) == '-' do
