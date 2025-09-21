@@ -637,8 +637,8 @@ local function grep(on_list, opts)
         "rg", "--line-number",
         "--no-heading", "--color=always",
         "--no-config", "--smart-case",
-        "--colors=path:fg:magenta",
-        "--colors=line:fg:green",
+        "--colors=path:none",
+        "--colors=line:none",
         "--colors=match:fg:red",
         "--colors=match:style:bold",
     }
@@ -692,9 +692,9 @@ local function grep(on_list, opts)
                 text = text .. line:sub(from, x - 1) .. line:sub(y + 1, m - 1)
                 from = n + 1
             end
-            local lnum = tonumber(line:sub(i + 10, j - 5))
+            local lnum = tonumber(line:sub(i + 5, j - 5))
             table.insert(items, {
-                filename = line:sub(10, i - 1 - 4),
+                filename = line:sub(5, i - 1 - 4),
                 lnum = lnum,
                 col = matches[1][1],
                 end_lnum = lnum,
@@ -704,7 +704,7 @@ local function grep(on_list, opts)
             })
         else
             table.insert(items, {
-                filename = line:sub(10, -5),
+                filename = line:sub(5, -5),
             })
         end
     end
