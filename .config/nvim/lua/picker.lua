@@ -354,9 +354,12 @@ function M.pick(prompt, src, onclose, opts)
             end
         else
             local ht = math.min(10, #lines)
-            local w = 15
-            for _, line in ipairs(lines) do
-                w = math.max(w, #line)
+            local w = vim.o.columns - 2
+            if not opts.fill_width then
+                w = 15
+                for _, line in ipairs(lines) do
+                    w = math.max(w, #line)
+                end
             end
             sconfig = vim.tbl_extend("force", sconfig, {
                 width = w,
@@ -719,6 +722,7 @@ function M.pick_grep()
         add_highlights = qfentry_add_highlights,
         preview = qfentry_preview,
         qflist = true,
+        fill_width = true,
     })
 end
 
