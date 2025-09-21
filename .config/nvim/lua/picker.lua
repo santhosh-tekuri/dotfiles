@@ -456,6 +456,83 @@ end
 
 ------------------------------------------------------------------------
 
+local function read_lines(pipe, on_line)
+    local queue, qfirst, qlast = {}, 0, -1
+    local line = nil
+    local check = assert(vim.uv.new_check())
+    local function processQ()
+        while qlast - qfirst + 1 > 0 do
+            local data = queue[qfirst]
+            queue[qfirst] = nil
+            qfirst = qfirst + 1
+            local from = 1
+            while from <= #data do
+                local j = data:find("\n", from, true)
+                local i = j
+                if j then
+                    if j > 1 and data[j - 1] == '\r' then
+                        i = j - 1
+                    end
+                    if i ~= 1 then
+                        if line then
+                            line = line .. data:sub(from, i - 1)
+                        else
+                            line = data:sub(from, i - 1)
+                        end
+                    end
+                    on_line(line)
+                    line = nil
+                    from = j + 1
+                else
+                    if line then
+                        line = line .. data:sub(from)
+                    else
+                        line = data:sub(from)
+                    end
+                    break
+                end
+            end
+        end
+    end
+    check:start(processQ)
+    pipe:read_start(function(err, data)
+        assert(not err, err)
+        if data then
+            qlast = qlast + 1
+            queue[qlast] = data
+        else
+            vim.uv.check_stop(check)
+            processQ()
+            if line then
+                on_line(line)
+            end
+        end
+    end)
+end
+
+local function cmd_items(path, args, line2item, on_list)
+    local stdio = { nil, vim.uv.new_pipe(), vim.uv.new_pipe() }
+    local items, errors = {}, {}
+    local handle, _ = vim.uv.spawn(path, { args = args, stdio = stdio }, function(code)
+        vim.schedule(function()
+            on_list(code == 0 and items or {})
+        end)
+    end)
+    read_lines(stdio[2], function(line)
+        table.insert(items, line2item(line))
+    end)
+    read_lines(stdio[3], function(line)
+        table.insert(errors, line)
+    end)
+    return function()
+        if handle:is_active() then
+            pcall(handle.kill, handle, 15)
+        end
+    end
+end
+
+------------------------------------------------------------------------
+
 function M.select(items, opts, on_choice)
     local prompt = opts and opts["prompt"] or ""
     local popts = {}
@@ -632,9 +709,50 @@ end
 
 ------------------------------------------------------------------------
 
+local function grep_line2item(line)
+    local i = line:find(":", 1, true)
+    if i then
+        local j = line:find(":", i + 1, true)
+        assert(j ~= nil)
+        local t, from = j, j + 1
+        local text = {}
+        local matches = {}
+        while true do
+            local x, y = line:find("[0m[31m", from, true)
+            if not x then
+                table.insert(text, line:sub(from))
+                break
+            end
+            local m, n = line:find("[0m", y + 1, true)
+            if not m then
+                table.insert(text, line:sub(from))
+                break
+            end
+            table.insert(matches, { #text + x - t, #text + x + m - y - 2 - t })
+            table.insert(text, line:sub(from, x - 1))
+            table.insert(text, line:sub(y + 1, m - 1))
+            from = n + 1
+        end
+        local lnum = tonumber(line:sub(i + 5, j - 5))
+        return {
+            filename = line:sub(5, i - 1 - 4),
+            lnum = lnum,
+            col = matches[1][1],
+            end_lnum = lnum,
+            end_col = matches[1][2] + 1,
+            matches = matches,
+            text = table.concat(text),
+        }
+    else
+        return {
+            filename = line:sub(5, -5),
+        }
+    end
+end
+
 local function grep(on_list, opts)
-    local cmd = {
-        "rg", "--line-number",
+    local args = {
+        "--line-number",
         "--no-heading", "--color=always",
         "--no-config", "--smart-case",
         "--colors=path:none",
@@ -650,9 +768,9 @@ local function grep(on_list, opts)
             on_list({})
             return
         end
-        table.insert(cmd, query:sub(1, i - 1))
+        table.insert(args, query:sub(1, i - 1))
         query = query:sub(j + 1)
-        if cmd[#cmd] == "--" then
+        if args[#args] == "--" then
             break
         end
     end
@@ -660,57 +778,13 @@ local function grep(on_list, opts)
         on_list({})
         return
     end
-    if cmd[#cmd] ~= "--" then
-        table.insert(cmd, "--")
+    if args[#args] ~= "--" then
+        table.insert(args, "--")
     end
-    table.insert(cmd, query)
-    local list = vim.fn.systemlist(cmd)
-    if vim.v.shell_error ~= 0 then
-        on_list({})
-        return
-    end
-    local items = {}
-    for _, line in ipairs(list) do
-        local i = line:find(":", 1, true)
-        if i then
-            local j = line:find(":", i + 1, true)
-            assert(j ~= nil)
-            local t, from = j, j + 1
-            local text = {}
-            local matches = {}
-            while true do
-                local x, y = line:find("[0m[31m", from, true)
-                if not x then
-                    table.insert(text, line:sub(from))
-                    break
-                end
-                local m, n = line:find("[0m", y + 1, true)
-                if not m then
-                    table.insert(text, line:sub(from))
-                    break
-                end
-                table.insert(matches, { #text + x - t, #text + x + m - y - 2 - t })
-                table.insert(text, line:sub(from, x - 1))
-                table.insert(text, line:sub(y + 1, m - 1))
-                from = n + 1
-            end
-            local lnum = tonumber(line:sub(i + 5, j - 5))
-            table.insert(items, {
-                filename = line:sub(5, i - 1 - 4),
-                lnum = lnum,
-                col = matches[1][1],
-                end_lnum = lnum,
-                end_col = matches[1][2] + 1,
-                matches = matches,
-                text = table.concat(text),
-            })
-        else
-            table.insert(items, {
-                filename = line:sub(5, -5),
-            })
-        end
-    end
-    on_list(items)
+    table.insert(args, query)
+    cmd_items("rg", args, grep_line2item, function(items)
+        on_list(items)
+    end)
 end
 
 function M.pick_grep()
