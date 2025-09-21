@@ -2,7 +2,6 @@ local spec = { "folke/snacks.nvim" }
 
 function spec.config()
     require("snacks").setup {
-        scroll = {},
         picker = {
             ui_select = false,
             on_show = function()
@@ -43,7 +42,6 @@ function spec.config()
             }
         }
     }
-    vim.keymap.set('n', ' h', Snacks.picker.help, { desc = "Open help picker" })
     vim.keymap.set('n', ' u', Snacks.picker.undo, { desc = "Open undo picker" })
 end
 

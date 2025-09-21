@@ -29,7 +29,7 @@ local function tolines(items, opts)
     local func = nil
     if opts["key"] then
         func = function(item)
-            return item[opts["key"]]
+            return item[opts["key"]] or ""
         end
     elseif opts["text_cb"] then
         func = opts["text_cb"]
@@ -728,6 +728,30 @@ end
 
 ------------------------------------------------------------------------
 
+local function help()
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.bo[buf].buftype = 'help'
+    local tags = vim.api.nvim_buf_call(buf, function() return vim.fn.taglist('.*') end)
+    vim.api.nvim_buf_delete(buf, { force = true })
+    return tags
+end
+
+local function open_help(item)
+    if item then
+        vim.schedule(function()
+            vim.cmd("help " .. item.name)
+        end)
+    end
+end
+
+function M.pick_help()
+    M.pick("Help:", help(), open_help, {
+        key = "name",
+    })
+end
+
+------------------------------------------------------------------------
+
 local function lsp_items(func)
     return function(on_list)
         return func({
@@ -903,6 +927,7 @@ function M.setup()
     vim.ui.select = M.select
     vim.keymap.set('n', '<leader>f', M.pick_file)
     vim.keymap.set('n', '<leader>b', M.pick_buffer)
+    vim.keymap.set('n', '<leader>h', M.pick_help)
     vim.keymap.set('n', '<leader>/', M.pick_grep)
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('LspPickers', {}),
