@@ -675,21 +675,22 @@ local function grep(on_list, opts)
             local j = line:find(":", i + 1, true)
             assert(j ~= nil)
             local t, from = j, j + 1
-            local text = ""
+            local text = {}
             local matches = {}
             while true do
                 local x, y = line:find("[0m[31m", from, true)
                 if not x then
-                    text = text .. line:sub(from)
+                    table.insert(text, line:sub(from))
                     break
                 end
                 local m, n = line:find("[0m", y + 1, true)
                 if not m then
-                    text = text .. line:sub(from)
+                    table.insert(text, line:sub(from))
                     break
                 end
                 table.insert(matches, { #text + x - t, #text + x + m - y - 2 - t })
-                text = text .. line:sub(from, x - 1) .. line:sub(y + 1, m - 1)
+                table.insert(text, line:sub(from, x - 1))
+                table.insert(text, line:sub(y + 1, m - 1))
                 from = n + 1
             end
             local lnum = tonumber(line:sub(i + 5, j - 5))
@@ -700,7 +701,7 @@ local function grep(on_list, opts)
                 end_lnum = lnum,
                 end_col = matches[1][2] + 1,
                 matches = matches,
-                text = text,
+                text = table.concat(text),
             })
         else
             table.insert(items, {
