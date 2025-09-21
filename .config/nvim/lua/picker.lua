@@ -631,7 +631,7 @@ end
 
 local function grep(on_list, opts)
     local cmd = {
-        "rg", "--column", "--line-number",
+        "rg", "--line-number",
         "--no-heading", "--color=always",
         "--no-config", "--smart-case",
         "--colors=path:fg:magenta",
@@ -671,10 +671,7 @@ local function grep(on_list, opts)
         if i then
             local j = line:find(":", i + 1, true)
             assert(j ~= nil)
-            local k = line:find(":", j + 1, true)
-            assert(k ~= nil)
-            local col = tonumber(line:sub(j + 5, k - 5))
-            local t = line:sub(k + 1)
+            local t = line:sub(j + 1)
             local text = ""
             local matches = {}
             while true do
@@ -696,7 +693,7 @@ local function grep(on_list, opts)
             table.insert(items, {
                 filename = line:sub(10, i - 1 - 4),
                 lnum = lnum,
-                col = col,
+                col = matches[1][1],
                 end_lnum = lnum,
                 end_col = matches[1][2] + 1,
                 matches = matches,
