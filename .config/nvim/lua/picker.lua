@@ -640,7 +640,7 @@ local function grep(on_list, opts)
         "--colors=path:none",
         "--colors=line:none",
         "--colors=match:fg:red",
-        "--colors=match:style:bold",
+        "--colors=match:style:nobold",
     }
     local query = opts.query
     while query:sub(1, 1) == '-' do
@@ -678,7 +678,7 @@ local function grep(on_list, opts)
             local text = ""
             local matches = {}
             while true do
-                local x, y = line:find("[0m[1m[31m", from, true)
+                local x, y = line:find("[0m[31m", from, true)
                 if not x then
                     text = text .. line:sub(from)
                     break
