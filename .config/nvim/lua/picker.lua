@@ -187,9 +187,9 @@ function M.pick(prompt, src, onclose, opts)
             return
         end
     end
-    local pbuf = vim.api.nvim_create_buf(false, true)
-    vim.b[pbuf].completion = false
-    local pwin = vim.api.nvim_open_win(pbuf, true, {
+    local qbuf = vim.api.nvim_create_buf(false, true)
+    vim.b[qbuf].completion = false
+    local qwin = vim.api.nvim_open_win(qbuf, true, {
         relative = "editor",
         width = vim.o.columns,
         height = 1,
@@ -198,8 +198,8 @@ function M.pick(prompt, src, onclose, opts)
         style = "minimal",
         zindex = 250,
     })
-    vim.api.nvim_set_option_value("statuscolumn", prompt .. " ", { scope = "local", win = pwin })
-    vim.api.nvim_set_option_value("winhighlight", "Normal:MsgArea,FloatBorder:Normal", { scope = "local", win = pwin })
+    vim.api.nvim_set_option_value("statuscolumn", prompt .. " ", { scope = "local", win = qwin })
+    vim.api.nvim_set_option_value("winhighlight", "Normal:MsgArea,FloatBorder:Normal", { scope = "local", win = qwin })
 
     vim.cmd.startinsert()
 
@@ -278,7 +278,7 @@ function M.pick(prompt, src, onclose, opts)
         end
         local line = vim.fn.line('.', swin)
         vim.cmd.stopinsert()
-        vim.api.nvim_buf_delete(pbuf, {})
+        vim.api.nvim_buf_delete(qbuf, {})
         vim.api.nvim_buf_delete(sbuf, {})
         if copts and copts["qflist"] then
             onclose(sitems, copts)
@@ -302,10 +302,10 @@ function M.pick(prompt, src, onclose, opts)
     local function keymap(lhs, func, args)
         vim.keymap.set("i", lhs, function()
             func(unpack(args or {}))
-        end, { buffer = pbuf })
+        end, { buffer = qbuf })
     end
     vim.api.nvim_create_autocmd('WinLeave', {
-        buffer = pbuf,
+        buffer = qbuf,
         callback = function()
             close(nil)
         end
@@ -340,8 +340,8 @@ function M.pick(prompt, src, onclose, opts)
         elseif #sitems > 0 then
             counts = counts .. #sitems
         end
-        vim.api.nvim_buf_clear_namespace(pbuf, ns, 0, -1)
-        vim.api.nvim_buf_set_extmark(pbuf, ns, 0, 0, {
+        vim.api.nvim_buf_clear_namespace(qbuf, ns, 0, -1)
+        vim.api.nvim_buf_set_extmark(qbuf, ns, 0, 0, {
             virt_text = { { counts, "Comment" } },
             virt_text_pos = "right_align",
             strict = false,
@@ -427,7 +427,7 @@ function M.pick(prompt, src, onclose, opts)
     end
     showitems(items or {})
     vim.api.nvim_create_autocmd("TextChangedI", {
-        buffer = pbuf,
+        buffer = qbuf,
         callback = function()
             if timer then
                 vim.fn.timer_stop(timer)
