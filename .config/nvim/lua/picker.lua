@@ -466,6 +466,8 @@ function M.pick(prompt, src, onclose, opts)
                         livecancel = nil
                     end
                     timer = vim.fn.timer_start(250, function()
+                        setitems({})
+                        showitems(items, nil)
                         vim.api.nvim_buf_call(lspbuf, function()
                             livecancel = src(function(result)
                                 if tick == livetick then
