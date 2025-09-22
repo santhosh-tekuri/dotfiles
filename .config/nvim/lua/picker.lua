@@ -724,10 +724,9 @@ end
 local function grep_line2item(line)
     local i = line:find(":", 1, true)
     if i then
-        local j = line:find(":", i + 1, true)
-        assert(j ~= nil)
-        local t, from = j, j + 1
-        local text = {}
+        local j = assert(line:find(":", i + 1, true))
+        local from = j + 1
+        local text, textlen = {}, 0
         local matches = {}
         while true do
             local x, y = line:find("[0m[31m", from, true)
@@ -740,9 +739,12 @@ local function grep_line2item(line)
                 table.insert(text, line:sub(from))
                 break
             end
-            table.insert(matches, { #text + x - t, #text + x + m - y - 2 - t })
             table.insert(text, line:sub(from, x - 1))
+            textlen = textlen + x - 1 - from + 1
+            local col = textlen + 1
             table.insert(text, line:sub(y + 1, m - 1))
+            textlen = textlen + (m - 1 - (y + 1) + 1)
+            table.insert(matches, { col, textlen })
             from = n + 1
         end
         local lnum = tonumber(line:sub(i + 5, j - 5))
