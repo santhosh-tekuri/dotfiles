@@ -547,9 +547,7 @@ local function cmd_items(path, args, line2item, on_list)
     local stdio = { nil, vim.uv.new_pipe(), vim.uv.new_pipe() }
     local items, errors = {}, {}
     local handle, _ = vim.uv.spawn(path, { args = args, stdio = stdio }, function(code)
-        vim.schedule(function()
-            on_list(code == 0 and items or {})
-        end)
+        vim.schedule_wrap(on_list)(code == 0 and items or {})
     end)
     read_lines(stdio[2], function(line)
         table.insert(items, line2item(line))
