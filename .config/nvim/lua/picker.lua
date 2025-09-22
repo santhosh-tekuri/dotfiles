@@ -981,23 +981,23 @@ local function diagnostics(bufnr)
     end
 end
 
-function M.pick_document_diagnostic()
-    return M.pick("DocDiagnostic", diagnostics(0), open_qfentry, {
+local function pick_diagnostic(bufnr)
+    local prompt = bufnr and "DocDiagnostic" or "WorkDiagnostic"
+    return M.pick(prompt, diagnostics(bufnr), open_qfentry, {
         text_cb = qfentry_text,
         preview = qfentry_preview,
         add_highlights = qfentry_add_highlights,
         qflist = true,
+        filter = bufnr and nil or { func = qfentry_filter_cwd, enabled = true },
     })
 end
 
+function M.pick_document_diagnostic()
+    return pick_diagnostic(0)
+end
+
 function M.pick_workspace_diagnostic()
-    return M.pick("WorkDiagnostic", diagnostics(nil), open_qfentry, {
-        text_cb = qfentry_text,
-        preview = qfentry_preview,
-        add_highlights = qfentry_add_highlights,
-        qflist = true,
-        filter = { func = qfentry_filter_cwd, enabled = true },
-    })
+    return pick_diagnostic(nil)
 end
 
 ------------------------------------------------------------------------
