@@ -215,8 +215,8 @@ function M.pick(prompt, src, onclose, opts)
     local closed = nil
     local timer = nil
 
-    local gwin = nil
-    local gconfig = {
+    local pwin = nil
+    local pconfig = {
         relative = "editor",
         row = 0,
         col = 0,
@@ -230,10 +230,10 @@ function M.pick(prompt, src, onclose, opts)
         if not opts.preview then
             return
         end
-        if gwin then
-            vim.api.nvim_buf_clear_namespace(vim.api.nvim_win_get_buf(gwin), ns, 0, -1)
-            vim.api.nvim_win_hide(gwin)
-            gwin = nil
+        if pwin then
+            vim.api.nvim_buf_clear_namespace(vim.api.nvim_win_get_buf(pwin), ns, 0, -1)
+            vim.api.nvim_win_hide(pwin)
+            pwin = nil
         end
         if not sitems or #sitems == 0 then
             return
@@ -244,13 +244,13 @@ function M.pick(prompt, src, onclose, opts)
         if not item then
             return
         end
-        gwin = vim.api.nvim_open_win(item.bufnr, false, gconfig)
-        vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", { scope = "local", win = gwin })
-        vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = gwin })
+        pwin = vim.api.nvim_open_win(item.bufnr, false, pconfig)
+        vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", { scope = "local", win = pwin })
+        vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = pwin })
         if item.lnum and item.lnum > 0 then
-            vim.api.nvim_win_call(gwin, function()
-                vim.api.nvim_win_set_cursor(gwin, { item.lnum, item.col })
-                local gbuf = vim.api.nvim_win_get_buf(gwin)
+            vim.api.nvim_win_call(pwin, function()
+                vim.api.nvim_win_set_cursor(pwin, { item.lnum, item.col })
+                local gbuf = vim.api.nvim_win_get_buf(pwin)
                 vim.api.nvim_buf_set_extmark(gbuf, ns, item.lnum - 1, item.col - 1, {
                     end_col = item.end_col - 1,
                     hl_group = "Incsearch",
@@ -270,11 +270,11 @@ function M.pick(prompt, src, onclose, opts)
         if timer then
             vim.fn.timer_stop(timer)
         end
-        if gwin then
-            vim.api.nvim_set_option_value("winhighlight", nil, { scope = "local", win = gwin })
-            vim.api.nvim_set_option_value("cursorline", nil, { scope = "local", win = gwin })
-            vim.api.nvim_buf_clear_namespace(vim.api.nvim_win_get_buf(gwin), ns, 0, -1)
-            vim.api.nvim_win_close(gwin, true)
+        if pwin then
+            vim.api.nvim_set_option_value("winhighlight", nil, { scope = "local", win = pwin })
+            vim.api.nvim_set_option_value("cursorline", nil, { scope = "local", win = pwin })
+            vim.api.nvim_buf_clear_namespace(vim.api.nvim_win_get_buf(pwin), ns, 0, -1)
+            vim.api.nvim_win_close(pwin, true)
         end
         local line = vim.fn.line('.', swin)
         vim.cmd.stopinsert()
