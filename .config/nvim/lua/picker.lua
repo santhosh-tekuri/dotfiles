@@ -347,7 +347,6 @@ function M.pick(prompt, src, onclose, opts)
                 end
             end
         end
-        show_preview()
     end
 
     local function move(i)
@@ -355,16 +354,32 @@ function M.pick(prompt, src, onclose, opts)
         if line > 0 and line <= vim.api.nvim_buf_line_count(sbuf) then
             vim.api.nvim_win_set_cursor(swin, { line, 0 })
             show_preview()
-        else
-            local t = sskip
-            if line == 0 then
-                sskip = sskip > 0 and sskip - 1 or sskip
-            elseif line + sskip < #sitems then
-                sskip = sskip + 1
+            return
+        end
+        local t = sskip
+        if line == 0 then
+            if sskip == 0 then -- last item
+                sskip = math.max(#sitems - 10, 0)
+                line = #sitems - sskip
+            else -- item above viewport
+                sskip = sskip - 1
+                line = nil
             end
-            if sskip ~= t then
-                renderitems()
-            end
+        elseif line + sskip < #sitems then -- item below viewport
+            sskip = sskip + 1
+            line = nil
+        else -- first items
+            sskip = 0
+            line = #sitems > 0 and 1 or nil
+        end
+        if sskip ~= t then
+            renderitems()
+        end
+        if line then
+            vim.api.nvim_win_set_cursor(swin, { line, 0 })
+        end
+        if sskip ~= t or line then
+            show_preview()
         end
     end
     local function keymap(lhs, func, args)
@@ -419,10 +434,10 @@ function M.pick(prompt, src, onclose, opts)
                 vim.api.nvim_win_hide(swin)
                 swin = -1
             end
-            show_preview()
         else
             renderitems()
         end
+        show_preview()
     end
 
     if opts and opts.filter then
