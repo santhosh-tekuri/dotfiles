@@ -427,6 +427,7 @@ function M.pick(prompt, src, onclose, opts)
         end)
     end
     showitems(items or {})
+    local livetick = 0
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = qbuf,
         callback = function()
@@ -437,11 +438,15 @@ function M.pick(prompt, src, onclose, opts)
             local query = vim.fn.getline(1)
             if #query > 0 then
                 if opts["live"] then
+                    livetick = livetick + 1
+                    local tick = livetick
                     timer = vim.fn.timer_start(250, function()
                         vim.api.nvim_buf_call(lspbuf, function()
                             src(function(result)
-                                setitems(result)
-                                showitems(items, nil)
+                                if tick == livetick then
+                                    setitems(result)
+                                    showitems(items, nil)
+                                end
                             end, { query = query })
                         end)
                     end)
