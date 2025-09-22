@@ -738,10 +738,10 @@ local function grep_line2item(line)
         return {
             filename = line:sub(5, i - 1 - 4),
             lnum = lnum,
-            col = matches[1][1],
+            col = #matches > 0 and matches[1][1] or nil,
             end_lnum = lnum,
-            end_col = matches[1][2] + 1,
-            matches = matches,
+            end_col = #matches > 0 and matches[1][2] + 1 or nil,
+            matches = #matches > 0 and matches or nil,
             text = table.concat(text),
         }
     else
