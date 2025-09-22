@@ -756,6 +756,8 @@ local function grep(on_list, opts)
         "--line-number",
         "--no-heading", "--color=always",
         "--no-config", "--smart-case",
+        "--max-columns=300",
+        "--max-columns-preview",
         "--colors=path:none",
         "--colors=line:none",
         "--colors=match:fg:red",
