@@ -556,9 +556,9 @@ end
 
 local function qfentry_text(item)
     local file = item.filename or vim.fn.bufname(item.bufnr)
-    local text = fileshorten(file) .. ":"
+    local text = fileshorten(file)
     if item.lnum and item.lnum > 0 then
-        text = text .. item.lnum
+        text = text .. ":" .. item.lnum
     end
     if item["text"] then
         text = text .. " " .. item["text"]
