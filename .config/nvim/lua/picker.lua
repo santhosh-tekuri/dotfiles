@@ -427,7 +427,7 @@ function M.pick(prompt, src, onclose, opts)
         end)
     end
     showitems(items or {})
-    local livetick = 0
+    local livetick, livecancel = 0, nil
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = qbuf,
         callback = function()
@@ -440,10 +440,15 @@ function M.pick(prompt, src, onclose, opts)
                 if opts["live"] then
                     livetick = livetick + 1
                     local tick = livetick
+                    if livecancel then
+                        livecancel()
+                        livecancel = nil
+                    end
                     timer = vim.fn.timer_start(250, function()
                         vim.api.nvim_buf_call(lspbuf, function()
-                            src(function(result)
+                            livecancel = src(function(result)
                                 if tick == livetick then
+                                    livecancel = nil
                                     setitems(result)
                                     showitems(items, nil)
                                 end
@@ -791,7 +796,7 @@ local function grep(on_list, opts)
         table.insert(args, "--")
     end
     table.insert(args, query)
-    cmd_items("rg", args, grep_line2item, function(items)
+    return cmd_items("rg", args, grep_line2item, function(items)
         on_list(items)
     end)
 end
