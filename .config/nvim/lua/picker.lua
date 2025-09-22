@@ -325,14 +325,68 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
 
+    local matchpos = nil
+    local sskip = 0
+    local function renderitems()
+        local lines = tolines(sitems, opts)
+        vim.api.nvim_buf_clear_namespace(sbuf, ns, 0, -1)
+        vim.api.nvim_buf_set_lines(sbuf, 0, -1, false, lines)
+        local ht = math.min(10, #lines)
+        local w = vim.o.columns - 2
+        if not opts.fill_width then
+            w = 15
+            for _, line in ipairs(lines) do
+                w = math.max(w, #line)
+            end
+        end
+        sconfig = vim.tbl_extend("force", sconfig, {
+            width = w,
+            height = ht,
+            row = vim.o.lines - ht - 1,
+            col = 0,
+        })
+        if swin == -1 then
+            swin = vim.api.nvim_open_win(sbuf, false, sconfig)
+        else
+            vim.api.nvim_win_set_config(swin, sconfig)
+        end
+        vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = swin })
+        vim.api.nvim_set_option_value("scrolloff", 0, { scope = "local", win = swin })
+        if opts["add_highlights"] then
+            for i, line in ipairs(lines) do
+                opts["add_highlights"](sitems[i], line, function(col, ext_opts)
+                    ext_opts.priority = 800
+                    vim.api.nvim_buf_set_extmark(sbuf, ns, i - 1, col, ext_opts)
+                end)
+            end
+        end
+        if matchpos ~= nil then
+            for line, arr in ipairs(matchpos) do
+                for _, p in ipairs(arr) do
+                    local from, to
+                    if type(p) == "table" then
+                        from, to = p[1], p[2] + 1
+                    else
+                        from, to = p, p + 1
+                    end
+                    vim.api.nvim_buf_set_extmark(sbuf, ns, line - 1, from, {
+                        end_col = to,
+                        hl_group = "Special",
+                        strict = false,
+                        priority = 900,
+                    })
+                end
+            end
+        end
+    end
+
     local function showitems(lines, pos)
         if closed then
             return
         end
+        matchpos = pos
+        sskip = 0
         sitems = lines
-        lines = tolines(lines, opts)
-        vim.api.nvim_buf_clear_namespace(sbuf, ns, 0, -1)
-        vim.api.nvim_buf_set_lines(sbuf, 0, -1, false, lines)
 
         -- show counts
         local counts = ""
@@ -353,57 +407,12 @@ function M.pick(prompt, src, onclose, opts)
                 vim.api.nvim_win_hide(swin)
                 swin = -1
             end
+            show_preview()
         else
-            local ht = math.min(10, #lines)
-            local w = vim.o.columns - 2
-            if not opts.fill_width then
-                w = 15
-                for _, line in ipairs(lines) do
-                    w = math.max(w, #line)
-                end
-            end
-            sconfig = vim.tbl_extend("force", sconfig, {
-                width = w,
-                height = ht,
-                row = vim.o.lines - ht - 1,
-                col = 0,
-            })
-            if swin == -1 then
-                swin = vim.api.nvim_open_win(sbuf, false, sconfig)
-            else
-                vim.api.nvim_win_set_config(swin, sconfig)
-            end
-            vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = swin })
-            vim.api.nvim_set_option_value("scrolloff", 0, { scope = "local", win = swin })
-            if opts["add_highlights"] then
-                for i, line in ipairs(lines) do
-                    opts["add_highlights"](sitems[i], line, function(col, ext_opts)
-                        ext_opts.priority = 800
-                        vim.api.nvim_buf_set_extmark(sbuf, ns, i - 1, col, ext_opts)
-                    end)
-                end
-            end
-            if pos ~= nil then
-                for line, arr in ipairs(pos) do
-                    for _, p in ipairs(arr) do
-                        local from, to
-                        if type(p) == "table" then
-                            from, to = p[1], p[2] + 1
-                        else
-                            from, to = p, p + 1
-                        end
-                        vim.api.nvim_buf_set_extmark(sbuf, ns, line - 1, from, {
-                            end_col = to,
-                            hl_group = "Special",
-                            strict = false,
-                            priority = 900,
-                        })
-                    end
-                end
-            end
+            renderitems()
         end
-        show_preview()
     end
+
     if opts and opts.filter then
         keymap("<c-h>", function()
             opts.filter.enabled = not opts.filter.enabled
