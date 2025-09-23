@@ -37,7 +37,7 @@ local function tolines(iter, opts)
     return iter:map(func):totable()
 end
 
-local function match_single(items, str, opts)
+local function decode_query(str)
     local ch, inverse = nil, nil
     if str:sub(1, 1) == "!" then
         ch, inverse, str = "'", true, str:sub(2)
@@ -53,6 +53,11 @@ local function match_single(items, str, opts)
             ch, str = "$", str:sub(1, -2)
         end
     end
+    return { str = str, ch = ch, inverse = inverse }
+end
+
+local function match_single(items, query, opts)
+    local str, ch, inverse = query.str, query.ch, query.inverse
     if ch then
         local ignorecase = not str:match("%u")
         if ignorecase then
@@ -98,46 +103,49 @@ local function match(items, query, opts)
     local w = 0
     local pos = nil
     for word in query:gmatch("%S+") do
-        if w == 1 then
-            assert(pos ~= nil)
-            local temp = {}
-            for i, item in ipairs(items) do
-                table.insert(temp, { item = item, pos = pos[i] })
+        word = decode_query(word)
+        if #word.str > 0 then
+            if w == 1 then
+                assert(pos ~= nil)
+                local temp = {}
+                for i, item in ipairs(items) do
+                    table.insert(temp, { item = item, pos = pos[i] })
+                end
+                items = temp
+                local func
+                if opts["key"] then
+                    local key = opts["key"]
+                    func = function(item)
+                        return item["item"][key]
+                    end
+                elseif opts["text_cb"] then
+                    local text_cb = opts["text_cb"]
+                    func = function(item)
+                        return text_cb(item["item"])
+                    end
+                else
+                    func = function(item)
+                        return item["item"]
+                    end
+                end
+                opts = { text_cb = func, matchseq = 1 }
+            elseif w > 1 then
+                assert(pos ~= nil)
+                for i, item in ipairs(items) do
+                    for _, p in ipairs(pos[i]) do
+                        table.insert(item["pos"], p)
+                    end
+                end
             end
-            items = temp
-            local func
-            if opts["key"] then
-                local key = opts["key"]
-                func = function(item)
-                    return item["item"][key]
-                end
-            elseif opts["text_cb"] then
-                local text_cb = opts["text_cb"]
-                func = function(item)
-                    return text_cb(item["item"])
-                end
-            else
-                func = function(item)
-                    return item["item"]
-                end
-            end
-            opts = { text_cb = func, matchseq = 1 }
-        elseif w > 1 then
-            assert(pos ~= nil)
-            for i, item in ipairs(items) do
-                for _, p in ipairs(pos[i]) do
-                    table.insert(item["pos"], p)
-                end
-            end
+            items, pos = unpack(match_single(items, word, opts))
+            w = w + 1
         end
-        items, pos = unpack(match_single(items, word, opts))
-        w = w + 1
     end
     if w > 1 then
         local temp = {}
         for i, item in ipairs(items) do
             table.insert(temp, item["item"])
-            for _, p in ipairs(pos[i]) do
+            for _, p in ipairs(assert(pos)[i]) do
                 table.insert(item["pos"], p)
             end
             pos[i] = item["pos"]
