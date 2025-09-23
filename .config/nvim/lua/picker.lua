@@ -427,23 +427,6 @@ function M.pick(prompt, src, onclose, opts)
             livecancel = nil
         end
     end)
-    keymap("<c-s>", function()
-        if opts.live then
-            if livecancel then
-                livecancel()
-                livecancel = nil
-            end
-            opts.live, opts.liveoff = nil, vim.fn.getline(".")
-            vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
-            vim.api.nvim_set_option_value("statuscolumn", "> ", { scope = "local", win = qwin })
-        elseif opts.liveoff then
-            ignore_query_change = true
-            vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, { opts.liveoff })
-            vim.fn.cursor(1, #opts.liveoff + 1)
-            opts.live, opts.liveoff = true, nil
-            vim.api.nvim_set_option_value("statuscolumn", prompt .. " ", { scope = "local", win = qwin })
-        end
-    end)
 
     local function showitems(lines, pos, skip_sbuf)
         if closed then
@@ -480,6 +463,25 @@ function M.pick(prompt, src, onclose, opts)
         end
         show_preview()
     end
+
+    keymap("<c-s>", function()
+        if opts.live then
+            if livecancel then
+                livecancel()
+                livecancel = nil
+            end
+            opts.live, opts.liveoff = nil, vim.fn.getline(".")
+            vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
+            vim.api.nvim_set_option_value("statuscolumn", "> ", { scope = "local", win = qwin })
+        elseif opts.liveoff then
+            ignore_query_change = true
+            vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, { opts.liveoff })
+            vim.fn.cursor(1, #opts.liveoff + 1)
+            opts.live, opts.liveoff = true, nil
+            vim.api.nvim_set_option_value("statuscolumn", prompt .. " ", { scope = "local", win = qwin })
+            showitems(items, nil)
+        end
+    end)
 
     if opts and opts.filter then
         keymap("<c-h>", function()
