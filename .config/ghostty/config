@@ -25,7 +25,8 @@ cursor-color = dcd7ba
 split-divider-color = 424b56
 
 palette = 0=#2E3436
-palette = 1=#b00400
+# palette = 1=#b00400
+palette = 1=#dd6777
 palette = 2=#4d6e2a
 palette = 3=#a68701
 palette = 4=#254b78
@@ -41,6 +42,7 @@ palette = 13=#AD7FA8
 palette = 14=#34E2E2
 palette = 15=#EEEEEC
 
+macos-option-as-alt = true
 macos-titlebar-style = native
 macos-non-native-fullscreen = visible-menu
 fullscreen = true
