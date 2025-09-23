@@ -682,7 +682,7 @@ function M.qfentry.text(item)
         text = text .. ":" .. item.lnum
     end
     if item["text"] then
-        text = text .. " " .. item["text"]
+        text = text .. " " .. string.gsub(item["text"], "\n", " ")
     end
     return text
 end
