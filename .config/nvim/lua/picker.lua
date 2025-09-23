@@ -568,7 +568,7 @@ local function cmd_items(path, args, line2item, on_list)
         on_list(code == 0 and items or {})
     end)
     read_lines(stdio[2], function(line)
-        table.insert(items, line2item(line))
+        table.insert(items, line2item and line2item(line) or line)
     end)
     read_lines(stdio[3], function(line)
         table.insert(errors, line)
@@ -702,11 +702,11 @@ end
 ------------------------------------------------------------------------
 
 local function files(on_list, opts)
-    local cmd = 'fd --type f --type l --color=never -E .git'
+    local args = { "--type=f", "--type=l", "--color=never", "-E=.git" }
     if not opts.filter then
-        cmd = cmd .. ' --hidden'
+        table.insert(args, "--hidden")
     end
-    on_list(vim.fn.systemlist(cmd))
+    cmd_items("fd", args, nil, on_list)
 end
 
 local function edit(item, opts)
