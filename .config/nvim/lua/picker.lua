@@ -561,10 +561,11 @@ local function read_lines(pipe, on_line)
 end
 
 local function cmd_items(path, args, line2item, on_list)
+    on_list = vim.schedule_wrap(on_list)
     local stdio = { nil, vim.uv.new_pipe(), vim.uv.new_pipe() }
     local items, errors = {}, {}
     local handle, _ = vim.uv.spawn(path, { args = args, stdio = stdio }, function(code)
-        vim.schedule_wrap(on_list)(code == 0 and items or {})
+        on_list(code == 0 and items or {})
     end)
     read_lines(stdio[2], function(line)
         table.insert(items, line2item(line))
@@ -836,9 +837,7 @@ local function grep(on_list, opts)
         table.insert(args, "--")
     end
     table.insert(args, query)
-    return cmd_items("rg", args, grep_line2item, function(items)
-        on_list(items)
-    end)
+    return cmd_items("rg", args, grep_line2item, on_list)
 end
 
 function M.pick_grep()
