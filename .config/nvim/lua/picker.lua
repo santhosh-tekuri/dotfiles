@@ -234,6 +234,7 @@ function M.pick(prompt, src, onclose, opts)
         focusable = false,
         zindex = 50,
     }
+    local livetick, livecancel = 0, nil
     local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function show_preview()
         if not opts.preview then
@@ -279,6 +280,9 @@ function M.pick(prompt, src, onclose, opts)
         closed = true
         if timer then
             vim.fn.timer_stop(timer)
+        end
+        if livecancel then
+            livecancel()
         end
         if pwin then
             vim.api.nvim_set_option_value("winhighlight", nil, { scope = "local", win = pwin })
@@ -416,6 +420,12 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<c-p>", move, { -1 })
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
+    keymap("<c-c>", function()
+        if livecancel then
+            livecancel()
+            livecancel = nil
+        end
+    end)
 
     local function showitems(lines, pos, skip_sbuf)
         if closed then
@@ -476,7 +486,6 @@ function M.pick(prompt, src, onclose, opts)
         end)
     end
     showitems(items or {})
-    local livetick, livecancel = 0, nil
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = qbuf,
         callback = function()
