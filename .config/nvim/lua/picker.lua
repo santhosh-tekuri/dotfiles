@@ -194,6 +194,7 @@ function M.pick(prompt, src, onclose, opts)
             return
         end
     end
+    local ignore_query_change = false
     local qbuf = vim.api.nvim_create_buf(false, true)
     vim.b[qbuf].completion = false
     local qwin = vim.api.nvim_open_win(qbuf, true, {
@@ -432,6 +433,7 @@ function M.pick(prompt, src, onclose, opts)
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
             vim.api.nvim_set_option_value("statuscolumn", "> ", { scope = "local", win = qwin })
         elseif opts.liveoff then
+            ignore_query_change = true
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, { opts.liveoff })
             vim.fn.cursor(1, #opts.liveoff + 1)
             opts.live, opts.liveoff = true, nil
@@ -501,6 +503,10 @@ function M.pick(prompt, src, onclose, opts)
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = qbuf,
         callback = function()
+            if ignore_query_change then
+                ignore_query_change = false
+                return
+            end
             if timer then
                 vim.fn.timer_stop(timer)
                 timer = nil
