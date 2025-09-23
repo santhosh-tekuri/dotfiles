@@ -426,6 +426,18 @@ function M.pick(prompt, src, onclose, opts)
             livecancel = nil
         end
     end)
+    keymap("<c-s>", function()
+        if opts.live then
+            opts.live, opts.liveoff = nil, vim.fn.getline(".")
+            vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
+            vim.api.nvim_set_option_value("statuscolumn", "> ", { scope = "local", win = qwin })
+        elseif opts.liveoff then
+            vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, { opts.liveoff })
+            vim.fn.cursor(1, #opts.liveoff + 1)
+            opts.live, opts.liveoff = true, nil
+            vim.api.nvim_set_option_value("statuscolumn", prompt .. " ", { scope = "local", win = qwin })
+        end
+    end)
 
     local function showitems(lines, pos, skip_sbuf)
         if closed then
@@ -495,7 +507,7 @@ function M.pick(prompt, src, onclose, opts)
             end
             local query = vim.fn.getline(1)
             if #query > 0 then
-                if opts["live"] then
+                if opts.live then
                     livetick = livetick + 1
                     local tick = livetick
                     if livecancel then
@@ -913,9 +925,7 @@ local function open_help(item)
 end
 
 function M.pick_help()
-    M.pick("Help:", help(), open_help, {
-        key = "name",
-    })
+    M.pick("Help:", help(), open_help, { key = "name" })
 end
 
 ------------------------------------------------------------------------
