@@ -152,10 +152,20 @@ function M.pick(prompt, src, onclose, opts)
     opts = vim.tbl_deep_extend("force", { matchseq = 1 }, opts or {})
 
     local ritems, items, sitems = {}, {}, {}
-    local function setitems(arr)
-        ritems = arr
+    local function setitems(arr, ropts)
+        if ropts and ropts.partial then
+            vim.list_extend(ritems, arr)
+        else
+            ritems = arr
+        end
         if opts.filter and opts.filter.func and opts.filter.enabled then
-            items = vim.tbl_filter(opts.filter.func, ritems)
+            if ropts and ropts.partial then
+                vim.iter(ritems):filter(opts.filter.func):each(function(item)
+                    table.insert(items, item)
+                end)
+            else
+                items = vim.tbl_filter(opts.filter.func, ritems)
+            end
         else
             items = ritems
         end
@@ -407,12 +417,11 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
 
-    local function showitems(lines, pos)
+    local function showitems(lines, pos, skip_sbuf)
         if closed then
             return
         end
         matchpos = pos
-        sskip = 0
         sitems = lines
 
         -- show counts
@@ -428,7 +437,11 @@ function M.pick(prompt, src, onclose, opts)
             virt_text_pos = "right_align",
             strict = false,
         })
+        if skip_sbuf then
+            return
+        end
 
+        sskip = 0
         if #lines == 0 then
             if swin ~= -1 then
                 vim.api.nvim_win_hide(swin)
@@ -484,11 +497,18 @@ function M.pick(prompt, src, onclose, opts)
                         setitems({})
                         showitems(items, nil)
                         vim.api.nvim_buf_call(lspbuf, function()
-                            livecancel = src(function(result)
+                            livecancel = src(function(result, ropts)
                                 if tick == livetick then
-                                    livecancel = nil
-                                    setitems(result)
-                                    showitems(items, nil)
+                                    ropts = ropts or {}
+                                    if ropts.done or not ropts.partial then
+                                        livecancel = nil
+                                    end
+                                    local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
+                                    setitems(result, ropts)
+                                    showitems(items, nil, skip_sbuf)
+                                    if ropts.partial then
+                                        vim.cmd.redraw()
+                                    end
                                 end
                             end, { query = query })
                         end)
@@ -506,7 +526,7 @@ end
 
 ------------------------------------------------------------------------
 
-local function read_lines(pipe, on_line)
+local function read_lines(pipe, on_line, tick)
     local queue, qfirst, qlast = {}, 0, -1
     local line = nil
     local check = assert(vim.uv.new_check())
@@ -543,6 +563,7 @@ local function read_lines(pipe, on_line)
                 end
             end
         end
+        _ = tick and tick()
     end
     check:start(processQ)
     pipe:read_start(function(err, data)
@@ -560,16 +581,25 @@ local function read_lines(pipe, on_line)
     end)
 end
 
-local function cmd_items(path, args, line2item, on_list)
+local function cmd_items(path, args, line2item, on_list, partial)
     on_list = vim.schedule_wrap(on_list)
     local stdio = { nil, vim.uv.new_pipe(), vim.uv.new_pipe() }
     local items, errors = {}, {}
     local handle, _ = vim.uv.spawn(path, { args = args, stdio = stdio }, function(code)
-        on_list(code == 0 and items or {})
+        on_list(code == 0 and items or {}, { partial = partial, done = true })
     end)
+    local tick_size = 10
+    local tick = partial and function()
+        if #items > tick_size then
+            tick_size = 10000
+            local t = items
+            items = {}
+            on_list(t, { partial = true })
+        end
+    end or nil
     read_lines(stdio[2], function(line)
         table.insert(items, line2item and line2item(line) or line)
-    end)
+    end, tick)
     read_lines(stdio[3], function(line)
         table.insert(errors, line)
     end)
@@ -837,7 +867,7 @@ local function grep(on_list, opts)
         table.insert(args, "--")
     end
     table.insert(args, query)
-    return cmd_items("rg", args, grep_line2item, on_list)
+    return cmd_items("rg", args, grep_line2item, on_list, true)
 end
 
 function M.pick_grep()
