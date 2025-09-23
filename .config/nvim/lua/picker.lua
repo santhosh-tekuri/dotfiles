@@ -601,7 +601,9 @@ local function fileshorten(fname)
     return name
 end
 
-local function qfentry_text(item)
+M.qfentry = {}
+
+function M.qfentry.text(item)
     local file = item.filename or vim.fn.bufname(item.bufnr)
     local text = fileshorten(file)
     if item.lnum and item.lnum > 0 then
@@ -621,7 +623,7 @@ local typeHilights = {
     H = 'DiagnosticSignHint',
 }
 
-local function qfentry_add_highlights(item, line, add_highlight)
+function M.qfentry.add_highlights(item, line, add_highlight)
     local i = line:find(":", 1, true)
     if i then
         add_highlight(0, {
@@ -662,13 +664,13 @@ local function qfentry_add_highlights(item, line, add_highlight)
     end
 end
 
-local function qfentry_filter_cwd(item)
+function M.qfentry.filter_cwd(item)
     local file = item.filename
     file = vim.fn.fnamemodify(file, ":.")
     return vim.fn.isabsolutepath(file) == 0
 end
 
-local function qfentry_preview(item)
+function M.qfentry.preview(item)
     local bufnr = item.bufnr
     if not bufnr then
         bufnr = vim.fn.bufadd(item.filename)
@@ -682,7 +684,7 @@ local function qfentry_preview(item)
     }
 end
 
-local function open_qfentry(item, opts)
+function M.qfentry.open(item, opts)
     if item ~= nil then
         if opts["qflist"] then
             vim.fn.setqflist(item)
@@ -844,11 +846,11 @@ function M.pick_grep()
         vim.api.nvim_echo({ { "ripgrep is not available", "ErrorMsg" } }, false, {})
         return
     end
-    M.pick("Grep:", grep, open_qfentry, {
-        text_cb = qfentry_text,
+    M.pick("Grep:", grep, M.qfentry.open, {
+        text_cb = M.qfentry.text,
         live = true,
-        add_highlights = qfentry_add_highlights,
-        preview = qfentry_preview,
+        add_highlights = M.qfentry.add_highlights,
+        preview = M.qfentry.preview,
         qflist = true,
         fill_width = true,
     })
@@ -891,12 +893,13 @@ local function lsp_items(func)
 end
 
 local function pick_lsp_item(prompt, func, filter)
-    M.pick(prompt, lsp_items(func), open_qfentry, {
-        text_cb = qfentry_text,
-        add_highlights = qfentry_add_highlights,
-        preview = qfentry_preview,
+    M.pick(prompt, lsp_items(func), M.qfentry.open, {
+        text_cb = M.qfentry.text,
+        add_highlights = M.qfentry.add_highlights,
+        preview = M.qfentry.preview,
         qflist = true,
         filter = filter,
+        fill_width = true,
     })
 end
 
@@ -919,7 +922,7 @@ end
 function M.pick_reference()
     pick_lsp_item("Reference:", function(opts)
         return vim.lsp.buf.references({}, opts)
-    end, { func = qfentry_filter_cwd, enabled = true })
+    end, { func = M.qfentry.filter_cwd, enabled = true })
 end
 
 ------------------------------------------------------------------------
@@ -967,9 +970,9 @@ local function document_symbol_add_highlights(item, line, add_highlight)
 end
 
 function M.pick_document_symbol()
-    M.pick("DocSymbol:", document_symbols, open_qfentry, {
+    M.pick("DocSymbol:", document_symbols, M.qfentry.open, {
         text_cb = document_symbol_text,
-        preview = qfentry_preview,
+        preview = M.qfentry.preview,
         add_highlights = document_symbol_add_highlights,
     })
 end
@@ -1013,12 +1016,12 @@ local function workspace_symbol_add_highlights(item, line, add_highlight)
 end
 
 function M.pick_workspace_symbol()
-    M.pick("WorkSymbol:", workspace_symbols, open_qfentry, {
+    M.pick("WorkSymbol:", workspace_symbols, M.qfentry.open, {
         text_cb = workspace_symbol_text,
-        preview = qfentry_preview,
+        preview = M.qfentry.preview,
         add_highlights = workspace_symbol_add_highlights,
         live = true,
-        filter = { func = qfentry_filter_cwd, enabled = true },
+        filter = { func = M.qfentry.filter_cwd, enabled = true },
     })
 end
 
@@ -1032,12 +1035,12 @@ end
 
 local function pick_diagnostic(bufnr)
     local prompt = bufnr and "DocDiagnostic" or "WorkDiagnostic"
-    return M.pick(prompt, diagnostics(bufnr), open_qfentry, {
-        text_cb = qfentry_text,
-        preview = qfentry_preview,
-        add_highlights = qfentry_add_highlights,
+    return M.pick(prompt, diagnostics(bufnr), M.qfentry.open, {
+        text_cb = M.qfentry.text,
+        preview = M.qfentry.preview,
+        add_highlights = M.qfentry.add_highlights,
         qflist = true,
-        filter = bufnr and nil or { func = qfentry_filter_cwd, enabled = true },
+        filter = bufnr and nil or { func = M.qfentry.filter_cwd, enabled = true },
     })
 end
 
