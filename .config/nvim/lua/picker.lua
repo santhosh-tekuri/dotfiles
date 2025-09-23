@@ -429,6 +429,10 @@ function M.pick(prompt, src, onclose, opts)
     end)
     keymap("<c-s>", function()
         if opts.live then
+            if livecancel then
+                livecancel()
+                livecancel = nil
+            end
             opts.live, opts.liveoff = nil, vim.fn.getline(".")
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
             vim.api.nvim_set_option_value("statuscolumn", "> ", { scope = "local", win = qwin })
