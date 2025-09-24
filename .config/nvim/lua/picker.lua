@@ -61,42 +61,42 @@ local function decode_query(str)
 end
 
 local function match_single(items, query, opts)
-    local str, ch, inverse, ignorecase = query.str, query.ch, query.inverse, query.ignorecase
-    if ch then
-        local func = nil
-        if opts["key"] then
-            func = function(item)
-                return item[opts["key"]]
-            end
-        elseif opts["text_cb"] then
-            func = opts["text_cb"]
-        end
-        local from, to
-        local result = { {}, {} }
-        for _, item in ipairs(items) do
-            local text = func and func(item) or item
-            if ignorecase then
-                text = text:lower()
-            end
-            if ch == "'" then
-                from, to = text:find(str, 1, true)
-            elseif ch == "^" then
-                from, to = text:sub(1, #str) == str and 1 or nil, #str
-            else
-                from, to = text:sub(- #str) == str and #text - #str + 1 or nil, #text
-            end
-            if inverse then
-                if not from then
-                    table.insert(result[1], item)
-                end
-            elseif from then
-                table.insert(result[1], item)
-                table.insert(result[2], { { from - 1, to - 1 } })
-            end
-        end
-        return result
+    if not query.ch then
+        return vim.fn.matchfuzzypos(items, query.str, opts)
     end
-    return vim.fn.matchfuzzypos(items, str, opts)
+    local str, ch, inverse, ignorecase = query.str, query.ch, query.inverse, query.ignorecase
+    local func = nil
+    if opts["key"] then
+        func = function(item)
+            return item[opts["key"]]
+        end
+    elseif opts["text_cb"] then
+        func = opts["text_cb"]
+    end
+    local from, to
+    local result = { {}, {} }
+    for _, item in ipairs(items) do
+        local text = func and func(item) or item
+        if ignorecase then
+            text = text:lower()
+        end
+        if ch == "'" then
+            from, to = text:find(str, 1, true)
+        elseif ch == "^" then
+            from, to = text:sub(1, #str) == str and 1 or nil, #str
+        else
+            from, to = text:sub(- #str) == str and #text - #str + 1 or nil, #text
+        end
+        if inverse then
+            if not from then
+                table.insert(result[1], item)
+            end
+        elseif from then
+            table.insert(result[1], item)
+            table.insert(result[2], { { from - 1, to - 1 } })
+        end
+    end
+    return result
 end
 
 local function match(items, query, opts)
