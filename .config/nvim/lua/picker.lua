@@ -408,7 +408,7 @@ function M.pick(prompt, src, onclose, opts)
     local function keymap(lhs, func, args)
         vim.keymap.set("i", lhs, function()
             func(unpack(args or {}))
-        end, { buffer = qbuf })
+        end, { buffer = qbuf, nowait = true })
     end
     vim.api.nvim_create_autocmd('WinLeave', {
         buffer = qbuf,
