@@ -53,16 +53,16 @@ local function decode_query(str)
             ch, str = "$", str:sub(1, -2)
         end
     end
-    return { str = str, ch = ch, inverse = inverse }
+    local ignorecase = ch and not str:match("%u")
+    if ignorecase then
+        str = str:lower()
+    end
+    return { str = str, ch = ch, inverse = inverse, ignorecase }
 end
 
 local function match_single(items, query, opts)
-    local str, ch, inverse = query.str, query.ch, query.inverse
+    local str, ch, inverse, ignorecase = query.str, query.ch, query.inverse, query.ignorecase
     if ch then
-        local ignorecase = not str:match("%u")
-        if ignorecase then
-            str = str:lower()
-        end
         local func = nil
         if opts["key"] then
             func = function(item)
