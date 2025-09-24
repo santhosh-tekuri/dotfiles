@@ -472,7 +472,7 @@ function M.pick(prompt, src, onclose, opts)
         show_preview()
     end
 
-    keymap("<c-s>", function()
+    keymap("<c-g>", function()
         if opts.live then
             if livecancel then
                 livecancel()
@@ -480,7 +480,8 @@ function M.pick(prompt, src, onclose, opts)
             end
             opts.live, opts.liveoff = nil, vim.fn.getline(".")
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
-            vim.api.nvim_set_option_value("statuscolumn", "> ", { scope = "local", win = qwin })
+            local stc = prompt .. " " .. opts.liveoff .. " > "
+            vim.api.nvim_set_option_value("statuscolumn", stc, { scope = "local", win = qwin })
         elseif opts.liveoff then
             ignore_query_change = true
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, { opts.liveoff })
