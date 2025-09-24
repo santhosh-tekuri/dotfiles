@@ -215,7 +215,7 @@ function M.pick(prompt, src, onclose, opts)
         zindex = 250,
     })
     vim.api.nvim_set_option_value("statuscolumn", prompt .. " ", { scope = "local", win = qwin })
-    vim.api.nvim_set_option_value("winhighlight", "Normal:MsgArea,FloatBorder:Normal", { scope = "local", win = qwin })
+    vim.api.nvim_set_option_value("winhighlight", "NormalFloat:MsgArea", { scope = "local", win = qwin })
 
     vim.cmd.startinsert()
 
@@ -480,7 +480,7 @@ function M.pick(prompt, src, onclose, opts)
             end
             opts.live, opts.liveoff = nil, vim.fn.getline(".")
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
-            local stc = prompt .. " " .. opts.liveoff .. " > "
+            local stc = prompt .. " %#Normal#" .. opts.liveoff .. "%#Special# > "
             vim.api.nvim_set_option_value("statuscolumn", stc, { scope = "local", win = qwin })
         elseif opts.liveoff then
             ignore_query_change = true
