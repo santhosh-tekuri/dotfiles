@@ -269,14 +269,16 @@ function M.pick(prompt, src, onclose, opts)
         vim.api.nvim_set_option_value("wrap", false, { scope = "local", win = pwin })
         if item.lnum and item.lnum > 0 then
             vim.api.nvim_win_call(pwin, function()
-                vim.api.nvim_win_set_cursor(pwin, { item.lnum, item.col })
+                vim.api.nvim_win_set_cursor(pwin, { item.lnum, item.col or 0 })
                 local gbuf = vim.api.nvim_win_get_buf(pwin)
-                vim.api.nvim_buf_set_extmark(gbuf, ns, item.lnum - 1, item.col - 1, {
-                    end_col = item.end_col - 1,
-                    hl_group = "Incsearch",
-                    strict = false,
-                    priority = 900,
-                })
+                if item.col then
+                    vim.api.nvim_buf_set_extmark(gbuf, ns, item.lnum - 1, item.col - 1, {
+                        end_col = item.end_col - 1,
+                        hl_group = "Incsearch",
+                        strict = false,
+                        priority = 900,
+                    })
+                end
                 vim.cmd("normal! zz")
             end)
         end
