@@ -569,10 +569,10 @@ function M.pick(prompt, src, onclose, opts)
             end
             local query = vim.fn.getline(1)
             if #query > 0 then
+                cancelrun()
                 if opts.live then
-                    cancelrun()
-                    local tick = runtick
                     timer = vim.fn.timer_start(250, function()
+                        local tick = runtick
                         setitems({})
                         showitems(items, nil)
                         vim.api.nvim_buf_call(lspbuf, function()
@@ -593,7 +593,7 @@ function M.pick(prompt, src, onclose, opts)
                         end)
                     end)
                 else
-                    runmatch()
+                    timer = vim.fn.timer_start(150, runmatch)
                 end
             else
                 cancelrun()
