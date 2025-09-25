@@ -990,7 +990,7 @@ end
 
 function M.pick_reference()
     pick_lsp_item("Reference:", function(opts)
-        return vim.lsp.buf.references({}, opts)
+        return vim.lsp.buf.references(nil, opts)
     end, { func = M.qfentry.filter_cwd, enabled = true })
 end
 
