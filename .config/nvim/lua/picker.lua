@@ -253,7 +253,7 @@ function M.pick(prompt, src, onclose, opts)
     }
     local livetick, livecancel = 0, nil
     local ns = vim.api.nvim_create_namespace("fuzzyhl")
-    local function update_qvirttext()
+    local function update_status()
         local vtxt = {}
         if pwin then
             local pbuf = vim.api.nvim_win_get_buf(pwin)
@@ -289,7 +289,7 @@ function M.pick(prompt, src, onclose, opts)
         local item = sitems[line]
         item = opts.preview(item)
         if not item then
-            update_qvirttext()
+            update_status()
             return
         end
         pwin = vim.api.nvim_open_win(item.bufnr, false, pconfig)
@@ -311,7 +311,7 @@ function M.pick(prompt, src, onclose, opts)
                 vim.cmd("normal! zz")
             end)
         end
-        update_qvirttext()
+        update_status()
     end
 
     local function close(copts)
@@ -476,7 +476,7 @@ function M.pick(prompt, src, onclose, opts)
         sitems = lines
 
         -- show counts
-        update_qvirttext()
+        update_status()
         if skip_sbuf then
             return
         end
