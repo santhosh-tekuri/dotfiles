@@ -270,8 +270,8 @@ function M.pick(prompt, src, onclose, opts)
         if item.lnum and item.lnum > 0 then
             vim.api.nvim_win_call(pwin, function()
                 vim.api.nvim_win_set_cursor(pwin, { item.lnum, item.col or 0 })
-                local gbuf = vim.api.nvim_win_get_buf(pwin)
                 if item.col then
+                    local gbuf = vim.api.nvim_win_get_buf(pwin)
                     vim.api.nvim_buf_set_extmark(gbuf, ns, item.lnum - 1, item.col - 1, {
                         end_col = item.end_col - 1,
                         hl_group = "Incsearch",
