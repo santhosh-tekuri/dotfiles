@@ -223,7 +223,7 @@ function M.pick(prompt, src, onclose, opts)
         focusable = false,
         zindex = 50,
     }
-    local livetick, livecancel = 0, nil
+    local runtick, runcancel = 0, nil
     local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function update_status()
         local vtxt = {}
@@ -236,7 +236,7 @@ function M.pick(prompt, src, onclose, opts)
             local txt = string.format("%d/%d", #sitems, #items)
             table.insert(vtxt, { txt, "Comment" })
         else
-            table.insert(vtxt, { "" .. #sitems, livecancel and "Normal" or "Comment" })
+            table.insert(vtxt, { "" .. #sitems, runcancel and "Normal" or "Comment" })
         end
         vim.api.nvim_buf_clear_namespace(qbuf, ns, 0, -1)
         vim.api.nvim_buf_set_extmark(qbuf, ns, 0, 0, {
@@ -294,8 +294,8 @@ function M.pick(prompt, src, onclose, opts)
         if timer then
             vim.fn.timer_stop(timer)
         end
-        if livecancel then
-            livecancel()
+        if runcancel then
+            runcancel()
         end
         if pwin then
             vim.api.nvim_set_option_value("winhighlight", nil, { scope = "local", win = pwin })
@@ -430,9 +430,9 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
     keymap("<c-c>", function()
-        if livecancel then
-            livecancel()
-            livecancel = nil
+        if runcancel then
+            runcancel()
+            runcancel = nil
         end
     end)
 
@@ -463,9 +463,9 @@ function M.pick(prompt, src, onclose, opts)
 
     keymap("<c-g>", function()
         if opts.live then
-            if livecancel then
-                livecancel()
-                livecancel = nil
+            if runcancel then
+                runcancel()
+                runcancel = nil
             end
             opts.live, opts.liveoff = nil, vim.fn.getline(".")
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
@@ -520,21 +520,21 @@ function M.pick(prompt, src, onclose, opts)
             local query = vim.fn.getline(1)
             if #query > 0 then
                 if opts.live then
-                    livetick = livetick + 1
-                    local tick = livetick
-                    if livecancel then
-                        livecancel()
-                        livecancel = nil
+                    runtick = runtick + 1
+                    local tick = runtick
+                    if runcancel then
+                        runcancel()
+                        runcancel = nil
                     end
                     timer = vim.fn.timer_start(250, function()
                         setitems({})
                         showitems(items, nil)
                         vim.api.nvim_buf_call(lspbuf, function()
-                            livecancel = src(function(result, ropts)
-                                if tick == livetick then
+                            runcancel = src(function(result, ropts)
+                                if tick == runtick then
                                     ropts = ropts or {}
                                     if ropts.done or not ropts.partial then
-                                        livecancel = nil
+                                        runcancel = nil
                                     end
                                     local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
                                     setitems(result, ropts)
