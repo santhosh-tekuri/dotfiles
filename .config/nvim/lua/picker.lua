@@ -446,18 +446,16 @@ function M.pick(prompt, src, onclose, opts)
         sitems = lines
 
         -- show counts
-        local counts
+        local qvtxt = {}
         if items and #items > #sitems then
-            counts = string.format("%d/%d", #sitems, #items)
+            local txt = string.format("%d/%d", #sitems, #items)
+            table.insert(qvtxt, { txt, "Comment" })
         else
-            counts = "" .. #sitems
-        end
-        if livecancel then
-            counts = "loading...    " .. counts
+            table.insert(qvtxt, { "" .. #sitems, livecancel and "Normal" or "Comment" })
         end
         vim.api.nvim_buf_clear_namespace(qbuf, ns, 0, -1)
         vim.api.nvim_buf_set_extmark(qbuf, ns, 0, 0, {
-            virt_text = { { counts, "Comment" } },
+            virt_text = qvtxt,
             virt_text_pos = "right_align",
             strict = false,
         })
