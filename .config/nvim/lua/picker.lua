@@ -1,5 +1,13 @@
 local M = {}
 
+local function bufname(bufnr)
+    local name = vim.fn.bufname(bufnr)
+    if name == "" then
+        name = string.format("%q", vim.bo[bufnr].buftype)
+    end
+    return name
+end
+
 local function openfunc(how)
     return function(item)
         if type(item) == "string" then
@@ -245,6 +253,26 @@ function M.pick(prompt, src, onclose, opts)
     }
     local livetick, livecancel = 0, nil
     local ns = vim.api.nvim_create_namespace("fuzzyhl")
+    local function update_qvirttext()
+        local vtxt = {}
+        if pwin then
+            local pbuf = vim.api.nvim_win_get_buf(pwin)
+            bufname(pbuf)
+            table.insert(vtxt, { bufname(pbuf) .. "    ", "Special" })
+        end
+        if items and #items > #sitems then
+            local txt = string.format("%d/%d", #sitems, #items)
+            table.insert(vtxt, { txt, "Comment" })
+        else
+            table.insert(vtxt, { "" .. #sitems, livecancel and "Normal" or "Comment" })
+        end
+        vim.api.nvim_buf_clear_namespace(qbuf, ns, 0, -1)
+        vim.api.nvim_buf_set_extmark(qbuf, ns, 0, 0, {
+            virt_text = vtxt,
+            virt_text_pos = "right_align",
+            strict = false,
+        })
+    end
     local function show_preview()
         if not opts.preview then
             return
@@ -261,6 +289,7 @@ function M.pick(prompt, src, onclose, opts)
         local item = sitems[line]
         item = opts.preview(item)
         if not item then
+            update_qvirttext()
             return
         end
         pwin = vim.api.nvim_open_win(item.bufnr, false, pconfig)
@@ -271,8 +300,8 @@ function M.pick(prompt, src, onclose, opts)
             vim.api.nvim_win_call(pwin, function()
                 vim.api.nvim_win_set_cursor(pwin, { item.lnum, item.col or 0 })
                 if item.col then
-                    local gbuf = vim.api.nvim_win_get_buf(pwin)
-                    vim.api.nvim_buf_set_extmark(gbuf, ns, item.lnum - 1, item.col - 1, {
+                    local pbuf = vim.api.nvim_win_get_buf(pwin)
+                    vim.api.nvim_buf_set_extmark(pbuf, ns, item.lnum - 1, item.col - 1, {
                         end_col = item.end_col - 1,
                         hl_group = "Incsearch",
                         strict = false,
@@ -282,6 +311,7 @@ function M.pick(prompt, src, onclose, opts)
                 vim.cmd("normal! zz")
             end)
         end
+        update_qvirttext()
     end
 
     local function close(copts)
@@ -446,19 +476,7 @@ function M.pick(prompt, src, onclose, opts)
         sitems = lines
 
         -- show counts
-        local qvtxt = {}
-        if items and #items > #sitems then
-            local txt = string.format("%d/%d", #sitems, #items)
-            table.insert(qvtxt, { txt, "Comment" })
-        else
-            table.insert(qvtxt, { "" .. #sitems, livecancel and "Normal" or "Comment" })
-        end
-        vim.api.nvim_buf_clear_namespace(qbuf, ns, 0, -1)
-        vim.api.nvim_buf_set_extmark(qbuf, ns, 0, 0, {
-            virt_text = qvtxt,
-            virt_text_pos = "right_align",
-            strict = false,
-        })
+        update_qvirttext()
         if skip_sbuf then
             return
         end
@@ -821,16 +839,8 @@ local function buffers()
     return items
 end
 
-local function buffer_text(item)
-    local name = vim.fn.bufname(item)
-    if name == "" then
-        name = string.format("%q", vim.bo[item].buftype)
-    end
-    return name
-end
-
 function M.pick_buffer()
-    M.pick("Buffer:", buffers(), edit, { text_cb = buffer_text })
+    M.pick("Buffer:", buffers(), edit, { text_cb = bufname })
 end
 
 ------------------------------------------------------------------------
