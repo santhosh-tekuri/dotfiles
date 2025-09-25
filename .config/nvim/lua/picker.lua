@@ -111,7 +111,7 @@ local function matchfunc(query)
     end
 end
 
-local function match(items, query, opts)
+local function match(items, query, opts, on_list)
     local func = matchfunc(query)
     if not func then
         return nil
@@ -123,16 +123,35 @@ local function match(items, query, opts)
             return item[key]
         end
     end
-    local mitems, pos = {}, {}
-    for _, item in ipairs(items) do
-        local txt = text_cb and text_cb(item) or item
-        local p = func(txt)
-        if p then
-            table.insert(mitems, item)
-            table.insert(pos, p)
+
+    local from, cancel = 1, false
+    local function run()
+        local mitems, pos = {}, {}
+        while from <= #items do
+            local item = items[from]
+            local txt = text_cb and text_cb(item) or item
+            local p = func(txt)
+            if p then
+                table.insert(mitems, item)
+                table.insert(pos, p)
+            end
+            from = from + 1
+            if from % 100 == 0 then
+                if not cancel then
+                    if #mitems > 0 then
+                        on_list({ mitems, pos }, { partial = true })
+                    end
+                    vim.defer_fn(run, 1)
+                end
+                return
+            end
         end
+        on_list({ mitems, pos }, { partial = true, done = true })
     end
-    return { mitems, pos }
+    run()
+    return function()
+        cancel = true
+    end
 end
 
 function M.pick(prompt, src, onclose, opts)
@@ -224,13 +243,6 @@ function M.pick(prompt, src, onclose, opts)
         zindex = 50,
     }
     local runtick, runcancel = 0, nil
-    local function cancelrun()
-        runtick = runtick + 1
-        if runcancel then
-            runcancel()
-            runcancel = nil
-        end
-    end
     local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function update_status()
         local vtxt = {}
@@ -240,8 +252,13 @@ function M.pick(prompt, src, onclose, opts)
             table.insert(vtxt, { bufname(pbuf) .. "    ", "Special" })
         end
         if items and #items > #sitems then
-            local txt = string.format("%d/%d", #sitems, #items)
-            table.insert(vtxt, { txt, "Comment" })
+            if runcancel then
+                table.insert(vtxt, { "" .. #sitems, "Normal" })
+                table.insert(vtxt, { "/" .. #items, "Comment" })
+            else
+                local txt = string.format("%d/%d", #sitems, #items)
+                table.insert(vtxt, { txt, "Comment" })
+            end
         else
             table.insert(vtxt, { "" .. #sitems, runcancel and "Normal" or "Comment" })
         end
@@ -251,6 +268,14 @@ function M.pick(prompt, src, onclose, opts)
             virt_text_pos = "right_align",
             strict = false,
         })
+    end
+    local function cancelrun()
+        runtick = runtick + 1
+        if runcancel then
+            runcancel()
+            runcancel = nil
+            update_status()
+        end
     end
     local function show_preview()
         if not opts.preview then
@@ -480,10 +505,28 @@ function M.pick(prompt, src, onclose, opts)
 
     local function runmatch()
         local query = vim.fn.getline(1)
-        local matched = match(items, query, opts)
-        if matched then
-            showitems(matched[1], matched[2])
-        end
+        cancelrun()
+        local tick = runtick
+        runcancel = function() end
+        showitems({}, {})
+        local count = 0
+        runcancel = match(items, query, opts, function(result, ropts)
+            if tick == runtick then
+                count = count + 1
+                ropts = ropts or {}
+                if ropts.done or not ropts.partial then
+                    -- vim.print("count: " .. count)
+                    runcancel = nil
+                end
+                local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
+                vim.list_extend(sitems, result[1])
+                vim.list_extend(assert(matchpos), result[2])
+                showitems(sitems, matchpos, skip_sbuf)
+                if ropts.partial then
+                    vim.cmd.redraw()
+                end
+            end
+        end)
     end
 
     if opts and opts.filter then
@@ -548,6 +591,7 @@ function M.pick(prompt, src, onclose, opts)
                     runmatch()
                 end
             else
+                cancelrun()
                 showitems(items or {}, nil)
             end
         end
