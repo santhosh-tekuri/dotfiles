@@ -254,7 +254,7 @@ function M.pick(prompt, src, onclose, opts)
         if pwin then
             local pbuf = vim.api.nvim_win_get_buf(pwin)
             bufname(pbuf)
-            table.insert(vtxt, { bufname(pbuf) .. "    ", "Special" })
+            table.insert(vtxt, { bufname(pbuf) .. "    ", "qfFilename" })
         end
         if items and #items > #sitems then
             if runcancel then
