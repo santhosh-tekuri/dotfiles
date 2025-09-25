@@ -45,122 +45,94 @@ local function tolines(iter, opts)
     return iter:map(func):totable()
 end
 
-local function decode_query(str)
-    local ch, inverse = nil, nil
-    if str:sub(1, 1) == "!" then
-        ch, inverse, str = "'", true, str:sub(2)
-        if str:sub(1, 1) == "^" then
-            ch, str = str:sub(1, 1), str:sub(2)
-        elseif str:sub(-1) == "$" then
-            ch, str = "$", str:sub(1, -2)
-        end
-    else
-        if str:sub(1, 1) == "'" or str:sub(1, 1) == "^" then
-            ch, str = str:sub(1, 1), str:sub(2)
-        elseif str:sub(-1) == "$" then
-            ch, str = "$", str:sub(1, -2)
-        end
-    end
-    local ignorecase = ch and not str:match("%u")
-    if ignorecase then
-        str = str:lower()
-    end
-    return { str = str, ch = ch, inverse = inverse, ignorecase }
-end
-
-local function match_single(items, query, opts)
-    if not query.ch then
-        return vim.fn.matchfuzzypos(items, query.str, opts)
-    end
-    local str, ch, inverse, ignorecase = query.str, query.ch, query.inverse, query.ignorecase
-    local func = nil
-    if opts["key"] then
-        func = function(item)
-            return item[opts["key"]]
-        end
-    elseif opts["text_cb"] then
-        func = opts["text_cb"]
-    end
-    local from, to
-    local result = { {}, {} }
-    for _, item in ipairs(items) do
-        local text = func and func(item) or item
-        if ignorecase then
-            text = text:lower()
-        end
-        if ch == "'" then
-            from, to = text:find(str, 1, true)
-        elseif ch == "^" then
-            from, to = text:sub(1, #str) == str and 1 or nil, #str
-        else
-            from, to = text:sub(- #str) == str and #text - #str + 1 or nil, #text
-        end
+local function matchfunc(query)
+    local funcs = {}
+    for word in query:gmatch("%S+") do
+        local inverse = word:sub(1, 1) == "!"
         if inverse then
-            if not from then
-                table.insert(result[1], item)
+            word = word:sub(2)
+        end
+        local func
+        if word:sub(1, 1) == "^" then
+            local str = word:sub(2)
+            if #str > 0 then
+                func = function(txt)
+                    local i, j = txt:find(str, 1, true)
+                    return i == 1 and { i, j } or nil
+                end
             end
-        elseif from then
-            table.insert(result[1], item)
-            table.insert(result[2], { { from - 1, to - 1 } })
+        elseif word:sub(-1) == "$" then
+            local str = word:sub(1, -2)
+            if #str > 0 then
+                func = function(txt)
+                    return txt:sub(- #str) == str and { #txt - #str + 1, #txt } or nil
+                end
+            end
+        elseif #word > 0 then
+            local str = word
+            func = function(txt)
+                local i, j = txt:find(str, 1, true)
+                return i and { i, j } or nil
+            end
+        end
+        if func then
+            if inverse then
+                local f = func
+                func = function(txt)
+                    local p = f(txt)
+                    return not p and {} or nil
+                end
+            end
+            table.insert(funcs, { func, not string.find(word, "%u") })
         end
     end
-    return result
+    if #funcs == 0 then
+        return nil
+    end
+    return function(txt)
+        local txtlower, pos = nil, {}
+        for _, f in ipairs(funcs) do
+            local t = txt
+            if f[2] then
+                if not txtlower then
+                    txtlower = txt:lower()
+                end
+                t = txtlower
+            end
+            local p = f[1](t)
+            if not p then
+                return nil
+            end
+            if #p > 0 then
+                table.insert(pos, p)
+            end
+        end
+        return pos
+    end
 end
 
 local function match(items, query, opts)
-    local w = 0
-    local pos = nil
-    for word in query:gmatch("%S+") do
-        word = decode_query(word)
-        if #word.str > 0 then
-            if w == 1 then
-                assert(pos ~= nil)
-                local temp = {}
-                for i, item in ipairs(items) do
-                    table.insert(temp, { item = item, pos = pos[i] })
-                end
-                items = temp
-                local func
-                if opts["key"] then
-                    local key = opts["key"]
-                    func = function(item)
-                        return item["item"][key]
-                    end
-                elseif opts["text_cb"] then
-                    local text_cb = opts["text_cb"]
-                    func = function(item)
-                        return text_cb(item["item"])
-                    end
-                else
-                    func = function(item)
-                        return item["item"]
-                    end
-                end
-                opts = { text_cb = func, matchseq = 1 }
-            elseif w > 1 then
-                assert(pos ~= nil)
-                for i, item in ipairs(items) do
-                    for _, p in ipairs(pos[i]) do
-                        table.insert(item["pos"], p)
-                    end
-                end
-            end
-            items, pos = unpack(match_single(items, word, opts))
-            w = w + 1
+    local func = matchfunc(query)
+    if not func then
+        return nil
+    end
+    local text_cb = opts.text_cb
+    if not text_cb and opts.key then
+        local key = opts.key
+        text_cb = function(item)
+            return item[key]
         end
     end
-    if w > 1 then
-        local temp = {}
-        for i, item in ipairs(items) do
-            table.insert(temp, item["item"])
-            for _, p in ipairs(assert(pos)[i]) do
-                table.insert(item["pos"], p)
-            end
-            pos[i] = item["pos"]
+    local mitems, pos = {}, {}
+    for _, item in ipairs(items) do
+        local txt = text_cb and text_cb(item) or item
+        local p = func(txt)
+        if p then
+            table.insert(mitems, item)
+            table.insert(pos, p)
         end
-        items = temp
     end
-    return { items, pos }
+    return { mitems, pos }
 end
 
 function M.pick(prompt, src, onclose, opts)
@@ -387,18 +359,14 @@ function M.pick(prompt, src, onclose, opts)
             local miter = vim.iter(matchpos):skip(sskip):take(shmax)
             for line, arr in miter:enumerate() do
                 for _, p in ipairs(arr) do
-                    local from, to
-                    if type(p) == "table" then
-                        from, to = p[1], p[2] + 1
-                    else
-                        from, to = p, p + 1
+                    if #p == 2 then
+                        vim.api.nvim_buf_set_extmark(sbuf, ns, line - sskip - 1, p[1] - 1, {
+                            end_col = p[2],
+                            hl_group = "Special",
+                            strict = false,
+                            priority = 900,
+                        })
                     end
-                    vim.api.nvim_buf_set_extmark(sbuf, ns, line - sskip - 1, from, {
-                        end_col = to,
-                        hl_group = "Special",
-                        strict = false,
-                        priority = 900,
-                    })
                 end
             end
         end
@@ -523,7 +491,9 @@ function M.pick(prompt, src, onclose, opts)
                     showitems(items)
                 else
                     local matched = match(items, query, opts)
-                    showitems(matched[1], matched[2])
+                    if matched then
+                        showitems(matched[1], matched[2])
+                    end
                 end
             end
             if opts.filter.func then
@@ -578,7 +548,9 @@ function M.pick(prompt, src, onclose, opts)
                     end)
                 else
                     local matched = match(items, query, opts)
-                    showitems(matched[1], matched[2])
+                    if matched then
+                        showitems(matched[1], matched[2])
+                    end
                 end
             else
                 showitems(items or {}, nil)
