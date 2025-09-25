@@ -446,11 +446,14 @@ function M.pick(prompt, src, onclose, opts)
         sitems = lines
 
         -- show counts
-        local counts = ""
+        local counts
         if items and #items > #sitems then
             counts = string.format("%d/%d", #sitems, #items)
-        elseif #sitems > 0 then
-            counts = counts .. #sitems
+        else
+            counts = "" .. #sitems
+        end
+        if livecancel then
+            counts = "loading...    " .. counts
         end
         vim.api.nvim_buf_clear_namespace(qbuf, ns, 0, -1)
         vim.api.nvim_buf_set_extmark(qbuf, ns, 0, 0, {
