@@ -224,6 +224,13 @@ function M.pick(prompt, src, onclose, opts)
         zindex = 50,
     }
     local runtick, runcancel = 0, nil
+    local function cancelrun()
+        runtick = runtick + 1
+        if runcancel then
+            runcancel()
+            runcancel = nil
+        end
+    end
     local ns = vim.api.nvim_create_namespace("fuzzyhl")
     local function update_status()
         local vtxt = {}
@@ -294,9 +301,7 @@ function M.pick(prompt, src, onclose, opts)
         if timer then
             vim.fn.timer_stop(timer)
         end
-        if runcancel then
-            runcancel()
-        end
+        cancelrun()
         if pwin then
             vim.api.nvim_set_option_value("winhighlight", nil, { scope = "local", win = pwin })
             vim.api.nvim_set_option_value("cursorline", nil, { scope = "local", win = pwin })
@@ -429,12 +434,7 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<c-p>", move, { -1 })
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
-    keymap("<c-c>", function()
-        if runcancel then
-            runcancel()
-            runcancel = nil
-        end
-    end)
+    keymap("<c-c>", cancelrun, {})
 
     local function showitems(lines, pos, skip_sbuf)
         if closed then
@@ -463,10 +463,7 @@ function M.pick(prompt, src, onclose, opts)
 
     keymap("<c-g>", function()
         if opts.live then
-            if runcancel then
-                runcancel()
-                runcancel = nil
-            end
+            cancelrun()
             opts.live, opts.liveoff = nil, vim.fn.getline(".")
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
             local stc = prompt .. " %#Normal#" .. opts.liveoff .. "%#Special# > "
@@ -520,12 +517,8 @@ function M.pick(prompt, src, onclose, opts)
             local query = vim.fn.getline(1)
             if #query > 0 then
                 if opts.live then
-                    runtick = runtick + 1
+                    cancelrun()
                     local tick = runtick
-                    if runcancel then
-                        runcancel()
-                        runcancel = nil
-                    end
                     timer = vim.fn.timer_start(250, function()
                         setitems({})
                         showitems(items, nil)
