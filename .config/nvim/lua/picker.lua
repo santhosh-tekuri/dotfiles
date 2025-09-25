@@ -478,6 +478,14 @@ function M.pick(prompt, src, onclose, opts)
         end
     end)
 
+    local function runmatch()
+        local query = vim.fn.getline(1)
+        local matched = match(items, query, opts)
+        if matched then
+            showitems(matched[1], matched[2])
+        end
+    end
+
     if opts and opts.filter then
         keymap("<c-h>", function()
             opts.filter.enabled = not opts.filter.enabled
@@ -487,10 +495,7 @@ function M.pick(prompt, src, onclose, opts)
                 if #query == 0 or opts.live then
                     showitems(items)
                 else
-                    local matched = match(items, query, opts)
-                    if matched then
-                        showitems(matched[1], matched[2])
-                    end
+                    runmatch()
                 end
             end
             if opts.filter.func then
@@ -540,10 +545,7 @@ function M.pick(prompt, src, onclose, opts)
                         end)
                     end)
                 else
-                    local matched = match(items, query, opts)
-                    if matched then
-                        showitems(matched[1], matched[2])
-                    end
+                    runmatch()
                 end
             else
                 showitems(items or {}, nil)
