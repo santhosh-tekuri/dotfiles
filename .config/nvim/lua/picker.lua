@@ -42,7 +42,11 @@ local function tolines(iter, opts)
     elseif opts["text_cb"] then
         func = opts["text_cb"]
     end
-    return iter:map(func):totable()
+    local function replacenl(line)
+        local str, _ = string.gsub(line, "\n", " ")
+        return str
+    end
+    return iter:map(func):map(replacenl):totable()
 end
 
 local function matchfunc(query)
@@ -715,8 +719,8 @@ function M.qfentry.text(item)
     if item.lnum and item.lnum > 0 then
         text = text .. ":" .. item.lnum
     end
-    if item["text"] then
-        text = text .. " " .. string.gsub(item["text"], "\n", " ")
+    if item.text then
+        text = text .. " " .. item.text
     end
     return text
 end
