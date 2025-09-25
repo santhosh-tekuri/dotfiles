@@ -1112,6 +1112,7 @@ local function pick_diagnostic(bufnr)
         add_highlights = M.qfentry.add_highlights,
         qflist = true,
         filter = bufnr and nil or { func = M.qfentry.filter_cwd, enabled = true },
+        fill_width = true,
     })
 end
 
