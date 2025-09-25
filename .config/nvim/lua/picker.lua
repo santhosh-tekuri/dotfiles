@@ -126,6 +126,7 @@ local function match(items, query, opts, on_list)
 
     local from, cancel = 1, false
     local function run()
+        local start = vim.uv.hrtime()
         local mitems, pos = {}, {}
         while from <= #items do
             local item = items[from]
@@ -136,7 +137,7 @@ local function match(items, query, opts, on_list)
                 table.insert(pos, p)
             end
             from = from + 1
-            if from % 100 == 0 then
+            if from % 100 == 0 and (vim.uv.hrtime() - start > 1e6) then
                 if not cancel then
                     if #mitems > 0 then
                         on_list({ mitems, pos }, { partial = true })
