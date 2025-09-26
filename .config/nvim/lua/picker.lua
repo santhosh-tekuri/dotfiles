@@ -538,6 +538,16 @@ function M.pick(prompt, src, onclose, opts)
             show_preview()
         end
     end
+    local function scroll(lines)
+        sskip = sskip + lines
+        if sskip < 0 then
+            sskip = 0
+        elseif sskip > #sitems - shmax then
+            sskip = #sitems - shmax
+        end
+        renderitems()
+        show_preview()
+    end
     local function keymap(lhs, func, args)
         vim.keymap.set("i", lhs, function()
             func(unpack(args or {}))
@@ -554,6 +564,8 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<esc>", close, { nil })
     keymap("<c-n>", move, { 1 })
     keymap("<c-p>", move, { -1 })
+    keymap("<c-d>", scroll, { shmax / 2 })
+    keymap("<c-u>", scroll, { -shmax / 2 })
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
     keymap("<c-c>", cancelrun, {})
