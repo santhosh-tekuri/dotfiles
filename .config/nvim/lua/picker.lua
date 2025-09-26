@@ -240,6 +240,7 @@ function M.pick(prompt, src, onclose, opts)
         border = { '', '', '', ' ', '', '', '', ' ' },
         focusable = false,
         zindex = 100,
+        col = 0,
     }
     local swin = -1
     local sskip = 0
@@ -383,7 +384,6 @@ function M.pick(prompt, src, onclose, opts)
             width = w,
             height = ht,
             row = vim.o.lines - ht - 1,
-            col = 0,
         })
         if swin == -1 then
             swin = vim.api.nvim_open_win(sbuf, false, sconfig)
