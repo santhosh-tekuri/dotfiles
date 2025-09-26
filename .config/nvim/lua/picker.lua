@@ -411,6 +411,54 @@ function M.pick(prompt, src, onclose, opts)
         end
     end
 
+    local function showitems(lines, pos, skip_sbuf)
+        if closed then
+            return
+        end
+        matchpos = pos
+        sitems = lines
+
+        -- show counts
+        update_status()
+        if skip_sbuf then
+            return
+        end
+
+        sskip = 0
+        if #lines == 0 then
+            if swin ~= -1 then
+                vim.api.nvim_win_hide(swin)
+                swin = -1
+            end
+        else
+            renderitems()
+        end
+        show_preview()
+    end
+
+    local function runmatch()
+        local query = vim.fn.getline(1)
+        cancelrun()
+        local tick = runtick
+        runcancel = function() end
+        showitems({}, {})
+        runcancel = match(items, query, opts, function(result, ropts)
+            if tick == runtick then
+                ropts = ropts or {}
+                if ropts.done or not ropts.partial then
+                    runcancel = nil
+                end
+                local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
+                vim.list_extend(sitems, result[1])
+                vim.list_extend(assert(matchpos), result[2])
+                showitems(sitems, matchpos, skip_sbuf)
+                if ropts.partial then
+                    vim.cmd.redraw()
+                end
+            end
+        end)
+    end
+
     local function move(i)
         local line = vim.api.nvim_win_get_cursor(swin)[1] + i
         if line > 0 and line <= vim.api.nvim_buf_line_count(sbuf) then
@@ -449,12 +497,6 @@ function M.pick(prompt, src, onclose, opts)
             func(unpack(args or {}))
         end, { buffer = qbuf, nowait = true })
     end
-    vim.api.nvim_create_autocmd('WinLeave', {
-        buffer = qbuf,
-        callback = function()
-            close(nil)
-        end
-    })
     keymap("<tab>", function() end, {})
     if opts and opts["qflist"] then
         keymap("<c-q>", close, { { qflist = true } })
@@ -469,32 +511,6 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
     keymap("<c-c>", cancelrun, {})
-
-    local function showitems(lines, pos, skip_sbuf)
-        if closed then
-            return
-        end
-        matchpos = pos
-        sitems = lines
-
-        -- show counts
-        update_status()
-        if skip_sbuf then
-            return
-        end
-
-        sskip = 0
-        if #lines == 0 then
-            if swin ~= -1 then
-                vim.api.nvim_win_hide(swin)
-                swin = -1
-            end
-        else
-            renderitems()
-        end
-        show_preview()
-    end
-
     keymap("<c-g>", function()
         if opts.live then
             cancelrun()
@@ -511,30 +527,6 @@ function M.pick(prompt, src, onclose, opts)
             showitems(items, nil)
         end
     end)
-
-    local function runmatch()
-        local query = vim.fn.getline(1)
-        cancelrun()
-        local tick = runtick
-        runcancel = function() end
-        showitems({}, {})
-        runcancel = match(items, query, opts, function(result, ropts)
-            if tick == runtick then
-                ropts = ropts or {}
-                if ropts.done or not ropts.partial then
-                    runcancel = nil
-                end
-                local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
-                vim.list_extend(sitems, result[1])
-                vim.list_extend(assert(matchpos), result[2])
-                showitems(sitems, matchpos, skip_sbuf)
-                if ropts.partial then
-                    vim.cmd.redraw()
-                end
-            end
-        end)
-    end
-
     if opts and opts.filter then
         keymap("<c-h>", function()
             opts.filter.enabled = not opts.filter.enabled
@@ -557,6 +549,12 @@ function M.pick(prompt, src, onclose, opts)
         end)
     end
     showitems(items or {})
+    vim.api.nvim_create_autocmd('WinLeave', {
+        buffer = qbuf,
+        callback = function()
+            close(nil)
+        end
+    })
     vim.api.nvim_create_autocmd("TextChangedI", {
         buffer = qbuf,
         callback = function()
