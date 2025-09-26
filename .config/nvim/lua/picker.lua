@@ -163,6 +163,7 @@ local function match(items, query, opts, on_list)
     end
 end
 
+local shmax = 10
 function M.pick(prompt, src, onclose, opts)
     local lspbuf = vim.api.nvim_get_current_buf()
     opts = vim.tbl_deep_extend("force", { matchseq = 1 }, opts or {})
@@ -237,7 +238,7 @@ function M.pick(prompt, src, onclose, opts)
     }
     local swin = -1
     local sskip = 0
-    local shmax, swmin = 10, 50
+    local swmin = 50
     local closed = nil
     local timer = nil
 
@@ -623,7 +624,7 @@ local function read_lines(pipe, on_line, tick)
                 local j = data:find("\n", from, true)
                 local i = j
                 if j then
-                    if j > 1 and data[j - 1] == '\r' then
+                    if j > 1 and data:sub(j - 1, j - 1) == '\r' then
                         i = j - 1
                     end
                     if i ~= 1 then
@@ -671,7 +672,7 @@ local function cmd_items(path, args, line2item, on_list, partial)
     local handle, _ = vim.uv.spawn(path, { args = args, stdio = stdio }, function(code)
         on_list(code == 0 and items or {}, { partial = partial, done = true })
     end)
-    local tick_size = 10
+    local tick_size = shmax
     local tick = partial and function()
         if #items > tick_size then
             tick_size = 10000
@@ -745,8 +746,7 @@ function M.qfentry.add_highlights(item, line, add_highlight)
             hl_group = "qfFilename",
             strict = false,
         })
-        local k = line:find(" ", i + 1, true)
-        assert(k ~= nil)
+        local k = assert(line:find(" ", i + 1, true))
         add_highlight(i, {
             end_col = k - 1,
             hl_group = "qfLineNr",
