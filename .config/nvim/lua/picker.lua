@@ -353,16 +353,10 @@ function M.pick(prompt, src, onclose, opts)
         vim.cmd.stopinsert()
         vim.api.nvim_buf_delete(qbuf, {})
         vim.api.nvim_buf_delete(sbuf, {})
-        if copts and copts["qflist"] then
-            onclose(sitems, copts)
+        if copts and sitems then
+            onclose(copts["qflist"] and sitems or sitems[line], copts)
         else
-            local item = nil
-            if copts then
-                if sitems ~= nil and line > 0 and line <= #sitems then
-                    item = sitems[line]
-                end
-            end
-            onclose(item, copts)
+            onclose(nil, nil)
         end
     end
 
