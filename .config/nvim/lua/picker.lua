@@ -590,7 +590,7 @@ function M.pick(prompt, src, onclose, opts)
                 vim.fn.timer_stop(timer)
                 timer = nil
             end
-            if #vim.fn.getline(1) == 0 then
+            if not vim.fn.getline(1):find("%S") then
                 showitems(items or {}, nil)
             elseif opts.live then
                 timer = vim.fn.timer_start(250, runlive)
