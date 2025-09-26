@@ -861,7 +861,13 @@ end
 local function grep_line2item(line)
     local i = line:find(":", 1, true)
     if i then
-        local j = assert(line:find(":", i + 1, true))
+        local j = line:find(":", i + 1, true)
+        if not j then
+            -- partial output, rg might have been killed
+            return {
+                filename = line:sub(5, i - 1 - 4),
+            }
+        end
         local from = j + 1
         local text, textlen = {}, 0
         local matches = {}
