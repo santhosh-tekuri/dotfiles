@@ -983,18 +983,15 @@ end
 
 ------------------------------------------------------------------------
 
-local function lsp_items(func)
-    return function(on_list)
+local function pick_lsp_item(prompt, func, filter)
+    local src = function(on_list)
         return func({
             on_list = function(result)
                 on_list(result.items)
             end
         })
     end
-end
-
-local function pick_lsp_item(prompt, func, filter)
-    M.pick(prompt, lsp_items(func), M.qfentry.open, {
+    M.pick(prompt, src, M.qfentry.open, {
         text_cb = M.qfentry.text,
         add_highlights = M.qfentry.add_highlights,
         preview = M.qfentry.preview,
@@ -1128,15 +1125,12 @@ end
 
 ------------------------------------------------------------------------
 
-local function diagnostics(bufnr)
-    return function(on_list)
-        on_list(vim.diagnostic.toqflist(vim.diagnostic.get(bufnr)))
-    end
-end
-
 local function pick_diagnostic(bufnr)
     local prompt = bufnr and "DocDiagnostic" or "WorkDiagnostic"
-    return M.pick(prompt, diagnostics(bufnr), M.qfentry.open, {
+    local src = function(on_list)
+        on_list(vim.diagnostic.toqflist(vim.diagnostic.get(bufnr)))
+    end
+    return M.pick(prompt, src, M.qfentry.open, {
         text_cb = M.qfentry.text,
         preview = M.qfentry.preview,
         add_highlights = M.qfentry.add_highlights,
