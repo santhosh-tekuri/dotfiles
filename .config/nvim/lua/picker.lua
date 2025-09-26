@@ -498,12 +498,14 @@ function M.pick(prompt, src, onclose, opts)
                 sskip = sskip - 1
                 line = nil
             end
-        elseif line + sskip < #sitems then -- item below viewport
-            sskip = sskip + 1
-            line = nil
-        else -- first items
-            sskip = 0
-            line = #sitems > 0 and 1 or nil
+        elseif line > shmax then
+            if line + sskip <= #sitems then -- item below viewport
+                sskip = sskip + 1
+                line = nil
+            else -- first items
+                sskip = 0
+                line = #sitems > 0 and 1 or nil
+            end
         end
         if sskip ~= t then
             renderitems()
