@@ -3,7 +3,11 @@ local M = {}
 local function bufname(bufnr)
     local name = vim.fn.bufname(bufnr)
     if name == "" then
-        name = string.format("%q", vim.bo[bufnr].buftype)
+        name = vim.bo[bufnr].buftype
+        if name == "" then
+            return "[No Name]"
+        end
+        return string.format("[%s]", name)
     end
     return name
 end
