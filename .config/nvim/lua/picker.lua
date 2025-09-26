@@ -73,7 +73,12 @@ local function matchfunc(query)
             local str = word:sub(1, -2)
             if #str > 0 then
                 func = function(txt)
-                    return txt:sub(- #str) == str and { #txt - #str + 1, #txt } or nil
+                    local from = #txt - #str + 1
+                    if from > 0 then
+                        local i, j = txt:find(str, from, true)
+                        return i == from and { i, j } or nil
+                    end
+                    return nil
                 end
             end
         elseif #word > 0 then
