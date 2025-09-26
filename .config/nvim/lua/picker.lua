@@ -459,6 +459,29 @@ function M.pick(prompt, src, onclose, opts)
         end)
     end
 
+    local function runlive()
+        local query = vim.fn.getline(1)
+        local tick = runtick
+        setitems({})
+        showitems(items, nil)
+        vim.api.nvim_buf_call(lspbuf, function()
+            runcancel = src(function(result, ropts)
+                if tick == runtick then
+                    ropts = ropts or {}
+                    if ropts.done or not ropts.partial then
+                        runcancel = nil
+                    end
+                    local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
+                    setitems(result, ropts)
+                    showitems(items, nil, skip_sbuf)
+                    if ropts.partial then
+                        vim.cmd.redraw()
+                    end
+                end
+            end, { query = query })
+        end)
+    end
+
     local function move(i)
         local line = vim.api.nvim_win_get_cursor(swin)[1] + i
         if line > 0 and line <= vim.api.nvim_buf_line_count(sbuf) then
@@ -562,41 +585,17 @@ function M.pick(prompt, src, onclose, opts)
                 ignore_query_change = false
                 return
             end
+            cancelrun()
             if timer then
                 vim.fn.timer_stop(timer)
                 timer = nil
             end
-            local query = vim.fn.getline(1)
-            if #query > 0 then
-                cancelrun()
-                if opts.live then
-                    timer = vim.fn.timer_start(250, function()
-                        local tick = runtick
-                        setitems({})
-                        showitems(items, nil)
-                        vim.api.nvim_buf_call(lspbuf, function()
-                            runcancel = src(function(result, ropts)
-                                if tick == runtick then
-                                    ropts = ropts or {}
-                                    if ropts.done or not ropts.partial then
-                                        runcancel = nil
-                                    end
-                                    local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
-                                    setitems(result, ropts)
-                                    showitems(items, nil, skip_sbuf)
-                                    if ropts.partial then
-                                        vim.cmd.redraw()
-                                    end
-                                end
-                            end, { query = query })
-                        end)
-                    end)
-                else
-                    timer = vim.fn.timer_start(150, runmatch)
-                end
-            else
-                cancelrun()
+            if #vim.fn.getline(1) == 0 then
                 showitems(items or {}, nil)
+            elseif opts.live then
+                timer = vim.fn.timer_start(250, runlive)
+            else
+                timer = vim.fn.timer_start(150, runmatch)
             end
         end
     })
