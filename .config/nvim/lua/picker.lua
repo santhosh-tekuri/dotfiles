@@ -237,7 +237,7 @@ function M.pick(prompt, src, onclose, opts)
     local sconfig = {
         relative = "editor",
         style = "minimal",
-        border = { '', '', '', ' ', '', '', '', ' ' },
+        border = { '', '', '', '', '', '', '', ' ' },
         focusable = false,
         zindex = 100,
         col = 0,
@@ -361,6 +361,23 @@ function M.pick(prompt, src, onclose, opts)
     end
 
     local matchpos = nil
+    local scrollns = vim.api.nvim_create_namespace("pickerscroll")
+    local function renderscroll()
+        vim.api.nvim_buf_clear_namespace(sbuf, scrollns, 0, -1)
+        local ht = sconfig.height
+        if #sitems > ht then
+            local theight = math.max(1, math.floor(ht * ht / #sitems))
+            local tpos = math.floor(sskip * (ht - theight) / (#sitems - ht))
+            for i = 0, theight - 1 do
+                vim.api.nvim_buf_set_extmark(sbuf, scrollns, tpos + i, 0, {
+                    virt_text = { { '▐', 'Comment' } },
+                    virt_text_pos = "right_align",
+                    strict = false,
+                })
+            end
+        end
+    end
+
     local function renderitems()
         local iter = vim.iter(sitems):skip(sskip):take(shmax)
         local lines = tolines(iter, opts)
@@ -409,6 +426,7 @@ function M.pick(prompt, src, onclose, opts)
                 end
             end
         end
+        renderscroll()
     end
 
     local function showitems(lines, pos, skip_sbuf)
@@ -421,6 +439,7 @@ function M.pick(prompt, src, onclose, opts)
         -- show counts
         update_status()
         if skip_sbuf then
+            renderscroll()
             return
         end
 
