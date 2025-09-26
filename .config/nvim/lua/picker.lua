@@ -1107,12 +1107,12 @@ local function workspace_symbol_add_highlights(item, line, add_highlight)
         hl_group = "Comment",
         strict = false,
     })
-    local text = item.text
-    local index = string.find(text, ' ')
-    if index then
-        text = string.sub(text, index + 1)
+    local symblen = #item.text
+    local sp = item.text:find(' ', 1, true)
+    if sp then
+        symblen = symblen - sp
     end
-    add_highlight(14 + #text, {
+    add_highlight(14 + symblen, {
         end_col = vim.o.columns,
         hl_group = "qfFilename",
         strict = false,
