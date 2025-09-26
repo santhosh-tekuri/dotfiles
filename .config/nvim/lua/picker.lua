@@ -368,9 +368,10 @@ function M.pick(prompt, src, onclose, opts)
         if #sitems > ht then
             local theight = math.max(1, math.floor(ht * ht / #sitems))
             local tpos = math.floor(sskip * (ht - theight) / (#sitems - ht))
-            for i = 0, theight - 1 do
-                vim.api.nvim_buf_set_extmark(sbuf, scrollns, tpos + i, 0, {
-                    virt_text = { { '▐', 'Comment' } },
+            for i = 0, ht - 1 do
+                local ch = (i >= tpos and i < tpos + theight) and '▐' or ' '
+                vim.api.nvim_buf_set_extmark(sbuf, scrollns, i, 0, {
+                    virt_text = { { ch, 'Comment' } },
                     virt_text_pos = "right_align",
                     strict = false,
                 })
