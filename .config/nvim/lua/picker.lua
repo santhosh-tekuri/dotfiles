@@ -524,13 +524,10 @@ function M.pick(prompt, src, onclose, opts)
         local tick = runtick
         runcancel = function() end
         showitems({}, {})
-        local count = 0
         runcancel = match(items, query, opts, function(result, ropts)
             if tick == runtick then
-                count = count + 1
                 ropts = ropts or {}
                 if ropts.done or not ropts.partial then
-                    -- vim.print("count: " .. count)
                     runcancel = nil
                 end
                 local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
