@@ -1187,15 +1187,17 @@ end
 
 ------------------------------------------------------------------------
 
-local function undolist()
-    local undotree = vim.fn.undotree()
-    local list = {}
-    local stack = { { alt = undotree.entries, depth = -1, seq = 0 } }
+local function undotree()
+    local tree = vim.fn.undotree()
+    local list, maxdepth, maxseq = {}, 0, 0
+    local stack = { { alt = tree.entries, depth = -1, seq = 0 } }
     while #stack > 0 do
         local node = table.remove(stack)
         if not node.visited then
             node.visited = true
-            if node.seq == undotree.seq_cur then
+            maxdepth = math.max(maxdepth, node.depth)
+            maxseq = math.max(maxseq, node.seq)
+            if node.seq == tree.seq_cur then
                 node.cur = true
             end
             if node.depth >= 0 then
@@ -1212,7 +1214,7 @@ local function undolist()
             end
         end
     end
-    return list
+    return { list = list, maxdepth = maxdepth, maxseqlen = #("" .. maxseq) }
 end
 
 local function fmt_time(time)
@@ -1233,15 +1235,6 @@ local function fmt_time(time)
     return os.date("%b %d, %Y", time) ---@type string
 end
 
-local function undo_text(node)
-    return string.format(
-        "%s%s %d %s",
-        node.cur and ">" or " ",
-        string.rep("  ", node.depth),
-        node.seq,
-        fmt_time(node.time))
-end
-
 function M.pick_undo()
     local buf = vim.api.nvim_get_current_buf()
     local tmp_file = vim.fn.stdpath("cache") .. "/picker-undo"
@@ -1257,7 +1250,22 @@ function M.pick_undo()
         pcall(vim.cmd, "silent rundo " .. tmp_undo)
     end)
 
+    local tree = undotree()
     local pbuf = vim.api.nvim_create_buf(false, true)
+    local function text_cb(node)
+        local s = string.format(
+            "%s %s%d",
+            node.cur and ">" or " ",
+            string.rep("  ", node.depth),
+            node.seq
+        )
+        local mlen = 2 + tree.maxdepth * 2 + tree.maxseqlen
+        return string.format(
+            "%-" .. mlen + 4 .. "s %s",
+            s,
+            fmt_time(node.time)
+        )
+    end
     local function on_close(item, opts)
         vim.api.nvim_buf_delete(pbuf, { force = true })
         vim.api.nvim_buf_delete(tmp_buf, { force = true })
@@ -1285,7 +1293,7 @@ function M.pick_undo()
         return { bufnr = pbuf }
     end
 
-    M.pick("Undo:", undolist(), on_close, { text_cb = undo_text, preview = preview })
+    M.pick("Undo:", tree.list, on_close, { text_cb = text_cb, preview = preview })
 end
 
 ------------------------------------------------------------------------
