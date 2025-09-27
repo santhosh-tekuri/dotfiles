@@ -1252,6 +1252,7 @@ function M.pick_undo()
 
     local tree = undotree()
     local pbuf = vim.api.nvim_create_buf(false, true)
+    vim.bo[pbuf].filetype = "diff"
     local function text_cb(node)
         local s = string.format(
             "%s %s%d",
@@ -1288,7 +1289,7 @@ function M.pick_undo()
             before = vim.api.nvim_buf_get_lines(tmp_buf, 0, -1, false)
         end)
         vim.o.eventignore = ei
-        local diff = vim.diff(table.concat(before, "\n") .. "\n", table.concat(after, "\n") .. "\n", {})
+        local diff = vim.diff(table.concat(before, "\n") .. "\n", table.concat(after, "\n") .. "\n", { ctxlen = 4 })
         vim.api.nvim_buf_set_lines(pbuf, 0, -1, false, vim.split(diff, "\n"))
         return { bufnr = pbuf }
     end
