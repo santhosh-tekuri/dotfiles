@@ -57,6 +57,7 @@ local groups = {
     GitSignsAdd = { fg = green },
     diffAdd = { bg = "#364937" },
     Added = { link = "String" },
+    Removed = { fg = "#dd6777" },
     diffAdded = { link = "GitSignsAdd" },
     diffDelete = { bg = "#493636" },
     diffDeleted = { link = "GitSignsDelete" },
