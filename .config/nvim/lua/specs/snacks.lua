@@ -42,7 +42,6 @@ function spec.config()
             }
         }
     }
-    vim.keymap.set('n', ' u', Snacks.picker.undo, { desc = "Open undo picker" })
 end
 
 return spec
