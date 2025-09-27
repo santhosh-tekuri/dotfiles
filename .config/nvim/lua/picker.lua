@@ -1217,7 +1217,49 @@ local function undo_text(node)
 end
 
 function M.pick_undo()
-    M.pick("Undo:", undolist(), function() end, { text_cb = undo_text })
+    local buf = vim.api.nvim_get_current_buf()
+    local tmp_file = vim.fn.stdpath("cache") .. "/picker-undo"
+    vim.fn.writefile(vim.api.nvim_buf_get_lines(buf, 0, -1, false), tmp_file)
+    local tmp_undo = tmp_file .. ".undo"
+    vim.api.nvim_buf_call(buf, function()
+        vim.cmd("silent wundo! " .. tmp_undo)
+    end)
+    local tmp_buf = vim.fn.bufadd(tmp_file)
+    vim.bo[tmp_buf].swapfile = false
+    vim.fn.bufload(tmp_buf)
+    vim.api.nvim_buf_call(tmp_buf, function()
+        pcall(vim.cmd, "silent rundo " .. tmp_undo)
+    end)
+
+    local pbuf = vim.api.nvim_create_buf(false, true)
+    local function on_close(item, opts)
+        vim.api.nvim_buf_delete(pbuf, { force = true })
+        vim.api.nvim_buf_delete(tmp_buf, { force = true })
+        vim.fn.delete(tmp_file)
+        vim.fn.delete(tmp_undo)
+        if item then
+            vim.api.nvim_buf_call(buf, function()
+                vim.cmd("undo " .. item.seq)
+            end)
+        end
+    end
+    local function preview(item)
+        local ei = vim.o.eventignore
+        vim.o.eventignore = "all"
+        local before, after
+        vim.api.nvim_buf_call(tmp_buf, function()
+            vim.cmd("noautocmd silent undo " .. item.seq)
+            after = vim.api.nvim_buf_get_lines(tmp_buf, 0, -1, false)
+            vim.cmd("noautocmd silent undo")
+            before = vim.api.nvim_buf_get_lines(tmp_buf, 0, -1, false)
+        end)
+        vim.o.eventignore = ei
+        local diff = vim.diff(table.concat(before, "\n") .. "\n", table.concat(after, "\n") .. "\n", {})
+        vim.api.nvim_buf_set_lines(pbuf, 0, -1, false, vim.split(diff, "\n"))
+        return { bufnr = pbuf }
+    end
+
+    M.pick("Undo:", undolist(), on_close, { text_cb = undo_text, preview = preview })
 end
 
 ------------------------------------------------------------------------
