@@ -132,11 +132,7 @@ local function matchfunc(query)
     end
 end
 
-local function match(items, query, opts, on_list)
-    local func = matchfunc(query)
-    if not func then
-        return nil
-    end
+local function match(items, func, opts, on_list)
     local text_cb = opts.text_cb
     if not text_cb and opts.key then
         local key = opts.key
@@ -468,11 +464,15 @@ function M.pick(prompt, src, onclose, opts)
 
     local function runmatch()
         local query = vim.fn.getline(1)
+        local func = matchfunc(query)
+        if not func then
+            return
+        end
         cancelrun()
         local tick = runtick
         runcancel = function() end
         showitems({}, {})
-        runcancel = match(items, query, opts, function(result, ropts)
+        runcancel = match(items, func, opts, function(result, ropts)
             if tick == runtick then
                 ropts = ropts or {}
                 if ropts.done or not ropts.partial then
@@ -491,6 +491,9 @@ function M.pick(prompt, src, onclose, opts)
 
     local function runlive()
         local query = vim.fn.getline(1)
+        if not query:find("%S") then
+            return
+        end
         local tick = runtick
         setitems({})
         showitems(items, nil)
