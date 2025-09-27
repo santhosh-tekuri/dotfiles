@@ -259,7 +259,7 @@ function M.pick(prompt, src, onclose, opts)
         zindex = 50,
     }
     local runtick, runcancel = 0, nil
-    local ns = vim.api.nvim_create_namespace("fuzzyhl")
+    local ns = vim.api.nvim_create_namespace("pickermatch")
     local function update_status()
         local vtxt = {}
         if pwin then
