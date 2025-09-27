@@ -1309,6 +1309,30 @@ end
 
 ------------------------------------------------------------------------
 
+vim.api.nvim_create_user_command("Pick", function(cmd)
+    local func = M["pick_" .. cmd.args]
+    if func and type(func) == 'function' then
+        func()
+    else
+        vim.api.nvim_echo({ { string.format("No picker named %q", cmd.args), "ErrorMsg" } }, false, {})
+    end
+end, {
+    nargs = '+',
+    desc = "Opens picker",
+    complete = function(_lead, line, col)
+        local _, _, prefix = line:sub(1, col):find("%S+%s+(%S*)")
+        prefix = "^pick_" .. prefix
+        local candidates = {}
+        for name, item in pairs(M) do
+            if type(item) == "function" and name:find(prefix) then
+                table.insert(candidates, name:sub(#"pick_" + 1))
+            end
+        end
+        table.sort(candidates)
+        return candidates
+    end
+})
+
 function M.setup()
     vim.ui.select = M.select
     vim.keymap.set('n', '<leader>f', M.pick_file)
@@ -1322,10 +1346,10 @@ function M.setup()
             local function opts(desc)
                 return { buffer = ev.buf, desc = desc }
             end
-            vim.keymap.set('n', 'gD', M.pick_declaration, opts("Goto declaration"))
             vim.keymap.set('n', 'gd', M.pick_definition, opts("Goto definition"))
-            vim.keymap.set('n', 'gi', M.pick_implementation, opts("Goto implementation"))
+            vim.keymap.set('n', 'gD', M.pick_declaration, opts("Goto declaration"))
             vim.keymap.set('n', 'gy', M.pick_type_definition, opts("Goto type definition"))
+            vim.keymap.set('n', 'gi', M.pick_implementation, opts("Goto implementation"))
             vim.keymap.set('n', '<leader>r', M.pick_reference, opts("Goto reference"))
             vim.keymap.set('n', '<leader>s', M.pick_document_symbol, opts("Open symbol picker"))
             vim.keymap.set('n', '<leader>S', M.pick_workspace_symbol, opts("Open workspace symbol picker"))
