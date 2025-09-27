@@ -509,7 +509,10 @@ function M.pick(prompt, src, onclose, opts)
             vim.api.nvim_win_set_cursor(swin, { line, 0 })
             show_preview()
             return
+        elseif #sitems <= shmax then
+            return
         end
+
         local t = sskip
         if line == 0 then
             if sskip == 0 then -- last item
