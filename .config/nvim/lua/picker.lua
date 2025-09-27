@@ -1185,12 +1185,47 @@ end
 
 ------------------------------------------------------------------------
 
+local function undolist()
+    local list = {}
+    local stack = { { alt = vim.fn.undotree().entries, depth = -1, seq = 0 } }
+    while #stack > 0 do
+        local node = table.remove(stack)
+        if not node.visited then
+            node.visited = true
+            if node.depth >= 0 then
+                table.insert(list, node)
+            end
+            if node.alt then
+                for i = 1, #node.alt, 1 do
+                    local child = node.alt[i]
+                    child.depth = node.depth + 1
+                    if not child.visited then
+                        table.insert(stack, child)
+                    end
+                end
+            end
+        end
+    end
+    return list
+end
+
+local function undo_text(node)
+    return string.format("%s %d", string.rep("  ", node.depth), node.seq)
+end
+
+function M.pick_undo()
+    M.pick("Undo:", undolist(), function() end, { text_cb = undo_text })
+end
+
+------------------------------------------------------------------------
+
 function M.setup()
     vim.ui.select = M.select
     vim.keymap.set('n', '<leader>f', M.pick_file)
     vim.keymap.set('n', '<leader>b', M.pick_buffer)
     vim.keymap.set('n', '<leader>h', M.pick_help)
     vim.keymap.set('n', '<leader>/', M.pick_grep)
+    vim.keymap.set('n', '<leader>x', M.pick_undo)
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('LspPickers', {}),
         callback = function(ev)
