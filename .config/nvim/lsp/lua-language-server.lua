@@ -27,6 +27,7 @@ return {
             },
             diagnostics = {
                 disable = { "missing-fields" },
+                unusedLocalExclude = { "_*" }
             }
         }
     }
