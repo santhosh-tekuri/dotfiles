@@ -1271,7 +1271,7 @@ function M.pick_undo()
         if item.save then
             add_highlight(0, {
                 end_col = #line,
-                hl_group = "String",
+                hl_group = "Added",
                 strict = false,
             })
         end
