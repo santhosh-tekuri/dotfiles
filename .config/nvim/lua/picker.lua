@@ -632,7 +632,7 @@ function M.pick(prompt, src, onclose, opts)
             elseif opts.live then
                 timer = vim.fn.timer_start(250, runlive)
             else
-                timer = vim.fn.timer_start(150, runmatch)
+                timer = vim.fn.timer_start(#sitems > 400000 and 150 or 0, runmatch)
             end
         end
     })
@@ -1267,6 +1267,15 @@ function M.pick_undo()
             fmt_time(node.time)
         )
     end
+    local function add_highlights(item, line, add_highlight)
+        if item.save then
+            add_highlight(0, {
+                end_col = #line,
+                hl_group = "String",
+                strict = false,
+            })
+        end
+    end
     local function on_close(item, opts)
         vim.api.nvim_buf_delete(pbuf, { force = true })
         vim.api.nvim_buf_delete(tmp_buf, { force = true })
@@ -1294,7 +1303,7 @@ function M.pick_undo()
         return { bufnr = pbuf }
     end
 
-    M.pick("Undo:", tree.list, on_close, { text_cb = text_cb, preview = preview })
+    M.pick("Undo:", tree.list, on_close, { text_cb = text_cb, add_highlights = add_highlights, preview = preview })
 end
 
 ------------------------------------------------------------------------
