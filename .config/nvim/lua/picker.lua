@@ -1188,12 +1188,16 @@ end
 ------------------------------------------------------------------------
 
 local function undolist()
+    local undotree = vim.fn.undotree()
     local list = {}
-    local stack = { { alt = vim.fn.undotree().entries, depth = -1, seq = 0 } }
+    local stack = { { alt = undotree.entries, depth = -1, seq = 0 } }
     while #stack > 0 do
         local node = table.remove(stack)
         if not node.visited then
             node.visited = true
+            if node.seq == undotree.seq_cur then
+                node.cur = true
+            end
             if node.depth >= 0 then
                 table.insert(list, node)
             end
@@ -1212,7 +1216,7 @@ local function undolist()
 end
 
 local function undo_text(node)
-    return string.format("%s %d", string.rep("  ", node.depth), node.seq)
+    return string.format("%s%s %d", node.cur and ">" or " ", string.rep("  ", node.depth), node.seq)
 end
 
 function M.pick_undo()
