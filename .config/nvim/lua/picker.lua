@@ -1256,6 +1256,7 @@ function M.pick_undo()
     vim.bo[tmp_buf].swapfile = false
     vim.fn.bufload(tmp_buf)
     vim.api.nvim_buf_call(tmp_buf, function()
+        ---@diagnostic disable-next-line: param-type-mismatch
         pcall(vim.cmd, "silent rundo " .. tmp_undo)
     end)
 

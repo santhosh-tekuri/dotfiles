@@ -26,10 +26,7 @@ vim.cmd.colorscheme("santhosh")
 
 -- load plugin specs
 require("lazy").setup {
-    -- require("specs.fzf"),
-    -- require("specs.telescope"),
     require("specs.cmdline"),
-    require("specs.snacks"),
     require("specs.oil"),
     require("specs.gitsigns"),
     require("specs.treesitter"),

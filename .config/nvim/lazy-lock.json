@@ -12,6 +12,5 @@
   "nvim-ts-autotag": { "branch": "main", "commit": "c4ca798ab95b316a768d51eaaaee48f64a4a46bc" },
   "oil.nvim": { "branch": "master", "commit": "07f80ad645895af849a597d1cac897059d89b686" },
   "registers.nvim": { "branch": "main", "commit": "c217f8f369e0886776cda6c94eab839b30a8940d" },
-  "snacks.nvim": { "branch": "main", "commit": "72a6316d2421942cb81f2d5276a0e607629cd1c6" },
   "url-open": { "branch": "main", "commit": "9f8f4a56ac709f26aa17d8ef921b272bf2262a30" }
 }
