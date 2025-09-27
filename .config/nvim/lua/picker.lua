@@ -1096,7 +1096,7 @@ local function document_symbol_text(item)
     return string.format("%-80s %13s", text, item["kind"])
 end
 
-local function document_symbol_add_highlights(item, line, add_highlight)
+local function document_symbol_add_highlights(_item, line, add_highlight)
     add_highlight(#line - 13, {
         end_col = #line,
         hl_group = "Comment",
@@ -1132,7 +1132,7 @@ local function workspace_symbol_text(item)
     return string.format("%s %s%s", line, string.rep(" ", w), file)
 end
 
-local function workspace_symbol_add_highlights(item, line, add_highlight)
+local function workspace_symbol_add_highlights(item, _line, add_highlight)
     add_highlight(0, {
         end_col = 13,
         hl_group = "Comment",
@@ -1276,7 +1276,7 @@ function M.pick_undo()
             })
         end
     end
-    local function on_close(item, opts)
+    local function on_close(item, _opts)
         vim.api.nvim_buf_delete(pbuf, { force = true })
         vim.api.nvim_buf_delete(tmp_buf, { force = true })
         vim.fn.delete(tmp_file)
@@ -1299,6 +1299,7 @@ function M.pick_undo()
         end)
         vim.o.eventignore = ei
         local diff = vim.diff(table.concat(before, "\n") .. "\n", table.concat(after, "\n") .. "\n", { ctxlen = 4 })
+        ---@diagnostic disable-next-line: param-type-mismatch
         vim.api.nvim_buf_set_lines(pbuf, 0, -1, false, vim.split(diff, "\n"))
         return { bufnr = pbuf }
     end
