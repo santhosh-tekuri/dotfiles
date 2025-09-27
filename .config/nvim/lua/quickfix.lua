@@ -1,5 +1,7 @@
 local ns = vim.api.nvim_create_namespace("qflist")
 
+vim.api.nvim_set_hl(0, "qfMatch", { link = "Removed", default = true })
+
 local function get_lines(ttt)
     local lines = {}
     for _, tt in ipairs(ttt) do
@@ -67,10 +69,26 @@ function QuickfixText(info)
                 if hl then
                     table.insert(tt, { item.text, hl })
                 elseif item.end_col ~= 0 and item.end_lnum == item.lnum then
-                    table.insert(tt, { item.text:sub(1, item.col - 1), 'qfText' })
-                    table.insert(tt,
-                        { item.text:sub(item.col, item.end_col - 1), "Removed" })
-                    table.insert(tt, { item.text:sub(item.end_col), 'qfText' })
+                    local matches = nil
+                    if item.user_data and type(item.user_data) == 'table' then
+                        matches = item.user_data.matches
+                    end
+                    if not matches then
+                        if item.lnum and item.col and item.end_col then
+                            if item.lnum > 0 and item.col > 0 and item.end_col > 0 then
+                                matches = { { item.col, item.end_col } }
+                            end
+                        end
+                    end
+                    local from = 1
+                    for _, m in ipairs(matches or {}) do
+                        table.insert(tt, { item.text:sub(from, m[1] - 1), 'qfText' })
+                        table.insert(tt, { item.text:sub(m[1], m[2]), "qfMatch" })
+                        from = m[2] + 1
+                    end
+                    if from <= #item.text then
+                        table.insert(tt, { item.text:sub(from), 'qfText' })
+                    end
                 else
                     table.insert(tt, { item.text, typeHilights[item.type] or 'qfText' })
                 end
