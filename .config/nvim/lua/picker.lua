@@ -2,9 +2,9 @@ local M = {}
 
 vim.api.nvim_set_hl(0, "qfFileName", { link = "Directory", default = true })
 vim.api.nvim_set_hl(0, "qfLineNr", { link = "LineNr", default = true })
+vim.api.nvim_set_hl(0, "qfMatch", { link = "Removed", default = true })
 vim.api.nvim_set_hl(0, "PickerMatch", { link = "Special", default = true })
 vim.api.nvim_set_hl(0, "PickerDim", { link = "Comment", default = true })
-vim.api.nvim_set_hl(0, "PickerGrepMatch", { link = "Removed", default = true })
 vim.api.nvim_set_hl(0, "PickerPreviewMatch", { link = "CurSearch", default = true })
 vim.api.nvim_set_hl(0, "PickerUndoSave", { link = "Added", default = true })
 
@@ -801,7 +801,10 @@ function M.qfentry.add_highlights(item, line, add_highlight)
                 strict = false,
             })
         else
-            local matches = item.matches
+            local matches = nil
+            if item.user_data and type(item.user_data) == 'table' then
+                matches = item.user_data.matches
+            end
             if not matches then
                 if item.lnum and item.col and item.end_col then
                     if item.lnum > 0 and item.col > 0 and item.end_col > 0 then
@@ -812,7 +815,7 @@ function M.qfentry.add_highlights(item, line, add_highlight)
             for _, m in ipairs(matches or {}) do
                 add_highlight(k + m[1] - 1, {
                     end_col = k + m[2],
-                    hl_group = "PickerGrepMatch",
+                    hl_group = "qfMatch",
                     strict = false,
                 })
             end
@@ -946,7 +949,7 @@ local function grep_line2item(line)
             col = #matches > 0 and matches[1][1] or nil,
             end_lnum = lnum,
             end_col = #matches > 0 and matches[1][2] + 1 or nil,
-            matches = #matches > 0 and matches or nil,
+            user_data = { matches = #matches > 0 and matches or nil },
             text = table.concat(text),
         }
     else
