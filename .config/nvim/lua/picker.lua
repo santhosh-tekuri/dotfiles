@@ -1215,8 +1215,31 @@ local function undolist()
     return list
 end
 
+local function fmt_time(time)
+    local delta = os.time() - time
+    local tpl = {
+        { { 1, 60, },                            "just now",     "just now" },
+        { { 60, 3600, },                         "a minute ago", "%d minutes ago" },
+        { { 3600, 3600 * 24, },                  "an hour ago",  "%d hours ago" },
+        { { 3600 * 24, 3600 * 24 * 7, },         "yesterday",    "%d days ago" },
+        { { 3600 * 24 * 7, 3600 * 24 * 7 * 4, }, "a week ago",   "%d weeks ago" },
+    }
+    for _, v in ipairs(tpl) do
+        if delta < v[1][2] then
+            local value = math.floor(delta / v[1][1] + 0.5)
+            return value == 1 and v[2] or v[3]:format(value)
+        end
+    end
+    return os.date("%b %d, %Y", time) ---@type string
+end
+
 local function undo_text(node)
-    return string.format("%s%s %d", node.cur and ">" or " ", string.rep("  ", node.depth), node.seq)
+    return string.format(
+        "%s%s %d %s",
+        node.cur and ">" or " ",
+        string.rep("  ", node.depth),
+        node.seq,
+        fmt_time(node.time))
 end
 
 function M.pick_undo()
