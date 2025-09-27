@@ -509,11 +509,10 @@ function M.pick(prompt, src, onclose, opts)
             vim.api.nvim_win_set_cursor(swin, { line, 0 })
             show_preview()
             return
-        elseif #sitems <= shmax then
-            return
         end
 
         local t = sskip
+        local h = math.min(shmax, #sitems)
         if line == 0 then
             if sskip == 0 then -- last item
                 sskip = math.max(#sitems - 10, 0)
@@ -522,7 +521,7 @@ function M.pick(prompt, src, onclose, opts)
                 sskip = sskip - 1
                 line = nil
             end
-        elseif line > shmax then
+        elseif line > h then
             if line + sskip <= #sitems then -- item below viewport
                 sskip = sskip + 1
                 line = nil
