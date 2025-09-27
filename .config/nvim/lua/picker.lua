@@ -314,9 +314,9 @@ function M.pick(prompt, src, onclose, opts)
         end
         pwin = vim.api.nvim_open_win(item.bufnr, false, pconfig)
         vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", { scope = "local", win = pwin })
-        vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = pwin })
         vim.api.nvim_set_option_value("wrap", false, { scope = "local", win = pwin })
         if item.lnum and item.lnum > 0 then
+            vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = pwin })
             vim.api.nvim_win_call(pwin, function()
                 vim.api.nvim_win_set_cursor(pwin, { item.lnum, item.col or 0 })
                 if item.col then
