@@ -2,6 +2,11 @@ local M = {}
 
 vim.api.nvim_set_hl(0, "qfFileName", { link = "Directory", default = true })
 vim.api.nvim_set_hl(0, "qfLineNr", { link = "LineNr", default = true })
+vim.api.nvim_set_hl(0, "PickerMatch", { link = "Special", default = true })
+vim.api.nvim_set_hl(0, "PickerDim", { link = "Comment", default = true })
+vim.api.nvim_set_hl(0, "PickerGrepMatch", { link = "Removed", default = true })
+vim.api.nvim_set_hl(0, "PickerPreviewMatch", { link = "CurSearch", default = true })
+vim.api.nvim_set_hl(0, "PickerUndoSave", { link = "Added", default = true })
 
 local function bufname(bufnr)
     local name = vim.fn.bufname(bufnr)
@@ -273,13 +278,13 @@ function M.pick(prompt, src, onclose, opts)
         if items and #items > #sitems then
             if runcancel then
                 table.insert(vtxt, { "" .. #sitems, "Normal" })
-                table.insert(vtxt, { "/" .. #items, "Comment" })
+                table.insert(vtxt, { "/" .. #items, "PickerDim" })
             else
                 local txt = string.format("%d/%d", #sitems, #items)
-                table.insert(vtxt, { txt, "Comment" })
+                table.insert(vtxt, { txt, "PickerDim" })
             end
         else
-            table.insert(vtxt, { "" .. #sitems, runcancel and "Normal" or "Comment" })
+            table.insert(vtxt, { "" .. #sitems, runcancel and "Normal" or "PickerDim" })
         end
         vim.api.nvim_buf_clear_namespace(qbuf, ns, 0, -1)
         vim.api.nvim_buf_set_extmark(qbuf, ns, 0, 0, {
@@ -326,7 +331,7 @@ function M.pick(prompt, src, onclose, opts)
                     local pbuf = vim.api.nvim_win_get_buf(pwin)
                     vim.api.nvim_buf_set_extmark(pbuf, ns, item.lnum - 1, item.col - 1, {
                         end_col = item.end_col - 1,
-                        hl_group = "Incsearch",
+                        hl_group = "PickerPreviewMatch",
                         strict = false,
                         priority = 900,
                     })
@@ -374,7 +379,7 @@ function M.pick(prompt, src, onclose, opts)
             for i = 0, ht - 1 do
                 local ch = (i >= tpos and i < tpos + theight) and '█' or ' '
                 vim.api.nvim_buf_set_extmark(sbuf, scrollns, i, 0, {
-                    virt_text = { { ch, 'Comment' } },
+                    virt_text = { { ch, 'PickerDim' } },
                     virt_text_pos = "right_align",
                     strict = false,
                 })
@@ -424,7 +429,7 @@ function M.pick(prompt, src, onclose, opts)
                     if #p == 2 then
                         vim.api.nvim_buf_set_extmark(sbuf, ns, line - sskip - 1, p[1] - 1, {
                             end_col = p[2],
-                            hl_group = "Special",
+                            hl_group = "PickerMatch",
                             strict = false,
                             priority = 900,
                         })
@@ -580,7 +585,7 @@ function M.pick(prompt, src, onclose, opts)
             cancelrun()
             opts.live, opts.liveoff = nil, vim.fn.getline(".")
             vim.api.nvim_buf_set_lines(qbuf, 0, -1, false, {})
-            local stc = prompt .. " %#Normal#" .. opts.liveoff .. "%#Special# > "
+            local stc = prompt .. " %#Normal#" .. opts.liveoff .. "%#PickerMatch# > "
             vim.api.nvim_set_option_value("statuscolumn", stc, { scope = "local", win = qwin })
         elseif opts.liveoff then
             ignore_query_change = true
@@ -804,7 +809,7 @@ function M.qfentry.add_highlights(item, line, add_highlight)
             for _, m in ipairs(matches or {}) do
                 add_highlight(k + m[1] - 1, {
                     end_col = k + m[2],
-                    hl_group = "Removed",
+                    hl_group = "PickerGrepMatch",
                     strict = false,
                 })
             end
@@ -1103,7 +1108,7 @@ end
 local function document_symbol_add_highlights(_item, line, add_highlight)
     add_highlight(#line - 13, {
         end_col = #line,
-        hl_group = "Comment",
+        hl_group = "PickerDim",
         strict = false,
     })
 end
@@ -1139,7 +1144,7 @@ end
 local function workspace_symbol_add_highlights(item, _line, add_highlight)
     add_highlight(0, {
         end_col = 13,
-        hl_group = "Comment",
+        hl_group = "PickerDim",
         strict = false,
     })
     local symblen = #item.text
@@ -1275,7 +1280,7 @@ function M.pick_undo()
         if item.save then
             add_highlight(0, {
                 end_col = #line,
-                hl_group = "Added",
+                hl_group = "PickerUndoSave",
                 strict = false,
             })
         end
