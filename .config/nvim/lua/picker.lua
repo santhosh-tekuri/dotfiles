@@ -1,5 +1,8 @@
 local M = {}
 
+vim.api.nvim_set_hl(0, "qfFileName", { link = "Directory", default = true })
+vim.api.nvim_set_hl(0, "qfLineNr", { link = "LineNr", default = true })
+
 local function bufname(bufnr)
     local name = vim.fn.bufname(bufnr)
     if name == "" then
@@ -265,7 +268,7 @@ function M.pick(prompt, src, onclose, opts)
         if pwin then
             local pbuf = vim.api.nvim_win_get_buf(pwin)
             bufname(pbuf)
-            table.insert(vtxt, { bufname(pbuf) .. "    ", "qfFilename" })
+            table.insert(vtxt, { bufname(pbuf) .. "    ", "qfFileName" })
         end
         if items and #items > #sitems then
             if runcancel then
@@ -773,7 +776,7 @@ function M.qfentry.add_highlights(item, line, add_highlight)
     if i then
         add_highlight(0, {
             end_col = i - 1,
-            hl_group = "qfFilename",
+            hl_group = "qfFileName",
             strict = false,
         })
         local k = assert(line:find(" ", i + 1, true))
@@ -1145,7 +1148,7 @@ local function workspace_symbol_add_highlights(item, _line, add_highlight)
     end
     add_highlight(14 + symblen, {
         end_col = vim.o.columns,
-        hl_group = "qfFilename",
+        hl_group = "qfFileName",
         strict = false,
     })
 end
