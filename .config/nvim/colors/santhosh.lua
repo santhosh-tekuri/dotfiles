@@ -56,6 +56,7 @@ local groups = {
     MatchParen = { bg = "#4c5063", fg = "#FFFFFF" },
     GitSignsAdd = { fg = green },
     diffAdd = { bg = "#364937" },
+    Added = { link = "String" },
     diffAdded = { link = "GitSignsAdd" },
     diffDelete = { bg = "#493636" },
     diffDeleted = { link = "GitSignsDelete" },
