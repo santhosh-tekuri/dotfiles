@@ -408,6 +408,7 @@ function M.pick(prompt, src, onclose, opts)
         end
         vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = swin })
         vim.api.nvim_set_option_value("scrolloff", 0, { scope = "local", win = swin })
+        vim.api.nvim_set_option_value("winhighlight", "FloatBorder:NormalFloat", { scope = "local", win = swin })
         if opts["add_highlights"] then
             for i, line in ipairs(lines) do
                 opts["add_highlights"](sitems[sskip + i], line, function(col, ext_opts)
@@ -803,7 +804,7 @@ function M.qfentry.add_highlights(item, line, add_highlight)
             for _, m in ipairs(matches or {}) do
                 add_highlight(k + m[1] - 1, {
                     end_col = k + m[2],
-                    hl_group = "ErrorMsg",
+                    hl_group = "Removed",
                     strict = false,
                 })
             end
