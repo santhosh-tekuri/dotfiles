@@ -115,7 +115,7 @@ vim.keymap.set({ "n", "t" }, "<c-;>", function()
         end
     end
     if #items == 0 then
-        vim.api.nvim_echo({ { "no other terminal found" } }, false, {})
+        vim.api.nvim_echo({ { "No terminal to select", "WarningMsg" } }, false, {})
     elseif #items == 1 then
         open(items[1].bufnr)
     else
