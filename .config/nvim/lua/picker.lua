@@ -246,7 +246,7 @@ function M.pick(prompt, src, onclose, opts)
         zindex = 100,
         col = 0,
     }
-    local swin = -1
+    local swin = nil
     local sskip = 0
     local swmin = 50
     local closed = nil
@@ -405,10 +405,10 @@ function M.pick(prompt, src, onclose, opts)
             height = ht,
             row = vim.o.lines - ht - 1,
         })
-        if swin == -1 then
-            swin = vim.api.nvim_open_win(sbuf, false, sconfig)
-        else
+        if swin then
             vim.api.nvim_win_set_config(swin, sconfig)
+        else
+            swin = vim.api.nvim_open_win(sbuf, false, sconfig)
         end
         vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = swin })
         vim.api.nvim_set_option_value("scrolloff", 0, { scope = "local", win = swin })
@@ -455,9 +455,9 @@ function M.pick(prompt, src, onclose, opts)
 
         sskip = 0
         if #lines == 0 then
-            if swin ~= -1 then
+            if swin then
                 vim.api.nvim_win_hide(swin)
-                swin = -1
+                swin = nil
             end
         else
             renderitems()
@@ -519,6 +519,9 @@ function M.pick(prompt, src, onclose, opts)
     end
 
     local function move(i)
+        if not swin then
+            return
+        end
         local line = vim.api.nvim_win_get_cursor(swin)[1] + i
         if line > 0 and line <= vim.api.nvim_buf_line_count(sbuf) then
             vim.api.nvim_win_set_cursor(swin, { line, 0 })
