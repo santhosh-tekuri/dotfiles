@@ -559,14 +559,16 @@ function M.pick(prompt, src, onclose, opts)
         end
     end
     local function scroll(lines)
-        sskip = sskip + lines
-        if sskip < 0 then
-            sskip = 0
-        elseif sskip > #sitems - shmax then
-            sskip = #sitems - shmax
+        if swin then
+            sskip = sskip + lines
+            if sskip < 0 then
+                sskip = 0
+            elseif sskip > #sitems - shmax then
+                sskip = #sitems - shmax
+            end
+            renderitems()
+            show_preview()
         end
-        renderitems()
-        show_preview()
     end
     local function keymap(lhs, func, args)
         vim.keymap.set("i", lhs, function()
