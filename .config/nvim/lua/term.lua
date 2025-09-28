@@ -93,7 +93,17 @@ end, { desc = "go to next terminal" })
 
 vim.keymap.set("t", "<c-]>", "<c-\\><c-n>", { desc = "return to normal mode" })
 
-vim.keymap.set("t", "<c-;>", function()
+vim.keymap.set({ "n", "t" }, "<c-;>", function()
+    local function open(buf)
+        if vim.bo.buftype == 'terminal' then
+            vim.api.nvim_win_set_buf(0, buf)
+        else
+            lastTerm = buf
+            open_terminal()
+        end
+        vim.schedule(vim.cmd.startinsert)
+    end
+
     local buffers = vim.fn.getbufinfo({ bufloaded = 1 })
     table.sort(buffers, function(a, b)
         return a.lastused > b.lastused
@@ -107,8 +117,7 @@ vim.keymap.set("t", "<c-;>", function()
     if #items == 0 then
         vim.api.nvim_echo({ { "no other terminal found" } }, false, {})
     elseif #items == 1 then
-        vim.api.nvim_win_set_buf(0, items[1].bufnr)
-        vim.cmd.startinsert()
+        open(items[1].bufnr)
     else
         vim.ui.select(items, {
             prompt = "Terminal:",
@@ -117,9 +126,10 @@ vim.keymap.set("t", "<c-;>", function()
             end
         }, function(item)
             if item ~= nil then
-                vim.api.nvim_win_set_buf(0, item.bufnr)
+                open(item.bufnr)
+            elseif vim.bo.buftype == 'terminal' then
+                vim.schedule(vim.cmd.startinsert)
             end
-            vim.schedule(vim.cmd.startinsert)
         end)
         vim.schedule(vim.cmd.startinsert)
     end
