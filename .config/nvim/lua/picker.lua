@@ -339,6 +339,23 @@ function M.pick(prompt, src, onclose, opts)
         update_status()
     end
 
+    local errbuf = nil
+    local function show_error(errors)
+        if errbuf then
+            vim.api.nvim_buf_delete(errbuf, { force = true })
+        end
+        errbuf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_lines(errbuf, 0, -1, false, errors)
+        local config = vim.tbl_extend("force", sconfig, {
+            width = vim.o.columns - 1,
+            height = #errors,
+            row = vim.o.lines - #errors - 1,
+        })
+        local win = vim.api.nvim_open_win(errbuf, false, config)
+        vim.api.nvim_set_option_value("winhighlight", "NormalFloat:Error,FloatBorder:Error",
+            { scope = "local", win = win })
+    end
+
     local function close(copts)
         if closed then
             return
@@ -358,6 +375,9 @@ function M.pick(prompt, src, onclose, opts)
         end
         local line = vim.fn.line('.', swin) + sskip
         vim.cmd.stopinsert()
+        if errbuf then
+            vim.api.nvim_buf_delete(errbuf, { force = true })
+        end
         vim.api.nvim_buf_delete(qbuf, {})
         vim.api.nvim_buf_delete(sbuf, {})
         if copts and sitems and #sitems > 0 then
@@ -387,6 +407,10 @@ function M.pick(prompt, src, onclose, opts)
     end
 
     local function renderitems()
+        if errbuf then
+            vim.api.nvim_buf_delete(errbuf, { force = true })
+            errbuf = nil
+        end
         local iter = vim.iter(sitems):skip(sskip):take(shmax)
         local lines = tolines(iter, opts)
         vim.api.nvim_buf_clear_namespace(sbuf, ns, 0, -1)
@@ -510,6 +534,9 @@ function M.pick(prompt, src, onclose, opts)
                     local skip_sbuf = ropts.partial and sskip + shmax <= #sitems
                     setitems(result, ropts)
                     showitems(items, nil, skip_sbuf)
+                    if runcancel == nil and #items == 0 and ropts.errors and #ropts.errors > 0 then
+                        show_error(ropts.errors)
+                    end
                     if ropts.partial then
                         vim.cmd.redraw()
                     end
@@ -642,6 +669,10 @@ function M.pick(prompt, src, onclose, opts)
                 ignore_query_change = false
                 return
             end
+            if errbuf then
+                vim.api.nvim_buf_delete(errbuf, { force = true })
+                errbuf = nil
+            end
             cancelrun()
             if timer then
                 vim.fn.timer_stop(timer)
@@ -720,7 +751,7 @@ local function cmd_items(path, args, line2item, on_list, partial)
     local stdio = { nil, vim.uv.new_pipe(), vim.uv.new_pipe() }
     local items, errors = {}, {}
     local handle, _ = vim.uv.spawn(path, { args = args, stdio = stdio }, function(code)
-        on_list(code == 0 and items or {}, { partial = partial, done = true })
+        on_list(code == 0 and items or {}, { partial = partial, done = true, errors = code ~= 0 and errors or nil })
     end)
     local tick_size = shmax
     local tick = partial and function()
