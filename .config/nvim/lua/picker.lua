@@ -235,7 +235,7 @@ function M.pick(prompt, src, onclose, opts)
     vim.api.nvim_set_option_value("statuscolumn", prompt .. " ", { scope = "local", win = qwin })
     vim.api.nvim_set_option_value("winhighlight", "NormalFloat:MsgArea", { scope = "local", win = qwin })
 
-    vim.cmd.startinsert()
+    vim.schedule(vim.cmd.startinsert)
 
     local sbuf = vim.api.nvim_create_buf(false, true)
     local sconfig = {

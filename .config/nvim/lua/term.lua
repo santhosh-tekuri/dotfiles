@@ -40,8 +40,6 @@ local function open_terminal()
     })
     if vim.bo[buf].buftype ~= "terminal" then
         new_terminal("default")
-    else
-        vim.cmd("startinsert")
     end
     vim.api.nvim_set_option_value("winhighlight", "Normal:Normal", { win = win })
 end
@@ -77,7 +75,6 @@ local function go_to_term(n)
                 i = 1
             end
             vim.api.nvim_win_set_buf(0, terms[i])
-            vim.cmd.startinsert()
             return
         end
     end
@@ -101,7 +98,6 @@ vim.keymap.set({ "n", "t" }, "<c-;>", function()
             lastTerm = buf
             open_terminal()
         end
-        vim.schedule(vim.cmd.startinsert)
     end
 
     local buffers = vim.fn.getbufinfo({ bufloaded = 1 })
@@ -127,13 +123,21 @@ vim.keymap.set({ "n", "t" }, "<c-;>", function()
         }, function(item)
             if item ~= nil then
                 open(item.bufnr)
-            elseif vim.bo.buftype == 'terminal' then
+            end
+            if vim.bo.buftype == 'terminal' then
                 vim.schedule(vim.cmd.startinsert)
             end
         end)
-        vim.schedule(vim.cmd.startinsert)
     end
 end, { desc = "pick terminal" })
+
+vim.api.nvim_create_autocmd({ 'WinEnter', 'TermOpen', 'BufEnter' }, {
+    callback = function()
+        if vim.bo.buftype == 'terminal' then
+            vim.api.nvim_buf_call(0, vim.cmd.startinsert)
+        end
+    end
+})
 
 vim.api.nvim_create_autocmd('TermClose', {
     desc = "explicity close terminal",
