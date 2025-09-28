@@ -53,13 +53,6 @@ vim.keymap.set({ "n", "t" }, "<c-/>", function()
     end
 end, { desc = "toggle terminal" })
 
-vim.keymap.set("t", "<c-n>", function()
-    local name = vim.fn.input("name: ")
-    if name ~= "" then
-        new_terminal(name)
-    end
-end, { desc = "create new terminal" })
-
 local function go_to_term(n)
     local terms = terminals()
     if #terms == 1 then
@@ -80,13 +73,24 @@ local function go_to_term(n)
     end
 end
 
-vim.keymap.set("t", "<c-h>", function()
-    go_to_term(-1)
-end, { desc = "go to prev terminal" })
+local function set_keymaps(mode, buf)
+    vim.keymap.set(mode, "<c-n>", function()
+        local name = vim.fn.input("name: ")
+        if name ~= "" then
+            new_terminal(name)
+        end
+    end, { buffer = buf, desc = "create new terminal" })
 
-vim.keymap.set("t", "<c-l>", function()
-    go_to_term(1)
-end, { desc = "go to next terminal" })
+    vim.keymap.set(mode, "<c-h>", function()
+        go_to_term(-1)
+    end, { buffer = buf, desc = "go to prev terminal" })
+
+    vim.keymap.set(mode, "<c-l>", function()
+        go_to_term(1)
+    end, { buffer = buf, desc = "go to next terminal" })
+end
+
+set_keymaps("t")
 
 vim.keymap.set("t", "<c-]>", "<c-\\><c-n>", { desc = "return to normal mode" })
 
@@ -124,17 +128,22 @@ vim.keymap.set({ "n", "t" }, "<c-;>", function()
             if item ~= nil then
                 open(item.bufnr)
             end
-            if vim.bo.buftype == 'terminal' then
-                vim.schedule(vim.cmd.startinsert)
-            end
         end)
     end
 end, { desc = "pick terminal" })
 
-vim.api.nvim_create_autocmd({ 'WinEnter', 'TermOpen', 'BufEnter' }, {
+vim.cmd.autocmd("TermOpen * startinsert")
+vim.api.nvim_create_autocmd("TermOpen", {
+    callback = function()
+        vim.cmd.startinsert()
+        set_keymaps("n", 0)
+    end
+})
+
+vim.api.nvim_create_autocmd({ 'BufEnter' }, {
     callback = function()
         if vim.bo.buftype == 'terminal' then
-            vim.api.nvim_buf_call(0, vim.cmd.startinsert)
+            vim.schedule(vim.cmd.startinsert)
         end
     end
 })
