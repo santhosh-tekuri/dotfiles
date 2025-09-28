@@ -31,6 +31,7 @@ local groups = {
     Constant = { link = "String" },
     Function = { link = "Default" },
     Identifier = { link = "Default" },
+    Error = { bg = "#3d0206", fg = white },
     ErrorMsg = { fg = red },
     DiagnosticError = { link = "ErrorMsg" },
     DiagnosticUnderlineError = { sp = "red", undercurl = true },
