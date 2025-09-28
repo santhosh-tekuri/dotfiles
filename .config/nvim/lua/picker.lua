@@ -357,7 +357,7 @@ function M.pick(prompt, src, onclose, opts)
         vim.cmd.stopinsert()
         vim.api.nvim_buf_delete(qbuf, {})
         vim.api.nvim_buf_delete(sbuf, {})
-        if copts and sitems then
+        if copts and sitems and #sitems > 0 then
             onclose(copts["qflist"] and sitems or sitems[line], copts)
         else
             onclose(nil, nil)
