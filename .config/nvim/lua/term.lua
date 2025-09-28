@@ -147,8 +147,10 @@ vim.api.nvim_create_autocmd('TermClose', {
 
 vim.keymap.set("n", "<leader>q", function()
     -- check if any process is running in termimals
+    local termCount = 0
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.bo[buf].buftype == "terminal" and vim.fn.bufloaded(buf) == 1 then
+            termCount = termCount + 1
             local pid = vim.b[buf].terminal_job_pid
             local handle = io.popen("pgrep -P " .. pid)
             if handle ~= nil then
@@ -162,6 +164,12 @@ vim.keymap.set("n", "<leader>q", function()
             end
         end
     end
+
+    if termCount > 0 then
+        vim.api.nvim_echo({ { "terminal(s) found.", "WarningMsg" } }, false, {})
+        return
+    end
+
     -- detach if remoteUI else quit
     for _, arg in ipairs(vim.v.argv) do
         if arg == "--embed" then
