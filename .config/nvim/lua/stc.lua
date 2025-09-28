@@ -1,7 +1,6 @@
 --- statuscolumn: sign lnum git
 
----@diagnostic disable-next-line: duplicate-set-field
-function _G.StatusColumn()
+function StatusColumn()
     local win = vim.g.statusline_winid
     local buf = vim.api.nvim_win_get_buf(win)
 
