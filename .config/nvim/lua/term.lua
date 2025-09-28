@@ -93,7 +93,7 @@ end, { desc = "go to next terminal" })
 
 vim.keymap.set("t", "<c-]>", "<c-\\><c-n>", { desc = "return to normal mode" })
 
-vim.keymap.set("t", "<c-o>", function()
+vim.keymap.set("t", "<c-;>", function()
     local buffers = vim.fn.getbufinfo({ bufloaded = 1 })
     table.sort(buffers, function(a, b)
         return a.lastused > b.lastused
