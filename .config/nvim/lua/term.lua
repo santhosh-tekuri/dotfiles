@@ -105,13 +105,13 @@ vim.keymap.set("t", "<c-;>", function()
         end
     end
     if #items == 0 then
-        vim.api.nvim_echo({ { "no other terminals found" } }, false, {})
+        vim.api.nvim_echo({ { "no other terminal found" } }, false, {})
     elseif #items == 1 then
         vim.api.nvim_win_set_buf(0, items[1].bufnr)
         vim.cmd.startinsert()
     else
         vim.ui.select(items, {
-            prompt = "Terminals:",
+            prompt = "Terminal:",
             format_item = function(item)
                 return vim.fn.fnamemodify(item.name, ":t")
             end
@@ -119,7 +119,7 @@ vim.keymap.set("t", "<c-;>", function()
             if item ~= nil then
                 vim.api.nvim_win_set_buf(0, item.bufnr)
             end
-            vim.cmd.startinsert()
+            vim.schedule(vim.cmd.startinsert)
         end)
         vim.schedule(vim.cmd.startinsert)
     end
