@@ -1281,7 +1281,6 @@ local function undotree()
 end
 
 local function fmt_time(time)
-    local delta = os.time() - time
     local tpl = {
         { { 1, 60, },                            "just now",     "just now" },
         { { 60, 3600, },                         "a minute ago", "%d minutes ago" },
@@ -1289,13 +1288,14 @@ local function fmt_time(time)
         { { 3600 * 24, 3600 * 24 * 7, },         "yesterday",    "%d days ago" },
         { { 3600 * 24 * 7, 3600 * 24 * 7 * 4, }, "a week ago",   "%d weeks ago" },
     }
+    local delta = os.time() - time
     for _, v in ipairs(tpl) do
         if delta < v[1][2] then
             local value = math.floor(delta / v[1][1] + 0.5)
             return value == 1 and v[2] or v[3]:format(value)
         end
     end
-    return os.date("%b %d, %Y", time) ---@type string
+    return os.date("%b %d, %Y", time)
 end
 
 function M.pick_undo()
@@ -1318,18 +1318,13 @@ function M.pick_undo()
     local pbuf = vim.api.nvim_create_buf(false, true)
     vim.bo[pbuf].filetype = "diff"
     local function text_cb(node)
-        local s = string.format(
-            "%s %s%d",
+        local s = ("%s %s%d"):format(
             node.cur and ">" or " ",
             string.rep("  ", node.depth),
             node.seq
         )
         local mlen = 2 + tree.maxdepth * 2 + tree.maxseqlen
-        return string.format(
-            "%-" .. mlen + 4 .. "s %s",
-            s,
-            fmt_time(node.time)
-        )
+        return ("%-" .. mlen + 4 .. "s %s"):format(s, fmt_time(node.time))
     end
     local function add_highlights(item, line, add_highlight)
         if item.save then
