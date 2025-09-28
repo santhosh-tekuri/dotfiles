@@ -969,6 +969,7 @@ end
 
 local function grep(on_list, opts)
     local args = {
+        "--with-filename",
         "--line-number",
         "--no-heading", "--color=always",
         "--no-config", "--smart-case",
@@ -980,6 +981,7 @@ local function grep(on_list, opts)
         "--colors=match:style:nobold",
         "-g=!**/.git/**",
     }
+    local paths = {}
     local query = opts.query
     while query:sub(1, 1) == '-' do
         local i, j = query:find("%s+")
@@ -987,7 +989,13 @@ local function grep(on_list, opts)
             on_list({})
             return
         end
-        table.insert(args, query:sub(1, i - 1))
+        local flag = query:sub(1, i - 1)
+        if flag:sub(1, #"--path=") == "--path=" then
+            local path = flag:sub(#"--path=" + 1)
+            table.insert(paths, vim.fn.expandcmd(path))
+        else
+            table.insert(args, query:sub(1, i - 1))
+        end
         query = query:sub(j + 1)
         if args[#args] == "--" then
             break
@@ -1001,6 +1009,7 @@ local function grep(on_list, opts)
         table.insert(args, "--")
     end
     table.insert(args, query)
+    vim.list_extend(args, paths)
     return cmd_items("rg", args, grep_line2item, on_list, true)
 end
 
