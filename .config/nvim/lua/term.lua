@@ -189,7 +189,7 @@ vim.keymap.set("n", "<leader>q", function()
     end
 
     if termCount > 0 then
-        vim.api.nvim_echo({ { "terminal(s) found.", "WarningMsg" } }, false, {})
+        vim.api.nvim_echo({ { "Terminal(s) found.", "WarningMsg" } }, false, {})
         return
     end
 
