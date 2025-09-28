@@ -319,6 +319,7 @@ function M.pick(prompt, src, onclose, opts)
         pwin = vim.api.nvim_open_win(item.bufnr, false, pconfig)
         vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", { scope = "local", win = pwin })
         vim.api.nvim_set_option_value("wrap", false, { scope = "local", win = pwin })
+        vim.api.nvim_set_option_value("relativenumber", false, { scope = "local", win = pwin })
         if item.lnum and item.lnum > 0 then
             vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = pwin })
             vim.api.nvim_win_call(pwin, function()
@@ -350,6 +351,8 @@ function M.pick(prompt, src, onclose, opts)
         if pwin then
             vim.api.nvim_set_option_value("winhighlight", nil, { scope = "local", win = pwin })
             vim.api.nvim_set_option_value("cursorline", nil, { scope = "local", win = pwin })
+            vim.api.nvim_set_option_value("wrap", nil, { scope = "local", win = pwin })
+            vim.api.nvim_set_option_value("relativenumber", nil, { scope = "local", win = pwin })
             vim.api.nvim_buf_clear_namespace(vim.api.nvim_win_get_buf(pwin), ns, 0, -1)
             vim.api.nvim_win_close(pwin, true)
         end
