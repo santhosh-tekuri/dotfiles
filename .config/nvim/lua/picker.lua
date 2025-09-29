@@ -1311,7 +1311,8 @@ end
 function M.pick_undo()
     local buf = vim.api.nvim_get_current_buf()
     local tmp_file = vim.fn.stdpath("cache") .. "/picker-undo"
-    vim.fn.writefile(vim.api.nvim_buf_get_lines(buf, 0, -1, false), tmp_file)
+    local buf_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    vim.fn.writefile(buf_lines, tmp_file)
     local tmp_undo = tmp_file .. ".undo"
     vim.api.nvim_buf_call(buf, function()
         vim.cmd("silent wundo! " .. tmp_undo)
@@ -1356,24 +1357,36 @@ function M.pick_undo()
             end)
         end
     end
+    local diff_previous = true
     local function preview(item)
         local ei = vim.o.eventignore
         vim.o.eventignore = "all"
-        local before, after
+        local before, after = buf_lines, nil
         vim.api.nvim_buf_call(tmp_buf, function()
             vim.cmd("noautocmd silent undo " .. item.seq)
             after = vim.api.nvim_buf_get_lines(tmp_buf, 0, -1, false)
-            vim.cmd("noautocmd silent undo")
-            before = vim.api.nvim_buf_get_lines(tmp_buf, 0, -1, false)
+            if diff_previous then
+                vim.cmd("noautocmd silent undo")
+                before = vim.api.nvim_buf_get_lines(tmp_buf, 0, -1, false)
+            end
         end)
         vim.o.eventignore = ei
-        local diff = vim.diff(table.concat(before, "\n") .. "\n", table.concat(after, "\n") .. "\n", { ctxlen = 4 })
+        local diff = vim.diff(table.concat(before, "\n") .. "\n", table.concat(assert(after), "\n") .. "\n",
+            { ctxlen = 4 })
         ---@diagnostic disable-next-line: param-type-mismatch
         vim.api.nvim_buf_set_lines(pbuf, 0, -1, false, vim.split(diff, "\n"))
         return { bufnr = pbuf }
     end
-
-    M.pick("Undo:", tree.list, on_close, { text_cb = text_cb, add_highlights = add_highlights, preview = preview })
+    local function toggle_preview_type(item)
+        diff_previous = not diff_previous
+        preview(item)
+    end
+    M.pick("Undo:", tree.list, on_close, {
+        text_cb = text_cb,
+        add_highlights = add_highlights,
+        preview = preview,
+        keymaps = { ["<a-p>"] = toggle_preview_type },
+    })
 end
 
 ------------------------------------------------------------------------
