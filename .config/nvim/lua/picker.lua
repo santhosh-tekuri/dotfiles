@@ -632,6 +632,11 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
     keymap("<c-c>", cancelrun, {})
+    keymap('<a-w>', function()
+        if pwin then
+            vim.wo[pwin].wrap = not vim.wo[pwin].wrap
+        end
+    end)
     keymap("<c-g>", function()
         if opts.live then
             cancelrun()
