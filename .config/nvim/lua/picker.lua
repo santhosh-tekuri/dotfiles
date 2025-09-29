@@ -937,10 +937,12 @@ end
 
 local function edit(item, opts)
     if item then
-        local mime = vim.fn.system({ "file", "-bL", "--mime", item })
-        if mime:find("binary") then
-            if vim.fn.confirm(("Do you want to open to open binary file %q"):format(item), "&Yes\n&No", 2) ~= 1 then
-                return
+        if vim.fn.executable("file") == 1 then
+            local mime = vim.fn.system({ "file", "-bL", "--mime", item })
+            if mime:find("binary") then
+                if vim.fn.confirm(("Do you want to open to open binary file %q"):format(item), "&Yes\n&No", 2) ~= 1 then
+                    return
+                end
             end
         end
         if opts["qflist"] then
