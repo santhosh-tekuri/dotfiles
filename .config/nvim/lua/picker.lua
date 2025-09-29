@@ -585,7 +585,7 @@ function M.pick(prompt, src, onclose, opts)
             show_preview()
         end
     end
-    local function scroll(lines)
+    local function scroll_list(lines)
         if swin then
             sskip = sskip + lines
             if sskip < 0 then
@@ -595,6 +595,13 @@ function M.pick(prompt, src, onclose, opts)
             end
             renderitems()
             show_preview()
+        end
+    end
+    local function scroll_preview(down)
+        if pwin then
+            vim.api.nvim_win_call(pwin, function()
+                vim.cmd("normal! " .. (down and "" or ""))
+            end)
         end
     end
     local function keymap(lhs, func, args)
@@ -613,8 +620,10 @@ function M.pick(prompt, src, onclose, opts)
     keymap("<esc>", close, { nil })
     keymap("<c-n>", move, { 1 })
     keymap("<c-p>", move, { -1 })
-    keymap("<c-d>", scroll, { shmax / 2 })
-    keymap("<c-u>", scroll, { -shmax / 2 })
+    keymap("<c-d>", scroll_list, { shmax / 2 })
+    keymap("<c-u>", scroll_list, { -shmax / 2 })
+    keymap("<c-f>", scroll_preview, { true })
+    keymap("<c-b>", scroll_preview, { false })
     keymap("<down>", move, { 1 })
     keymap("<up>", move, { -1 })
     keymap("<c-c>", cancelrun, {})
