@@ -1313,16 +1313,16 @@ local function undotree()
     return { list = list, curidx = curidx, maxdepth = maxdepth, maxseqlen = #("" .. maxseq) }
 end
 
+local dur = {
+    { { 1, 60, },                            "just now",     "just now" },
+    { { 60, 3600, },                         "a minute ago", "%d minutes ago" },
+    { { 3600, 3600 * 24, },                  "an hour ago",  "%d hours ago" },
+    { { 3600 * 24, 3600 * 24 * 7, },         "yesterday",    "%d days ago" },
+    { { 3600 * 24 * 7, 3600 * 24 * 7 * 4, }, "a week ago",   "%d weeks ago" },
+}
 local function fmt_time(time)
-    local tpl = {
-        { { 1, 60, },                            "just now",     "just now" },
-        { { 60, 3600, },                         "a minute ago", "%d minutes ago" },
-        { { 3600, 3600 * 24, },                  "an hour ago",  "%d hours ago" },
-        { { 3600 * 24, 3600 * 24 * 7, },         "yesterday",    "%d days ago" },
-        { { 3600 * 24 * 7, 3600 * 24 * 7 * 4, }, "a week ago",   "%d weeks ago" },
-    }
     local delta = os.time() - time
-    for _, v in ipairs(tpl) do
+    for _, v in ipairs(dur) do
         if delta < v[1][2] then
             local value = math.floor(delta / v[1][1] + 0.5)
             return value == 1 and v[2] or v[3]:format(value)
