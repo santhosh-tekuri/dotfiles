@@ -15,8 +15,7 @@ vim.api.nvim_create_user_command('Messages', function()
             vim.cmd("file [Messages]")
         end)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-        local cwin = vim.api.nvim_get_current_win()
-        vim.api.nvim_win_set_buf(cwin, buf)
+        vim.cmd("rightbelow 10split | buffer " .. buf)
     end
 end, {})
 
