@@ -437,6 +437,10 @@ function M.pick(prompt, src, onclose, opts)
         vim.api.nvim_set_option_value("cursorline", true, { scope = "local", win = swin })
         vim.api.nvim_set_option_value("scrolloff", 0, { scope = "local", win = swin })
         vim.api.nvim_set_option_value("winhighlight", "FloatBorder:NormalFloat", { scope = "local", win = swin })
+        if opts.select then
+            vim.api.nvim_win_set_cursor(swin, { opts.select, 0 })
+            opts.select = nil
+        end
         if opts["add_highlights"] then
             for i, line in ipairs(lines) do
                 opts["add_highlights"](sitems[sskip + i], line, function(col, ext_opts)
@@ -1272,7 +1276,7 @@ end
 
 local function undotree()
     local tree = vim.fn.undotree()
-    local list, maxdepth, maxseq = {}, 0, 0
+    local list, maxdepth, maxseq, curidx = {}, 0, 0, 0
     local stack = { { alt = tree.entries, depth = -1, seq = 0 } }
     while #stack > 0 do
         local node = table.remove(stack)
@@ -1285,6 +1289,9 @@ local function undotree()
             end
             if node.depth >= 0 then
                 table.insert(list, node)
+                if node.cur then
+                    curidx = #list
+                end
             end
             if node.alt then
                 for i = 1, #node.alt, 1 do
@@ -1297,7 +1304,7 @@ local function undotree()
             end
         end
     end
-    return { list = list, maxdepth = maxdepth, maxseqlen = #("" .. maxseq) }
+    return { list = list, curidx = curidx, maxdepth = maxdepth, maxseqlen = #("" .. maxseq) }
 end
 
 local function fmt_time(time)
@@ -1396,6 +1403,7 @@ function M.pick_undo()
         add_highlights = add_highlights,
         preview = preview,
         keymaps = { ["<a-p>"] = toggle_preview_type },
+        select = tree.curidx,
     })
 end
 
