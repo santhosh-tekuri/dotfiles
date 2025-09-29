@@ -655,6 +655,16 @@ function M.pick(prompt, src, onclose, opts)
             end
         end)
     end
+    if opts and opts.keymaps then
+        for lhs, func in pairs(opts.keymaps) do
+            keymap(lhs, function()
+                local line = vim.fn.line('.', swin) + sskip
+                if sitems and sitems[line] then
+                    func(sitems[line])
+                end
+            end, {})
+        end
+    end
     showitems(items or {})
     vim.api.nvim_create_autocmd('WinLeave', {
         buffer = qbuf,
