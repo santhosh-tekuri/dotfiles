@@ -954,7 +954,8 @@ local function buffers()
 end
 
 function M.pick_buffer()
-    M.pick("Buffer:", buffers(), edit, { text_cb = bufname })
+    local function preview(item) return { bufnr = item } end
+    M.pick("Buffer:", buffers(), edit, { text_cb = bufname, preview = preview })
 end
 
 ------------------------------------------------------------------------
