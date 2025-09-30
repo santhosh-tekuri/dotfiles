@@ -1,23 +1,25 @@
-vim.api.nvim_create_user_command('Messages', function()
-    local messages = vim.fn.execute("messages", "silent")
-    if messages:sub(1, 1) == '\n' then
-        messages = messages:sub(2)
-    end
-    if #messages == 0 then
+vim.api.nvim_create_user_command('Redir', function(cmd)
+    if cmd.args:sub(1, 1) == '!' then
+        vim.api.nvim_echo({ { "Use terminal for shell commands", "ErrorMsg" } }, false, {})
         return
+    end
+    local messages = vim.fn.execute(cmd.args, "silent")
+    if #messages == 0 then
+        vim.api.nvim_echo({ { "No Output", "WarningMsg" } }, false, {})
+        return
+    end
+    if cmd.args == "messages" and messages:sub(1, 1) == '\n' then
+        messages = messages:sub(2)
     end
     local lines = vim.split(messages, "\n")
     if #lines > 0 then
         local buf = vim.api.nvim_create_buf(false, true)
         vim.b[buf].wipe = true
         vim.bo[buf].bufhidden = 'wipe'
-        vim.api.nvim_buf_call(buf, function()
-            vim.cmd("file [Messages]")
-        end)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
         vim.cmd("rightbelow 10split | buffer " .. buf)
     end
-end, {})
+end, { nargs = '+', complete = "command" })
 
 vim.api.nvim_create_user_command('SudoWrite', function()
     local tmp = vim.fn.tempname()
