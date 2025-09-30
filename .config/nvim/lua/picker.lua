@@ -444,6 +444,14 @@ function M.pick(prompt, src, onclose, opts)
         if opts["add_highlights"] then
             for i, line in ipairs(lines) do
                 opts["add_highlights"](sitems[sskip + i], line, function(col, ext_opts)
+                    if type(col) == "table" then
+                        ext_opts = {
+                            end_col = col[2],
+                            hl_group = ext_opts,
+                            strict = false,
+                        }
+                        col = col[1] - 1
+                    end
                     ext_opts.priority = 800
                     vim.api.nvim_buf_set_extmark(sbuf, ns, i - 1, col, ext_opts)
                 end)
@@ -1233,22 +1241,23 @@ local function workspace_symbol_text(item)
     return string.format("%s %s%s", line, string.rep(" ", w), file)
 end
 
-local function workspace_symbol_add_highlights(item, _line, add_highlight)
-    add_highlight(0, {
-        end_col = 13,
-        hl_group = "PickerDim",
-        strict = false,
-    })
+local function worksapce_symbol_columns(item, line)
     local symblen = #item.text
     local sp = item.text:find(' ', 1, true)
     if sp then
         symblen = symblen - sp
     end
-    add_highlight(14 + symblen, {
-        end_col = vim.o.columns,
-        hl_group = "qfFileName",
-        strict = false,
-    })
+    return {
+        kind = { 1, line:find(" ", 1, true) - 1 },
+        text = { 15, 15 + symblen - 1 },
+        file = { line:find("%S", 15 + symblen, false), #line },
+    }
+end
+
+local function workspace_symbol_add_highlights(item, line, add_highlight)
+    local cols = worksapce_symbol_columns(item, line)
+    add_highlight(cols.kind, "PickerDim")
+    add_highlight(cols.file, "qfFileName")
 end
 
 function M.pick_workspace_symbol()
