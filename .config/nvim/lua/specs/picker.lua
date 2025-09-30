@@ -11,6 +11,7 @@ function spec.config()
     vim.keymap.set('n', '<leader>h', m.pick_help)
     vim.keymap.set('n', '<leader>/', m.pick_grep)
     vim.keymap.set('n', '<leader>u', m.pick_undo)
+    vim.keymap.set('n', '<leader>q', m.pick_qfitem)
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('LspPickers', {}),
         callback = function(ev)

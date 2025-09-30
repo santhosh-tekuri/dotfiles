@@ -168,7 +168,7 @@ vim.api.nvim_create_autocmd('TermClose', {
     nested = true,
 })
 
-vim.keymap.set("n", "<leader>q", function()
+vim.keymap.set("n", "<leader>Q", function()
     -- check if any process is running in termimals
     local termCount = 0
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
