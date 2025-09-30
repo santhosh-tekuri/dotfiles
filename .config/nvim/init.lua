@@ -6,7 +6,6 @@ require('quickfix')
 require("textobjs")
 require("stc")
 require("term")
-require("picker").setup()
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -27,6 +26,7 @@ vim.cmd.colorscheme("santhosh")
 -- load plugin specs
 require("lazy").setup {
     require("specs.cmdline"),
+    require("specs.picker"),
     require("specs.oil"),
     require("specs.gitsigns"),
     require("specs.treesitter"),
