@@ -2,7 +2,6 @@ require("opts")
 require("keymaps")
 require("usercmds")
 require("autocmds")
-require('quickfix')
 require("textobjs")
 require("stc")
 require("term")
@@ -26,6 +25,7 @@ vim.cmd.colorscheme("santhosh")
 -- load plugin specs
 require("lazy").setup {
     require("specs.cmdline"),
+    require("specs.quickfix"),
     require("specs.picker"),
     require("specs.oil"),
     require("specs.gitsigns"),
