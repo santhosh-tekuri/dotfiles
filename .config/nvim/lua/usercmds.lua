@@ -53,15 +53,8 @@ local function runCommand(args, auto_close)
     end
 end
 
-vim.api.nvim_create_user_command('RunCmd', function(args)
-    runCommand(args.args, false)
-end, { nargs = "+", desc = "Run Command" })
+vim.api.nvim_create_user_command('RunCmd', function(cmd)
+    runCommand(cmd.args, cmd.bang)
+end, { nargs = "+", bang = true, desc = "Run Command" })
 
-vim.api.nvim_create_user_command('RunTui', function(args)
-    runCommand(args.args, true)
-end, {
-    nargs = "+",
-    desc = "Run TUI command"
-})
-
-vim.keymap.set('n', '<leader>g', "<cmd>RunTui lazygit<cr>", { desc = "launch lazygit" })
+vim.keymap.set('n', '<leader>g', "<cmd>RunCmd! lazygit<cr>", { desc = "launch lazygit" })
