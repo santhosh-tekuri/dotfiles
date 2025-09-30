@@ -52,6 +52,7 @@ function spec.config()
             },
             keymap = {
                 preset = 'super-tab',
+                ['<Tab>'] = { "select_and_accept", "show" },
                 ['<C-p>'] = { 'select_prev', 'fallback' },
                 ['<C-n>'] = { 'select_next', 'fallback' },
             }
