@@ -41,10 +41,12 @@ function StatusColumn()
             num = vim.v.lnum
         elseif rnu then
             num = vim.v.relnum
-        else
+        elseif nu then
             num = vim.v.lnum
         end
-        table.insert(comp, "%=" .. num .. " ")
+        if num then
+            table.insert(comp, "%=" .. num .. " ")
+        end
     end
     if vim.wo[win].signcolumn ~= "no" then
         append(git)
