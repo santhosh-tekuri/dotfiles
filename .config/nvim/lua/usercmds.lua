@@ -1,3 +1,4 @@
+local redir_buf
 vim.api.nvim_create_user_command('Redir', function(cmd)
     if cmd.args:sub(1, 1) == '!' then
         vim.api.nvim_echo({ { "Use terminal for shell commands", "ErrorMsg" } }, false, {})
@@ -13,13 +14,20 @@ vim.api.nvim_create_user_command('Redir', function(cmd)
     end
     local lines = vim.split(messages, "\n")
     if #lines > 0 then
-        local buf = vim.api.nvim_create_buf(false, true)
-        vim.b[buf].wipe = true
-        vim.bo[buf].bufhidden = 'wipe'
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-        vim.cmd("rightbelow 10split | buffer " .. buf)
+        local buf
+        if cmd.bang and vim.api.nvim_buf_is_valid(redir_buf) then
+            buf = redir_buf
+            vim.api.nvim_buf_set_lines(buf, -1, -1, false, lines)
+        else
+            buf = vim.api.nvim_create_buf(false, true)
+            vim.b[buf].wipe = true
+            vim.bo[buf].bufhidden = 'wipe'
+            vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+            vim.cmd("rightbelow 10split | buffer " .. buf)
+        end
+        redir_buf = buf
     end
-end, { nargs = '+', complete = "command" })
+end, { nargs = '+', complete = "command", bang = true })
 
 vim.api.nvim_create_user_command('SudoWrite', function()
     local tmp = vim.fn.tempname()
