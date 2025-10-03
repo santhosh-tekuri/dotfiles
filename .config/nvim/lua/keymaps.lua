@@ -1,5 +1,6 @@
 vim.g.mapleader = " "
 
+vim.keymap.set("n", "gf", "gF")
 vim.keymap.set("n", "gh", "^", { desc = "to first non-blank char of the line" })
 vim.keymap.set("n", "gl", "g_", { desc = "to last non-blank char of the line" })
 
