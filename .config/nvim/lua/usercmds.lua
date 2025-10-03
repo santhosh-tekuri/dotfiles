@@ -24,6 +24,7 @@ vim.api.nvim_create_user_command('Redir', function(cmd)
             vim.bo[buf].bufhidden = 'wipe'
             vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
             vim.cmd("rightbelow 10split | buffer " .. buf)
+            vim.wo.winfixbuf = true
         end
         redir_buf = buf
     end
