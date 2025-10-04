@@ -33,21 +33,7 @@ function StatusColumn()
     if vim.wo[win].signcolumn ~= "no" then
         append(sign)
     end
-    if vim.v.virtnum == 0 then
-        local nu = vim.wo[win].number
-        local rnu = vim.wo[win].relativenumber
-        local num
-        if nu and rnu and vim.v.relnum == 0 then
-            num = vim.v.lnum
-        elseif rnu then
-            num = vim.v.relnum
-        elseif nu then
-            num = vim.v.lnum
-        end
-        if num then
-            table.insert(comp, "%=" .. num .. " ")
-        end
-    end
+    table.insert(comp, "%l ")
     if vim.wo[win].signcolumn ~= "no" then
         append(git)
     end
