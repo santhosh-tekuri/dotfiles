@@ -132,7 +132,6 @@ vim.keymap.set({ "n", "t" }, "<c-;>", function()
     end
 end, { desc = "pick terminal" })
 
-vim.cmd.autocmd("TermOpen * startinsert")
 vim.api.nvim_create_autocmd("TermOpen", {
     callback = function()
         vim.cmd.startinsert()
@@ -140,7 +139,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
     end
 })
 
-vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+vim.api.nvim_create_autocmd('BufEnter', {
     callback = function()
         if vim.bo.buftype == 'terminal' then
             vim.schedule(vim.cmd.startinsert)
