@@ -5,6 +5,7 @@ require("autocmds")
 require("textobjs")
 require("stc")
 require("term")
+require("worddiff")
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
