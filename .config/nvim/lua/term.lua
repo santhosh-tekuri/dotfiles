@@ -1,11 +1,7 @@
 local function terminals()
-    local terms = {}
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.bo[buf].buftype == "terminal" and vim.fn.bufloaded(buf) == 1 then
-            table.insert(terms, buf)
-        end
-    end
-    return terms
+    return vim.tbl_filter(function(buf)
+        return vim.bo[buf].buftype == "terminal" and vim.fn.bufloaded(buf) == 1
+    end, vim.api.nvim_list_bufs())
 end
 
 local function new_terminal(name)
