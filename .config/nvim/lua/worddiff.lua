@@ -43,18 +43,7 @@ local function diff_nodes(bufnr, del, add)
     end
 end
 
-local function apply_highlights(bufnr)
-    local parser = vim.treesitter.get_parser(bufnr)
-    if not parser then
-        return
-    end
-    local trees = parser:parse()
-    if not trees or #trees == 0 then
-        return
-    end
-    local root = trees[1]:root()
-
-    vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+local function apply_diff_highlights(bufnr, root)
     local query = vim.treesitter.query.parse("diff", "(changes) @changes")
     for _, ch in query:iter_captures(assert(root)) do
         local del = ch:child(0)
@@ -89,13 +78,38 @@ local function apply_highlights(bufnr)
     end
 end
 
+local function apply_highlights(bufnr)
+    vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+
+    local parser = vim.treesitter.get_parser(bufnr)
+    if not parser then
+        return
+    end
+    local trees = parser:parse(true)
+    if not trees or #trees == 0 then
+        return
+    end
+    local root = trees[1]:root()
+    if vim.bo[bufnr].filetype == "diff" then
+        apply_diff_highlights(bufnr, root)
+    else
+        parser:for_each_tree(function(_, ltree)
+            for _, child in pairs(ltree:children()) do
+                for _, tree in pairs(child:trees()) do
+                    apply_diff_highlights(bufnr, tree:root())
+                end
+            end
+        end)
+    end
+end
+
 local function define_hl()
     vim.api.nvim_set_hl(0, "Reverse", { reverse = true, default = true })
 end
 define_hl()
 vim.api.nvim_create_autocmd("ColorScheme", { callback = define_hl })
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "diff",
+    pattern = { "diff", "gitcommit" },
     callback = function(ctx)
         apply_highlights(ctx.buf)
     end
