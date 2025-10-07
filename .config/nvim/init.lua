@@ -5,7 +5,6 @@ require("autocmds")
 require("textobjs")
 require("stc")
 require("term")
-require("worddiff")
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -27,6 +26,7 @@ vim.cmd.colorscheme("santhosh")
 require("lazy").setup {
     require("specs.quickfix"),
     require("specs.picker"),
+    require("specs.wordiff"),
     require("specs.cmdline"),
     require("specs.oil"),
     require("specs.gitsigns"),
@@ -41,5 +41,4 @@ require("lazy").setup {
     require("specs.coverage"),
     require("specs.autopairs"),
     require("specs.registers"),
-    { "folke/snacks.nvim", opts = { picker = { enabled = true } } }
 }
