@@ -19,4 +19,4 @@ git:
   autoFetch: false
   paging:
     colorArg: always
-    useConfig: true
+    pager: diff-so-fancy
