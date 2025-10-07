@@ -41,4 +41,5 @@ require("lazy").setup {
     require("specs.coverage"),
     require("specs.autopairs"),
     require("specs.registers"),
+    { "folke/snacks.nvim", opts = { picker = { enabled = true } } }
 }
