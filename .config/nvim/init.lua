@@ -20,10 +20,9 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-vim.cmd.colorscheme("santhosh")
-
 -- load plugin specs
 require("lazy").setup {
+    require("specs.silence"),
     require("specs.quickfix"),
     require("specs.picker"),
     require("specs.wordiff"),
