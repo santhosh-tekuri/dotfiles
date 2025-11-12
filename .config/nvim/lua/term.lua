@@ -146,6 +146,9 @@ vim.api.nvim_create_autocmd('BufEnter', {
 vim.api.nvim_create_autocmd('TermClose', {
     desc = "explicity close terminal",
     callback = function(ctx)
+        if not vim.api.nvim_buf_is_valid(ctx.buf) then
+            return
+        end
         vim.cmd.stopinsert()
         vim.keymap.set('n', 'q', function()
             local buf = vim.api.nvim_get_current_buf()
