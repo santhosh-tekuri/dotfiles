@@ -25,25 +25,19 @@ local function open_terminal()
     if buf == nil then
         buf = vim.api.nvim_create_buf(false, true)
     end
-    local win = vim.api.nvim_open_win(buf, true, {
-        relative = "editor",
-        width = vim.o.columns,
-        height = vim.o.lines - vim.o.cmdheight,
-        row = 0,
-        col = 0,
-        style = "minimal",
-
-    })
+    vim.api.nvim_win_set_buf(0, buf)
     if vim.bo[buf].buftype ~= "terminal" then
         new_terminal("default")
     end
-    vim.api.nvim_set_option_value("winhighlight", "Normal:Normal", { win = win })
 end
 
 vim.keymap.set({ "n", "t" }, "<c-/>", function()
     if vim.bo.buftype == "terminal" then
-        lastTerm = vim.api.nvim_get_current_buf()
-        vim.cmd("close")
+        local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+        table.sort(bufs, function(a, b)
+            return a.lastused > b.lastused
+        end)
+        vim.api.nvim_win_set_buf(0, bufs[1].bufnr)
     else
         open_terminal()
     end
