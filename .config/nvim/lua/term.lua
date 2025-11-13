@@ -31,17 +31,21 @@ local function open_terminal()
     end
 end
 
-vim.keymap.set({ "n", "t" }, "<c-/>", function()
+vim.api.nvim_create_user_command('ToggleTerm', function()
     if vim.bo.buftype == "terminal" then
         local bufs = vim.fn.getbufinfo({ buflisted = 1 })
         table.sort(bufs, function(a, b)
             return a.lastused > b.lastused
         end)
-        vim.api.nvim_win_set_buf(0, bufs[1].bufnr)
+        for _, buf in ipairs(bufs) do
+            if vim.bo[buf.bufnr] ~= 'terminal' then
+                vim.api.nvim_win_set_buf(0, buf.bufnr)
+            end
+        end
     else
         open_terminal()
     end
-end, { desc = "toggle terminal" })
+end, { nargs = 0, desc = "Toggle Terminal" })
 
 local function go_to_term(n)
     local terms = terminals()
@@ -84,7 +88,7 @@ set_keymaps("t")
 
 vim.keymap.set("t", "<c-]>", "<c-\\><c-n>", { desc = "return to normal mode" })
 
-vim.keymap.set({ "n", "t" }, "<c-;>", function()
+vim.api.nvim_create_user_command('PickTerm', function()
     local function open(buf)
         if vim.bo.buftype == 'terminal' then
             vim.api.nvim_win_set_buf(0, buf)
@@ -120,7 +124,7 @@ vim.keymap.set({ "n", "t" }, "<c-;>", function()
             end
         end)
     end
-end, { desc = "pick terminal" })
+end, { nargs = 0, desc = "Pick Terminal" })
 
 vim.api.nvim_create_autocmd("TermOpen", {
     callback = function()
@@ -160,7 +164,7 @@ vim.api.nvim_create_autocmd('TermClose', {
     nested = true,
 })
 
-vim.keymap.set("n", "<leader>Q", function()
+vim.api.nvim_create_user_command('SafeQuit', function()
     -- check if any process is running in termimals
     local termCount = 0
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -193,4 +197,8 @@ vim.keymap.set("n", "<leader>Q", function()
         end
     end
     vim.cmd.detach()
-end, { desc = "safe exit" })
+end, { nargs = 0, desc = "Safe Quit" })
+
+vim.keymap.set({ "n", "t" }, "<c-/>", "<CMD>ToggleTerm<cr>")
+vim.keymap.set({ "n", "t" }, "<c-;>", "<CMD>PickTerm<cr>")
+vim.keymap.set("n", "<leader>Q", "<CMD>SafeQuit<cr>")
