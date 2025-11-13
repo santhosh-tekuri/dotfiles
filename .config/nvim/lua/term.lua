@@ -1,3 +1,4 @@
+vim.cmd("autocmd! nvim.terminal TermClose *")
 local function terminals()
     return vim.tbl_filter(function(buf)
         return vim.bo[buf].buftype == "terminal" and vim.fn.bufloaded(buf) == 1
