@@ -7,6 +7,7 @@ function spec.config()
         float = {
             max_width = 70,
             max_height = 20,
+            border = "single",
             win_options = {
                 winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator",
             }
