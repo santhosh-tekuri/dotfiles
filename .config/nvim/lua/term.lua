@@ -76,11 +76,11 @@ local function set_keymaps(mode, buf)
         end
     end, { buffer = buf, desc = "create new terminal" })
 
-    vim.keymap.set(mode, "<c-h>", function()
+    vim.keymap.set(mode, "<c-,>", function()
         go_to_term(-1)
     end, { buffer = buf, desc = "go to prev terminal" })
 
-    vim.keymap.set(mode, "<c-l>", function()
+    vim.keymap.set(mode, "<c-.>", function()
         go_to_term(1)
     end, { buffer = buf, desc = "go to next terminal" })
 end
@@ -201,5 +201,5 @@ vim.api.nvim_create_user_command('SafeQuit', function()
 end, { nargs = 0, desc = "Safe Quit" })
 
 vim.keymap.set({ "n", "t" }, "<c-/>", "<CMD>ToggleTerm<cr>")
-vim.keymap.set({ "n", "t" }, "<c-;>", "<CMD>PickTerm<cr>")
+vim.keymap.set({ "n", "t" }, "<c-s-/>", "<CMD>PickTerm<cr>")
 vim.keymap.set("n", "<leader>Q", "<CMD>SafeQuit<cr>")
