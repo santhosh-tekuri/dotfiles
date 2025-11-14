@@ -26,6 +26,7 @@ require("lazy").setup {
     require("specs.quickfix"),
     require("specs.picker"),
     require("specs.wordiff"),
+    require("specs.git"),
     require("specs.cmdline"),
     require("specs.oil"),
     require("specs.gitsigns"),
