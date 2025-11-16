@@ -4,7 +4,6 @@ require("usercmds")
 require("autocmds")
 require("textobjs")
 require("stc")
-require("term")
 
 -- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
