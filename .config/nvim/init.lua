@@ -22,6 +22,7 @@ vim.opt.runtimepath:prepend(lazypath)
 -- load plugin specs
 require("lazy").setup {
     require("specs.silence"),
+    require("specs.term"),
     require("specs.quickfix"),
     require("specs.picker"),
     require("specs.wordiff"),
