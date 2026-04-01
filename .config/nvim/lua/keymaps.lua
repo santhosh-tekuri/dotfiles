@@ -40,6 +40,18 @@ vim.keymap.set("i", "<C-L>", function()
     end
 end, { desc = "jump to end of current treesitter node" })
 
+
+-- incremental selection
+vim.keymap.set("n", "<tab>", function()
+    vim.fn.feedkeys("van")
+end)
+vim.keymap.set("x", "<tab>", function()
+    vim.fn.feedkeys("an")
+end)
+vim.keymap.set("x", "<s-tab>", function()
+    vim.fn.feedkeys("in")
+end)
+
 -- `<leader>'{char}` opens file containing mark upper({char})
 vim.keymap.set('n', "<leader>'", function()
     local char = vim.fn.getcharstr(-1)
