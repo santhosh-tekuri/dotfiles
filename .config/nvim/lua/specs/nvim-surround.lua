@@ -1,6 +1,5 @@
 -- add/delete/change surrounding pairs
 
-vim.pack.add { "https://github.com/kylechui/nvim-surround" }
 
 --[[
 ys{motion}{char}        surround by {char}

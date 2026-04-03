@@ -1,7 +1,5 @@
 -- open url under cursor in default browser
 
-vim.pack.add { "https://github.com/sontungexpt/url-open" }
-
 require("url-open").setup {
     highlight_url = {
         all_urls = {

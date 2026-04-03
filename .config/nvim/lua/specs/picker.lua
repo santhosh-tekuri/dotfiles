@@ -1,6 +1,3 @@
-vim.pack.add { "https://github.com/santhosh-tekuri/picker.nvim" }
--- dir = "~/gh/santhosh-tekuri/picker.nvim",
-
 local m = require("picker")
 vim.ui.select = m.select
 vim.keymap.set('n', '<leader>f', m.pick_file)
