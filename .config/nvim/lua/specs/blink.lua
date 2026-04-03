@@ -1,63 +1,59 @@
 -- completion plugin
 
-local spec = { "saghen/blink.cmp", version = "*" }
+vim.pack.add { { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("1.*") } }
 
-function spec.config()
-    require("blink.cmp").setup {
-        keymap = {
-            preset = "super-tab",
-        },
-        signature = {
-            enabled = true,
-        },
-        completion = {
-            list = {
-                selection = {
-                    auto_insert = false,
-                },
+require("blink.cmp").setup {
+    keymap = {
+        preset = "super-tab",
+    },
+    signature = {
+        enabled = true,
+    },
+    completion = {
+        list = {
+            selection = {
+                auto_insert = false,
             },
-            menu = {
-                draw = {
-                    treesitter = { 'lsp' },
-                    columns = function(ctx)
-                        if ctx.get_mode() == "cmdline" or ctx.get_mode() == "cmdwin" then
-                            return { { "label" } }
-                        end
-                        return {
-                            { "label", "label_detail", gap = 1 },
-                            { "kind" },
-                        }
-                    end,
-                    components = {
-                        label = {
-                            text = function(ctx) return ctx.label end,
-                        },
-                        label_detail = {
-                            width = { min = 10, max = 30 },
-                            text = function(ctx) return ctx.label_detail end,
-                            highlight = 'BlinkCmpLabelDescription',
-                        },
+        },
+        menu = {
+            draw = {
+                treesitter = { 'lsp' },
+                columns = function(ctx)
+                    if ctx.get_mode() == "cmdline" or ctx.get_mode() == "cmdwin" then
+                        return { { "label" } }
+                    end
+                    return {
+                        { "label", "label_detail", gap = 1 },
+                        { "kind" },
+                    }
+                end,
+                components = {
+                    label = {
+                        text = function(ctx) return ctx.label end,
                     },
-                }
-            },
-            documentation = {
-                auto_show = true,
+                    label_detail = {
+                        width = { min = 10, max = 30 },
+                        text = function(ctx) return ctx.label_detail end,
+                        highlight = 'BlinkCmpLabelDescription',
+                    },
+                },
             }
         },
-        cmdline = {
-            completion = {
-                menu = {
-                    auto_show = true,
-                },
+        documentation = {
+            auto_show = true,
+        }
+    },
+    cmdline = {
+        completion = {
+            menu = {
+                auto_show = true,
             },
-            keymap = {
-                preset = 'super-tab',
-                ['<Tab>'] = { "select_and_accept", "show" },
-                ['<C-p>'] = { 'select_prev', 'fallback' },
-                ['<C-n>'] = { 'select_next', 'fallback' },
-            }
+        },
+        keymap = {
+            preset = 'super-tab',
+            ['<Tab>'] = { "select_and_accept", "show" },
+            ['<C-p>'] = { 'select_prev', 'fallback' },
+            ['<C-n>'] = { 'select_next', 'fallback' },
         }
     }
-end
-
-return spec
+}

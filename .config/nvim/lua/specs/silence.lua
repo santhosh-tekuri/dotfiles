@@ -1,10 +1,4 @@
-local spec = {
-    "santhosh-tekuri/silence.nvim",
-    -- dir = "~/gh/santhosh-tekuri/silence.nvim",
-}
+vim.pack.add { "https://github.com/santhosh-tekuri/silence.nvim" }
+-- dir = "~/gh/santhosh-tekuri/silence.nvim",
 
-function spec.config()
-    vim.cmd.colorscheme("silence")
-end
-
-return spec
+vim.cmd.colorscheme("silence")

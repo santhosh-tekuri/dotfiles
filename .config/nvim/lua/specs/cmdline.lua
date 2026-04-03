@@ -1,13 +1,9 @@
 -- editable command line
 
-local spec = { "smilhey/ed-cmd.nvim" }
+vim.pack.add { "https://github.com/smilhey/ed-cmd.nvim" }
 
-function spec.config()
-    require("ed-cmd").setup({
-        cmdline = {
-            keymaps = { edit = "<c-]>", close = '<esc>' }
-        }
-    })
-end
-
-return spec
+require("ed-cmd").setup({
+    cmdline = {
+        keymaps = { edit = "<c-]>", close = '<esc>' }
+    }
+})

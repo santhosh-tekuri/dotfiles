@@ -1,10 +1,4 @@
-local spec = {
-    "santhosh-tekuri/git.nvim",
-    -- dir = "~/gh/santhosh-tekuri/git.nvim",
-}
+vim.pack.add { "https://github.com/santhosh-tekuri/git.nvim" }
+-- dir = "~/gh/santhosh-tekuri/git.nvim",
 
-function spec.config()
-    vim.keymap.set('n', ' g', "<cmd>GitStatus<cr>")
-end
-
-return spec
+vim.keymap.set('n', ' g', "<cmd>GitStatus<cr>")

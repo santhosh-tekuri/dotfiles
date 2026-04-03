@@ -1,3 +1,5 @@
 -- color highlighting for hex, rgb, hsl, CSS variables, and Tailwind CSS
 
-return { "norcalli/nvim-colorizer.lua", opts = {} }
+vim.pack.add { "https://github.com/norcalli/nvim-colorizer.lua" }
+
+require("colorizer").setup()

@@ -1,3 +1,8 @@
 -- displays coverage information in the sign column
 
-return { "andythigpen/nvim-coverage", cmd = "Coverage", opts = {} }
+vim.pack.add {
+    "https://github.com/nvim-lua/plenary.nvim",
+    "https://github.com/andythigpen/nvim-coverage"
+}
+
+require("coverage").setup()
