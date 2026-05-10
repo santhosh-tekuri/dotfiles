@@ -45,7 +45,6 @@ end, plugins))
 
 -- configure plugins
 for _, p in ipairs(vim.pack.get()) do
-    vim.cmd.packadd(p.spec.name)
     local name = assert(p.spec.name)
     local dot = name:find(".", 1, true)
     if dot then
