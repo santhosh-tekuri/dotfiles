@@ -1,7 +1,16 @@
 alias karabiner="sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon'"
 alias kanata='sudo kanata -c ~/.config/kanata/kanata.kbd'
 
-if ! command -v nvim &> /dev/null; then
+if test -d /opt/homebrew/bin; then
+    eval $(/opt/homebrew/bin/brew shellenv)
+    for d in coreutils findutils gnu-sed gnu-tar grep make; do
+        export PATH=/opt/homebrew/opt/$d/libexec/gnubin:$PATH
+        export MANPATH=/opt/homebrew/opt/$d/libexec/gnuman:$MANPATH
+        alias grep='grep --color=auto'
+    done
+fi
+
+if command -v nvim &> /dev/null; then
     export EDITOR=nvim
     export MANPAGER='nvim +Man!'
 fi
@@ -49,8 +58,6 @@ alias .git='cd "$(git rev-parse --show-toplevel)"'
 
 export PATH=$dir/bin:$PATH
 export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
-
-test -d /opt/homebrew/bin/ && eval $(/opt/homebrew/bin/brew shellenv)
 
 # to get mouse scrolling work for git-log, man
 export LESS=-R
