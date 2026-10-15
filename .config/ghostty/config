@@ -45,5 +45,4 @@ palette = 15=#EEEEEC
 
 macos-option-as-alt = true
 macos-titlebar-style = native
-macos-non-native-fullscreen = visible-menu
-fullscreen = true
+maximize = true
