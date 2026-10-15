@@ -14,6 +14,7 @@ mouse-hide-while-typing = true
 keybind=ctrl+left_bracket=text:\x1b
 keybind = cmd+k=text:\x02
 keybind = cmd+shift+k=clear_screen
+keybind = ctrl+shift+l=clear_screen
 keybind = shift+backspace=text:\x17
 keybind = alt+backspace=text:\x17
 
