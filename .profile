@@ -81,3 +81,11 @@ fi
 if [ -n "$STY" ]; then
     unset PROMPT_COMMAND
 fi
+
+if command -v kubectl >/dev/null 2>&1; then
+    source <(kubectl completion $(basename $SHELL))
+fi
+if command -v docker >/dev/null 2>&1; then
+    source <(docker completion $(basename $SHELL))
+fi
+
