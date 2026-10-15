@@ -20,6 +20,7 @@ zstyle ':completion:*' menu select
 
 setopt CORRECT # spell check commands
 setopt AUTO_CD # just type `dir` to cd
+setopt interactivecomments # ignore text folliwing # on command line
 
 bindkey -e # use emacs keymap for command line editing
 bindkey \^U backward-kill-line # ctrl-u -> kill before cursor
@@ -28,8 +29,6 @@ bindkey \^U backward-kill-line # ctrl-u -> kill before cursor
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
-
-setopt interactivecomments # ignore text folliwing # on command line
 
 function hilite(){
     echo -en "\033[31m"  ## red
@@ -85,7 +84,7 @@ bindkey -M main ' ' expand-alias
 bindkey '^ '   magic-space          # control-space to bypass completion
 bindkey -M isearch " "  magic-space # normal space during searches
 
-# command customization --
+# tool integrations --
 if command -v fzf >/dev/null 2>&1; then
     source <(fzf --zsh)
     compdef _gnu_generic fzf
