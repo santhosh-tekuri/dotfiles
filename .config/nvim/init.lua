@@ -1,3 +1,4 @@
+require("log")
 require("opts")
 require("keymaps")
 require("usercmds")
