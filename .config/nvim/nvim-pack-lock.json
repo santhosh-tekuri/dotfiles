@@ -50,7 +50,7 @@
       "src": "https://github.com/stevearc/oil.nvim"
     },
     "picker.nvim": {
-      "rev": "16c6263282dc39628de17e90d6ad28fb7e79a76f",
+      "rev": "2b3281e11fdeea2cdef4ac6c2d2c801c6f1b5157",
       "src": "https://github.com/santhosh-tekuri/picker.nvim"
     },
     "plenary.nvim": {
