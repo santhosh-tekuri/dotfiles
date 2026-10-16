@@ -45,12 +45,14 @@ end, plugins))
 
 -- configure plugins
 for _, p in ipairs(vim.pack.get()) do
-    local name = assert(p.spec.name)
-    local dot = name:find(".", 1, true)
-    if dot then
-        name = name:sub(1, dot - 1)
-    end
-    if #vim.api.nvim_get_runtime_file("lua/specs/" .. name .. ".lua", true) == 1 then
-        require("specs." .. name)
+    if p.active then
+        local name = assert(p.spec.name)
+        local dot = name:find(".", 1, true)
+        if dot then
+            name = name:sub(1, dot - 1)
+        end
+        if #vim.api.nvim_get_runtime_file("lua/specs/" .. name .. ".lua", true) == 1 then
+            require("specs." .. name)
+        end
     end
 end
