@@ -1,7 +1,6 @@
 -- treesitter configurations and abstraction layers
 
 vim.pack.add { "https://github.com/nvim-treesitter/nvim-treesitter" }
--- build = ":TSUpdate",
 
 local ts = require("nvim-treesitter")
 ts.install {
@@ -12,6 +11,17 @@ ts.install {
     "rust",
     "python",
 }
+
+vim.api.nvim_create_autocmd("PackChanged", {
+    callback = function(ev)
+        if ev.data.spec.name == "nvim-treesitter" and ev.data.kind == "update" then
+            if not ev.data.active then
+                vim.cmd.packadd("nvim-treesitter")
+            end
+            vim.cmd("TSUpdate")
+        end
+    end
+})
 
 vim.api.nvim_create_autocmd("FileType", {
     desc = "enable treesitter",
