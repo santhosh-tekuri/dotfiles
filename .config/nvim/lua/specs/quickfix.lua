@@ -1,1 +1,3 @@
+vim.pack.add { "https://github.com/santhosh-tekuri/quickfix.nvim" }
+
 vim.o.quickfixtextfunc = require("quickfix").quickfixtextfunc

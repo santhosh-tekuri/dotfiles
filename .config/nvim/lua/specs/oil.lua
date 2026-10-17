@@ -1,5 +1,7 @@
 -- file explorer: edit your filesystem like a buffer
 
+vim.pack.add { "https://github.com/stevearc/oil.nvim" }
+
 require("oil").setup {
     float = {
         max_width = 70,
