@@ -107,11 +107,11 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end, opts("toggle diagnostic for current line"))
 
         -- setup codelens
-        vim.lsp.codelens.refresh({ bufnr = 0 })
+        vim.lsp.codelens.enable(true, { bufnr = 0 })
         vim.api.nvim_create_autocmd('InsertLeave', {
             desc = "refresh codelens",
             callback = function()
-                vim.lsp.codelens.refresh({ bufnr = 0 })
+                vim.lsp.codelens.enable(true, { bufnr = 0 })
             end,
             buffer = 0,
         })
