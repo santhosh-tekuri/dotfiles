@@ -24,7 +24,7 @@ vim.api.nvim_create_autocmd("PackChanged", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-    desc = "enable treesitter",
+    desc = "auto install treesitter parser",
     callback = function(event)
         local lang = vim.treesitter.language.get_lang(event.match) or event.match
         if not vim.list_contains(ts.get_available(), lang) then
