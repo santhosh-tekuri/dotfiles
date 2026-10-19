@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# clones as bare repo with worktree for default branch
+
+set -e
+
+if [ $# = 0 ]; then
+    >&2 echo 'usage: git-klone URL'
+    exit 1
+fi
+
+dir=$(basename "$1" .git)
+mkdir "$dir"
+git clone --bare "$1" "$dir/.git"
+cd "$dir"
+git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+git fetch origin
+branch=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+git worktree add "$branch"
