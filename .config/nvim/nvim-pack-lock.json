@@ -10,7 +10,7 @@
       "src": "https://github.com/smilhey/ed-cmd.nvim"
     },
     "git.nvim": {
-      "rev": "2de8dbafd484ac5823b11edee1e6fe3c3567c59f",
+      "rev": "d8306f624bee0e76743dab3eaa9466240f299cd7",
       "src": "https://github.com/santhosh-tekuri/git.nvim"
     },
     "gitsigns.nvim": {
@@ -34,7 +34,7 @@
       "src": "https://github.com/kylechui/nvim-surround"
     },
     "nvim-treesitter": {
-      "rev": "d3e4a28b63961ba972b0945d66c73b6eec969953",
+      "rev": "29212d826054bb2948fa9d3a99eca9bf6a050eb2",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "oil.nvim": {
@@ -48,10 +48,6 @@
     "quickfix.nvim": {
       "rev": "78a07821f1bb121fe67d9396fdf3497875e4c4d6",
       "src": "https://github.com/santhosh-tekuri/quickfix.nvim"
-    },
-    "registers.nvim": {
-      "rev": "c217f8f369e0886776cda6c94eab839b30a8940d",
-      "src": "https://github.com/tversteeg/registers.nvim"
     },
     "silence.nvim": {
       "rev": "d776e4a24fda3fd83b6cc02c53ee0aadf2cace0e",
