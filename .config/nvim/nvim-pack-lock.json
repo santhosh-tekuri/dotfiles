@@ -10,11 +10,11 @@
       "src": "https://github.com/smilhey/ed-cmd.nvim"
     },
     "git.nvim": {
-      "rev": "d8306f624bee0e76743dab3eaa9466240f299cd7",
+      "rev": "6dfe33d9adc0797f5680e6e0134ed96b9345dae8",
       "src": "https://github.com/santhosh-tekuri/git.nvim"
     },
     "gitsigns.nvim": {
-      "rev": "fd780920613e541cbdfac41bf711583ed49f9249",
+      "rev": "683137003522aebd6948358334164a6ba2ca7cd5",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "mason.nvim": {

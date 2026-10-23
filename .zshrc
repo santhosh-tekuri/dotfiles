@@ -92,5 +92,12 @@ if command -v fzf >/dev/null 2>&1; then
     zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept
 fi
 
+if command -v kubectl >/dev/null 2>&1; then
+    source <(kubectl completion $(basename zsh))
+fi
+if command -v docker >/dev/null 2>&1; then
+    source <(docker completion $(basename zsh))
+fi
+
 # misc --
 source $dir/bin/docker.sh
