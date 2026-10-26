@@ -10,7 +10,7 @@
       "src": "https://github.com/smilhey/ed-cmd.nvim"
     },
     "git.nvim": {
-      "rev": "bdb5793b2f1ec16d543a4804b231625c3cb38041",
+      "rev": "3f6e64dfddf69f65fe17c2c46177e1eee970894d",
       "src": "https://github.com/santhosh-tekuri/git.nvim"
     },
     "gitsigns.nvim": {
