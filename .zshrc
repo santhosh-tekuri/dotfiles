@@ -76,6 +76,13 @@ bindkey '^[[B' history-substring-search-down
 
 # alias expansion --
 function expand-alias() {
+    local exclude=("ls" "ll" "grep" "mvn")
+    local words=( ${(z)LBUFFER} )
+    if [[ " ${exclude[@]} " =~ " ${words[-1]} " ]]; then
+        zle magic-space
+        return
+    fi
+
     [[ ! $BUFFER =~ "^\\\\.*" ]] && zle _expand_alias # expand only if not starts with '\'
     zle self-insert
 }
