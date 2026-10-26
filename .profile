@@ -42,6 +42,8 @@ alias chmox="chmod +x"
 alias myip="ipconfig getifaddr en0"
 alias mvn="mvn -Dhttps.protocols=TLSv1.2"
 alias ssh-gen="ssh-keygen -t rsa -b 4096 -C"
+alias str-quote="jq -R -s ."
+alias str-unquote="jq -s ."
 alias encrypt="openssl enc -aes-256-cbc -salt"
 alias decrypt="openssl enc -aes-256-cbc -d -md md5"
 
