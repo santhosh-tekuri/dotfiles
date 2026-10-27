@@ -22,6 +22,7 @@ export XDG_STATE_HOME="$HOME/.local/state"
 export SCREENRC=$XDG_CONFIG_HOME/screen/screenrc
 export NPM_CONFIG_CACHE=~/.cache/npm
 export RUSTUP_HOME=$XDG_DATA_HOME/rustup
+export MAVEN_OPTS="-Dhttps.protocols=TLSv1.2"
 export FZF_DEFAULT_OPTS=--reverse
 
 if [ -f /usr/local/bin/bash ]; then
@@ -40,7 +41,6 @@ alias ll="ls -alh"
 alias vi="vim -p"
 alias chmox="chmod +x"
 alias myip="ipconfig getifaddr en0"
-alias mvn="mvn -Dhttps.protocols=TLSv1.2"
 alias ssh-gen="ssh-keygen -t rsa -b 4096 -C"
 alias str-quote="jq -R -s ."
 alias str-unquote="jq -r ."
