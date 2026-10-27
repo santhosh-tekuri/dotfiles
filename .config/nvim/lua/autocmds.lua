@@ -1,3 +1,18 @@
+vim.api.nvim_create_autocmd("BufReadPost", {
+    desc = "Delete welcome buffer on first file open",
+    once = true,
+    callback = function()
+        local b = vim.fn.bufnr("#")
+        if b > 0
+            and vim.api.nvim_buf_is_valid(b)
+            and vim.api.nvim_buf_get_name(b) == ""
+            and vim.bo[b].filetype == ""
+            and not vim.bo[b].modified then
+            vim.api.nvim_buf_delete(b, { force = true })
+        end
+    end
+})
+
 vim.api.nvim_create_autocmd("BufWritePre", {
     desc = "Format on save",
     group = vim.api.nvim_create_augroup("Format", {}),
