@@ -1,7 +1,10 @@
 vim.api.nvim_create_autocmd("BufReadPost", {
     desc = "Delete welcome buffer on first file open",
-    once = true,
-    callback = function()
+    callback = function(ev)
+        if vim.api.nvim_win_get_config(0).relative ~= "" then
+            return -- current window is float
+        end
+        vim.api.nvim_del_autocmd(ev.id)
         local b = vim.fn.bufnr("#")
         if b > 0
             and vim.api.nvim_buf_is_valid(b)
