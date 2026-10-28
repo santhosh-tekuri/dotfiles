@@ -2,15 +2,18 @@ vim.api.nvim_create_autocmd("BufHidden", {
     desc = "Delete welcome buffer when hidden",
     callback = function(ev)
         if ev.buf == 1 then
-            vim.api.nvim_del_autocmd(ev.id)
-            if vim.api.nvim_buf_is_valid(1)
-                and vim.api.nvim_buf_get_name(1) == ""
-                and vim.bo[1].filetype == ""
-                and not vim.bo[1].modified then
-                vim.schedule(function()
+            vim.schedule(function()
+                if vim.bo.buftype == "terminal" then
+                    return
+                end
+                vim.api.nvim_del_autocmd(ev.id)
+                if vim.api.nvim_buf_is_valid(1)
+                    and vim.api.nvim_buf_get_name(1) == ""
+                    and vim.bo[1].filetype == ""
+                    and not vim.bo[1].modified then
                     vim.api.nvim_buf_delete(1, { force = true })
-                end)
-            end
+                end
+            end)
         end
     end
 })
