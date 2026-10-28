@@ -54,7 +54,7 @@
       "src": "https://github.com/santhosh-tekuri/silence.nvim"
     },
     "term.nvim": {
-      "rev": "376b4369045714ee2b163b480e0670c0828c5cb6",
+      "rev": "ea5ec3d38e355563a5c830ef54c287bf78ef1975",
       "src": "https://github.com/santhosh-tekuri/term.nvim"
     },
     "wordiff.nvim": {
