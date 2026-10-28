@@ -1,17 +1,16 @@
-vim.api.nvim_create_autocmd("BufReadPost", {
-    desc = "Delete welcome buffer on first file open",
+vim.api.nvim_create_autocmd("BufHidden", {
+    desc = "Delete welcome buffer when hidden",
     callback = function(ev)
-        if vim.api.nvim_win_get_config(0).relative ~= "" then
-            return -- current window is float
-        end
-        vim.api.nvim_del_autocmd(ev.id)
-        local b = vim.fn.bufnr("#")
-        if b > 0
-            and vim.api.nvim_buf_is_valid(b)
-            and vim.api.nvim_buf_get_name(b) == ""
-            and vim.bo[b].filetype == ""
-            and not vim.bo[b].modified then
-            vim.api.nvim_buf_delete(b, { force = true })
+        if ev.buf == 1 then
+            vim.api.nvim_del_autocmd(ev.id)
+            if vim.api.nvim_buf_is_valid(1)
+                and vim.api.nvim_buf_get_name(1) == ""
+                and vim.bo[1].filetype == ""
+                and not vim.bo[1].modified then
+                vim.schedule(function()
+                    vim.api.nvim_buf_delete(1, { force = true })
+                end)
+            end
         end
     end
 })
