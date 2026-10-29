@@ -10,11 +10,11 @@
       "src": "https://github.com/smilhey/ed-cmd.nvim"
     },
     "git.nvim": {
-      "rev": "14c65ec6db3af2f9a24466c6cabc833e241ff67f",
+      "rev": "edcbfbdd58c912ea4877bd8e31d76039b042e882",
       "src": "https://github.com/santhosh-tekuri/git.nvim"
     },
     "gitsigns.nvim": {
-      "rev": "d4854fa9a94b5c8b37dd209fb4a19e98e764186f",
+      "rev": "1e9d0fbfe7ff848bc402d2c2e2854fb4eff2dce7",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "mason.nvim": {
@@ -54,7 +54,7 @@
       "src": "https://github.com/santhosh-tekuri/silence.nvim"
     },
     "term.nvim": {
-      "rev": "ea5ec3d38e355563a5c830ef54c287bf78ef1975",
+      "rev": "0231fd36c08f215d88495322c85b2f52db8c7491",
       "src": "https://github.com/santhosh-tekuri/term.nvim"
     },
     "wordiff.nvim": {
