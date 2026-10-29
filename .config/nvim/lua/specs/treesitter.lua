@@ -36,7 +36,9 @@ vim.api.nvim_create_autocmd("FileType", {
         timer:start(0, 1000, vim.schedule_wrap(function()
             i = i + 1
             if vim.list_contains(ts.get_installed(), lang) then
-                timer:close()
+                if not timer:is_closing() then
+                    timer:close()
+                end
                 if vim.api.nvim_buf_is_valid(event.buf) then
                     vim.treesitter.start(event.buf)
                     vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
@@ -45,7 +47,9 @@ vim.api.nvim_create_autocmd("FileType", {
                     vim.wo.foldlevel = 99
                 end
             elseif i > 60 then
-                timer:close()
+                if not timer:is_closing() then
+                    timer:close()
+                end
             end
         end))
     end
