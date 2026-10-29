@@ -2,14 +2,15 @@
 
 if [ "$#" -ne 2 ]; then
     >&2 cat <<'EOF'
-usage: zero-delim PREFIX_EXTENDED_REGEX FILE
+usage: zero-delim EXTENDED_PATTERN FILE
 
 prints zero delimited multiline logrecords from FILE
-can use $level, $date and $time variables
+i.e, prefixes lines having the PATTERN null char
+can use $level, $date and $time variables in PATTERN
 
 example:
-    zero-delim '$level ' test.log | grep -z '^ERROR'
-    zero-delim '$date $time ' test.log | grep -z ' ERROR '
+    zero-delim '^$level ' test.log | grep -z '^ERROR'
+    zero-delim '^$date $time ' test.log | grep -z ' ERROR '
 EOF
     exit 1
 fi
@@ -18,5 +19,5 @@ export level='(FATAL|ERROR|WARN|INFO|DEBUG|TRACE) '
 export date='[0-9]{4}-[0-9]{2}-[0-9]{2}'
 export time='[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}'
 
-arg=$(echo -n "s/^$1/\x00\0/g" | envsubst)
+arg=$(echo -n "/$1/s/^/\x00/g" | envsubst)
 sed -E "$arg" "$2"
