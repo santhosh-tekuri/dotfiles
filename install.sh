@@ -41,7 +41,7 @@ function gitclone() {
 addline "source $PWD/.bashrc" ~/.bashrc
 addline "source $PWD/.zshrc" ~/.zshrc
 addline "source $PWD/.vimrc" ~/.vimrc
-mkdir -p ~/.ssh
+mkdir -p ~/.ssh/sockets
 addline "Include $PWD/.ssh/config" ~/.ssh/config
 
 # link .config subfolders
