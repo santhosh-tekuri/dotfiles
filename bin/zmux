@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "$#" -ne 1 ]; then
+    >&2 cat <<'EOF'
+usage: zmux SESSION
+EOF
+    exit 1
+fi
+session="$1"
+
+if [ -n "$ZMX_SESSION" ]; then
+    >&2 echo You are already in zmx session
+    exit 1
+fi
+
+unset ZMX_SESSION_PREFIX
+tab="$(printf '\t')"
+awk_script=$(cat << 'EOF'
+BEGIN { FS = OFS = "\t" }
+{
+    delete map;
+    for (i=1; i<=NF; i++) {
+        split($i, pair, "=")
+        if (i==1) {
+            pair[1] = "name" # to handle prefix in line
+        }
+        map[pair[1]] = pair[2]
+    }
+    if (!("attached" in map)) {
+        map["attached"] = map["created"]
+    }
+    print map["name"], map["session"], map["window"], map["attached"]
+}
+EOF
+)
+
+function log() {
+    true && echo "$1"
+}
+
+function pause() {
+    read -rp "Press ENTER to continue..."
+}
+
+function zmx_ls() {
+    zmx ls 2>/dev/null | awk "$awk_script"
+}
+
+function zmx_attach_existing() {
+    name="$1"
+    zmx set "$name" "attached=$(date +%s)"
+    zmx attach "$name"
+}
+
+cleanup() {
+    if [ $? -eq 0 ]; then
+        # tput rmcup
+        echo
+    fi
+}
+
+trap cleanup EXIT
+# tput smcup
+
+i=0
+while true; do
+    ((i++))
+    all=$(zmx_ls)
+    windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session')
+    log "$windows"
+    log "------------"
+    if [ $i -eq 1 ]; then
+        if [ -z "$windows" ]; then
+            log "session not exists"
+            name="$(uuidgen)"
+            window="default"
+            zmx attach --labels "session=$session window=$window" "$name"
+        else
+            log "session exists"
+            windows=$(echo -n "$windows" | sort "-t$tab" -k4nr)
+            name=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $1;exit}')
+            window=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $3;exit}')
+            log "name is [$name]"
+            zmx_attach_existing "$name"
+        fi
+        continue
+    fi
+
+    if [ -z "$windows" ]; then
+        exit
+    fi
+    echo "$all"
+    read -r -s -n 1 ch
+    case "$ch" in
+        "q")
+            exit
+            ;;
+        "c")
+            read -rp "window name: " window
+            name="$(uuidgen)"
+            zmx attach --labels "session=$session window=$window" "$name"
+            ;;
+        "p")
+            t=$(echo -n "$windows" | grep -B1 "$name" | awk -F "$tab" 'NR=1 {print $1;exit}')
+            if [ "$t" == "$name" ]; then
+                t=$(echo -n "$windows" | awk -F "$tab" 'END {print $1}')
+            fi
+            zmx_attach_existing "$t"
+            ;;
+        "n")
+            t=$(echo -n "$windows" | grep -A1 "$name" | awk -F "$tab" 'END {print $1}')
+            log "t1 is $t"
+            if [ "$t" == "$name" ]; then
+                log "xxx"
+                t=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $1;exit}')
+                log "t2 is $t"
+            fi
+            log "next is $t"
+            zmx_attach_existing "$t"
+            ;;
+        "&")
+            read -rs -n1 -p "kill current window? (y/n)" resp
+            if [ "$resp" == "y" ]; then
+                zmx kill "$name"
+                i=0
+            elif [ "$resp" == "Y" ]; then
+                zmx kill --force "$name"
+                i=0
+            else
+                zmx attach "$name"
+            fi
+            ;;
+    esac
+done
+
