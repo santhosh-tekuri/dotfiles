@@ -4,6 +4,7 @@ window-padding-x = 0,0
 window-padding-y = 0,0
 
 font-family = 0xProto
+window-title-font-family = 0xProto
 font-size = 18
 font-variation = wght=100
 font-feature = -calt, -liga, -dlig
