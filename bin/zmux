@@ -2,6 +2,7 @@
 
 set -e
 
+colors_dim_foreground=$(tput setaf 0)
 colors_status_line=$(tput setab 4 && tput setaf 7)
 colors_session_name=$(tput setab 3 && tput setaf 0)
 
@@ -123,6 +124,8 @@ while true; do
     fi
     windows=$(echo -n "$windows" | sort "-t$tab" -k4n)
 
+    echo -n "$colors_dim_foreground"
+    zmx history "$name"
     # draw status bar --
     tput cup "$(tput lines)" 0
     echo -n "$colors_session_name"
@@ -144,10 +147,10 @@ while true; do
     tput sgr0 # reset colors
     tput home
 
-    echo "$all"
-    log "------------"
-    log "$windows"
-    log "------------"
+    # echo "$all"
+    # log "------------"
+    # log "$windows"
+    # log "------------"
     read -r -s -n 1 ch
     case "$ch" in
         "d")
