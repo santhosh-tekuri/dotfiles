@@ -28,10 +28,13 @@ BEGIN { FS = OFS = "\t" }
         }
         map[pair[1]] = pair[2]
     }
+    if (!("index" in map)) {
+        map["index"] = map["created"]
+    }
     if (!("attached" in map)) {
         map["attached"] = map["created"]
     }
-    print map["name"], map["session"], map["window"], map["attached"]
+    print map["name"], map["session"], map["window"], map["index"], map["attached"]
 }
 EOF
 )
@@ -79,7 +82,7 @@ while true; do
             zmx attach --labels "session=$session window=$window" "$name"
         else
             log "session exists"
-            windows=$(echo -n "$windows" | sort "-t$tab" -k4nr)
+            windows=$(echo -n "$windows" | sort "-t$tab" -k5nr)
             name=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $1;exit}')
             window=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $3;exit}')
             log "name is [$name]"
@@ -91,6 +94,7 @@ while true; do
     if [ -z "$windows" ]; then
         exit
     fi
+    windows=$(echo -n "$windows" | sort "-t$tab" -k4n)
     echo "$all"
     read -r -s -n 1 ch
     case "$ch" in
