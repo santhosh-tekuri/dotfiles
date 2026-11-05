@@ -132,6 +132,13 @@ while true; do
         "n")
             zmx_attach_existing "$(next)"
             ;;
+        ",")
+            read -rp "new window name: " resp
+            if [ "$resp" != "" ]; then
+                zmx set "$name" "window=$resp"
+            fi
+            zmx attach "$name"
+            ;;
         "&")
             read -rs -n1 -p "kill current window? (y/n)" resp
             if [ "$resp" != "y" ] && [ "$resp" != "Y" ]; then
