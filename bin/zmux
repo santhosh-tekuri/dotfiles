@@ -17,9 +17,13 @@ else
     )
 fi
 
+# -------------------------------------------------------
+
 if [ "$#" -ne 1 ]; then
     >&2 cat <<'EOF'
 usage: zmux SESSION
+
+tmux style session management for zmx
 EOF
     exit 1
 fi
