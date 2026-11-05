@@ -157,6 +157,15 @@ while true; do
                 zmx_attach_existing "$next"
             fi
             ;;
+        "s")
+            read -rp "session: " resp
+            if [ "$resp" != "" ]; then
+                session="$resp"
+                i=0
+            else
+                zmx attach "$name"
+            fi
+            ;;
     esac
 done
 
