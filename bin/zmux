@@ -57,6 +57,22 @@ function zmx_attach_existing() {
     zmx attach "$name"
 }
 
+function prev() {
+    t=$(echo -n "$windows" | grep -B1 "$name" | awk -F "$tab" 'NR==1 {print $1;exit}')
+    if [ "$t" == "$name" ]; then
+        t=$(echo -n "$windows" | awk -F "$tab" 'END {print $1}')
+    fi
+    echo -n "$t"
+}
+
+function next() {
+    t=$(echo -n "$windows" | grep -A1 "$name" | awk -F "$tab" 'END {print $1}')
+    if [ "$t" == "$name" ]; then
+        t=$(echo -n "$windows" | awk -F "$tab" 'NR==1 {print $1;exit}')
+    fi
+    echo -n "$t"
+}
+
 cleanup() {
     if [ $? -eq 0 ]; then
         # tput rmcup
@@ -72,8 +88,6 @@ while true; do
     ((i++))
     all=$(zmx_ls)
     windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session')
-    log "$windows"
-    log "------------"
     if [ $i -eq 1 ]; then
         if [ -z "$windows" ]; then
             log "session not exists"
@@ -96,6 +110,9 @@ while true; do
     fi
     windows=$(echo -n "$windows" | sort "-t$tab" -k4n)
     echo "$all"
+    log "------------"
+    log "$windows"
+    log "------------"
     read -r -s -n 1 ch
     case "$ch" in
         "q")
@@ -107,22 +124,10 @@ while true; do
             zmx attach --labels "session=$session window=$window" "$name"
             ;;
         "p")
-            t=$(echo -n "$windows" | grep -B1 "$name" | awk -F "$tab" 'NR==1 {print $1;exit}')
-            if [ "$t" == "$name" ]; then
-                t=$(echo -n "$windows" | awk -F "$tab" 'END {print $1}')
-            fi
-            zmx_attach_existing "$t"
+            zmx_attach_existing "$(prev)"
             ;;
         "n")
-            t=$(echo -n "$windows" | grep -A1 "$name" | awk -F "$tab" 'END {print $1}')
-            log "t1 is $t"
-            if [ "$t" == "$name" ]; then
-                log "xxx"
-                t=$(echo -n "$windows" | awk -F "$tab" 'NR==1 {print $1;exit}')
-                log "t2 is $t"
-            fi
-            log "next is $t"
-            zmx_attach_existing "$t"
+            zmx_attach_existing "$(next)"
             ;;
         "&")
             read -rs -n1 -p "kill current window? (y/n)" resp
