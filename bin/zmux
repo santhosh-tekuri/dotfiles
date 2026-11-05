@@ -2,6 +2,9 @@
 
 set -e
 
+colors_status_line=$(tput setab 4 && tput setaf 7)
+colors_session_name=$(tput setab 3 && tput setaf 0)
+
 if [ -n "$ZMUX_BOOKMARKS" ]; then
     readarray -d ':' -t bookmarks <<< "$ZMUX_BOOKMARKS"
 else
@@ -128,9 +131,8 @@ while true; do
     windows=$(echo -n "$windows" | sort "-t$tab" -k4n)
 
     # draw status bar --
-    bg=4;fg=7; nbg=3;nfg=0;
     tput cup "$(tput lines)" 0
-    tput setab $nbg;tput setaf $nfg
+    echo -n "$colors_session_name"
     echo -n " $session "
     idx=0
     echo -n " "
@@ -140,11 +142,11 @@ while true; do
         if [ "$(echo -n "$line" | cut -f1)" == "$name" ]; then
             tput sgr0 # active tab. reset colors
         else
-            tput setab $bg;tput setaf $fg
+            echo -n "$colors_status_line"
         fi
         echo -n " $idx:$win "
     done
-    tput setab $bg;tput setaf $fg
+    echo -n "$colors_status_line"
     tput el # erase line
     tput sgr0 # reset colors
     tput home
