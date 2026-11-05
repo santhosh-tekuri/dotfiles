@@ -67,6 +67,7 @@ function zmx_ls() {
 }
 
 function zmx_attach_existing() {
+    tput cnorm
     name="$1"
     zmx set "$name" "attached=$(date +%s)"
     zmx attach "$name"
@@ -107,6 +108,7 @@ while true; do
                     break
                 fi
             done
+            tput cnorm
             zmx attach --labels "session=$session window=$window" "$name"
         else
             log "session exists"
@@ -162,11 +164,12 @@ while true; do
             exit
             ;;
         "q")
-            zmx attach "$name"
+            zmx_attach_existing "$name"
             ;;
         "c")
             read -rp "window name: " window
             name="$(uuidgen)"
+            tput cnorm
             zmx attach --labels "session=$session window=$window" "$name"
             ;;
         "p")
@@ -180,12 +183,12 @@ while true; do
             if [ "$resp" != "" ]; then
                 zmx set "$name" "window=$resp"
             fi
-            zmx attach "$name"
+            zmx_attach_existing "$name"
             ;;
         "&")
             read -rs -n1 -p "kill current window? (y/n)" resp
             if [ "$resp" != "y" ] && [ "$resp" != "Y" ]; then
-                zmx attach "$name"
+                zmx_attach_existing "$name"
                 continue
             fi
             next="$(next)"
@@ -206,7 +209,7 @@ while true; do
                 session="$resp"
                 i=0
             else
-                zmx attach "$name"
+                zmx_attach_existing "$name"
             fi
             ;;
     esac
