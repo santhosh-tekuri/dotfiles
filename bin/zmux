@@ -134,14 +134,20 @@ while true; do
             ;;
         "&")
             read -rs -n1 -p "kill current window? (y/n)" resp
+            if [ "$resp" != "y" ] && [ "$resp" != "Y" ]; then
+                zmx attach "$name"
+                continue
+            fi
+            next="$(next)"
             if [ "$resp" == "y" ]; then
                 zmx kill "$name"
-                i=0
             elif [ "$resp" == "Y" ]; then
                 zmx kill --force "$name"
-                i=0
+            fi
+            if [ "$next" == "$name" ]; then
+                exit
             else
-                zmx attach "$name"
+                zmx_attach_existing "$next"
             fi
             ;;
     esac
