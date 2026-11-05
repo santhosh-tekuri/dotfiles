@@ -144,6 +144,11 @@ while true; do
     done
     echo -n "$colors_status_line"
     tput el # erase line
+    if [ -n "$SSH_CLIENT" ]; then
+        ssh="${USER}@$(hostname) "
+        tput cup "$(tput lines)" $(($(tput cols)-${#ssh}-1))
+        echo -n "$ssh"
+    fi
     tput sgr0 # reset colors
     tput home
 
