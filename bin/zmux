@@ -87,18 +87,11 @@ function next() {
     echo -n "$t"
 }
 
-cleanup() {
-    if [ $? -eq 0 ]; then
-        # tput rmcup
-        echo
-    fi
-}
-
-trap cleanup EXIT
-# tput smcup
+trap "tput cnorm" EXIT
 
 i=0
 while true; do
+    tput civis
     ((i++))
     all=$(zmx_ls)
     windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session')
