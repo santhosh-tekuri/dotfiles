@@ -98,6 +98,16 @@ function next() {
     echo -n "$t"
 }
 
+function prompt() {
+    tput cup "$(tput lines)" 0
+    echo -n "$colors_status_line"
+    tput el
+    tput cnorm
+    # shellcheck disable=SC2162
+    read "$@"
+    tput sgr0
+}
+
 trap "tput cnorm" EXIT
 
 i=0
@@ -176,7 +186,7 @@ while true; do
             zmx_attach_existing "$name"
             ;;
         "c")
-            read -rp "window name: " window
+            prompt -rp "window name: " window
             name="$(uuidgen)"
             tput cnorm
             zmx attach --labels "session=$session window=$window" "$name"
@@ -194,14 +204,14 @@ while true; do
             zmx_attach_existing "$(next)"
             ;;
         ",")
-            read -rp "new window name: " resp
+            prompt -rp "window name: " resp
             if [ "$resp" != "" ]; then
                 zmx set "$name" "window=$resp"
             fi
             zmx_attach_existing "$name"
             ;;
         "&")
-            read -rs -n1 -p "kill current window? (y/n)" resp
+            prompt -rs -n1 -p "kill current window? (y/n) (Y to force kill)" resp
             if [ "$resp" != "y" ] && [ "$resp" != "Y" ]; then
                 zmx_attach_existing "$name"
                 continue
@@ -219,7 +229,7 @@ while true; do
             fi
             ;;
         "s")
-            read -rp "session: " resp
+            prompt -rp "session: " resp
             if [ "$resp" != "" ]; then
                 session="$resp"
                 i=0
