@@ -126,6 +126,29 @@ while true; do
         exit
     fi
     windows=$(echo -n "$windows" | sort "-t$tab" -k4n)
+
+    # draw status bar --
+    bg=4;fg=7; nbg=3;nfg=0;
+    tput cup "$(tput lines)" 0
+    tput setab $nbg;tput setaf $nfg
+    echo -n " $session "
+    idx=0
+    echo -n " "
+    echo "$windows" | while read -r line; do
+        ((idx++))
+        win=$(echo -n "$line" | cut -f3)
+        if [ "$(echo -n "$line" | cut -f1)" == "$name" ]; then
+            tput sgr0 # active tab. reset colors
+        else
+            tput setab $bg;tput setaf $fg
+        fi
+        echo -n " $idx:$win "
+    done
+    tput setab $bg;tput setaf $fg
+    tput el # erase line
+    tput sgr0 # reset colors
+    tput home
+
     echo "$all"
     log "------------"
     log "$windows"
