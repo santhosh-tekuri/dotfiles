@@ -2,6 +2,17 @@
 
 set -e
 
+if [ -n "$ZMUX_BOOKMARKS" ]; then
+    readarray -d ':' -t bookmarks <<< "$ZMUX_BOOKMARKS"
+else
+    bookmarks=(
+        "$HOME"
+        "$HOME/dotfiles"
+        "$HOME/.config/nvim"
+        ~/gh/santhosh-tekuri/*
+    )
+fi
+
 if [ "$#" -ne 1 ]; then
     >&2 cat <<'EOF'
 usage: zmux SESSION
@@ -93,6 +104,12 @@ while true; do
             log "session not exists"
             name="$(uuidgen)"
             window="default"
+            for dir in "${bookmarks[@]}"; do
+                if [ -d "$dir" ] && [ "$(basename "$dir")" == "$session" ]; then
+                    cd "$dir"
+                    break
+                fi
+            done
             zmx attach --labels "session=$session window=$window" "$name"
         else
             log "session exists"
