@@ -115,8 +115,11 @@ while true; do
     log "------------"
     read -r -s -n 1 ch
     case "$ch" in
-        "q")
+        "d")
             exit
+            ;;
+        "q")
+            zmx attach "$name"
             ;;
         "c")
             read -rp "window name: " window
