@@ -176,6 +176,12 @@ while true; do
             tput cnorm
             zmx attach --labels "session=$session window=$window" "$name"
             ;;
+        [0-9])
+            line=$(echo -n "$windows" | sed -n "${ch}p")
+            if [ -n "$line" ]; then
+                zmx_attach_existing "$(echo -n "$line" | cut -f1)"
+            fi
+            ;;
         "p")
             zmx_attach_existing "$(prev)"
             ;;
