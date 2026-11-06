@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+# usage: zmux [SESSION]
+# tmux style session management for zmx
+
 set -e
 
-colors_dim_foreground=$(tput setaf 0)
 colors_status_line=$(tput setab 4 && tput setaf 7)
 colors_session_name=$(tput setab 3 && tput setaf 0)
 
@@ -19,14 +21,6 @@ fi
 
 # -------------------------------------------------------
 
-if [ "$#" -ne 1 ]; then
-    >&2 cat <<'EOF'
-usage: zmux SESSION
-
-tmux style session management for zmx
-EOF
-    exit 1
-fi
 session="$1"
 
 if ! command -v zmx >/dev/null 2>&1; then
@@ -58,7 +52,7 @@ BEGIN { FS = OFS = "\t" }
     if (!("attached" in map)) {
         map["attached"] = map["created"]
     }
-    print map["name"], map["session"], map["window"], map["index"], map["attached"]
+    print map["name"], map["session"], map["window"], map["index"], map["attached"], map["clients"]
 }
 EOF
 )
@@ -189,6 +183,21 @@ while true; do
     tput civis
     ((i++))
     all=$(zmx_ls)
+    if [ -z "$session" ]; then
+        sessions=$(echo -n "$all" | awk '
+        BEGIN { FS = OFS = "\t" }
+        { clients[$2] += $6 }
+        !($2 in attached) || ($5 > attached[$2]) { attached[$2] = $5 }
+        END { for (k in clients) print k, clients[k], attached[k] }')
+        t=$(echo -n "$sessions" | awk -F "$tab" '$2==0 {print}' | sort "-t$tab" -k3nr)
+        if [ -z "$t" ]; then
+            t=$(echo -n "$sessions" | awk -F "$tab" '$2>0 {print}' | sort "-t$tab" -k3nr)
+        fi
+        session=$(echo -n "$t" | awk -F "$tab" 'NR=1 {print $1;exit}')
+        if [ -z "$session" ]; then
+            session=default
+        fi
+    fi
     windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session')
 
     # handle current window no longer exists
