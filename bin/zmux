@@ -63,19 +63,19 @@ BEGIN { FS = OFS = "\t" }
 EOF
 )
 keybinds=$(cat << 'EOF'
-c       create new window
-,       rename current window
+    c       create new window
+    ,       rename current window
 
-[1-9]   select window at position
-n       select next window
-p       select prev window
-N       swap with next window
-P       swap with prev window
-&       kill current window
+[1-9]       select window at position
+    n       select next window
+    p       select prev window
+    N       swap with next window
+    P       swap with prev window
+    &       kill current window
 
-s       switch session
-d       detach client
-q       exit prefix mode
+    s       switch session
+    d       detach client
+    q       exit prefix mode
 EOF
 )
 keybinds_lc=$(echo -n "$keybinds" | wc -l)
@@ -243,7 +243,7 @@ while true; do
             zmx_attach_existing "$name"
             ;;
         "c")
-            prompt -rp "window name: " window
+            prompt -rp " window name: " window
             name="$(uuidgen)"
             tput cnorm
             zmx attach --labels "session=$session window=$window" "$name"
@@ -269,14 +269,14 @@ while true; do
             swap "$(next)"
             ;;
         ",")
-            prompt -rp "window name: " resp
+            prompt -rp " window name: " resp
             if [ "$resp" != "" ]; then
                 zmx set "$name" "window=$resp"
             fi
             zmx_attach_existing "$name"
             ;;
         "&")
-            prompt -rs -n1 -p "kill current window? (y/n) (Y to force kill)" resp
+            prompt -rs -n1 -p " kill current window? (y/n) (Y to force kill)" resp
             if [ "$resp" != "y" ] && [ "$resp" != "Y" ]; then
                 zmx_attach_existing "$name"
                 continue
