@@ -114,6 +114,10 @@ function next() {
     echo -n "$t"
 }
 
+function bell() {
+    printf '\a'
+}
+
 function prompt() {
     tput cup "$(tput lines)" 0
     echo -n "$colors_status_line"
@@ -216,6 +220,8 @@ while true; do
             line=$(echo -n "$windows" | sed -n "${ch}p")
             if [ -n "$line" ]; then
                 zmx_attach_existing "$(echo -n "$line" | cut -f1)"
+            else
+                bell
             fi
             ;;
         "p")
