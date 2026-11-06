@@ -39,7 +39,7 @@ if [ -n "$ZMX_SESSION" ]; then
     exit 1
 fi
 
-unset ZMX_SESSION_PREFIX
+unset -v ZMX_SESSION_PREFIX
 tab="$(printf '\t')"
 awk_script=$(cat << 'EOF'
 BEGIN { FS = OFS = "\t" }
@@ -180,10 +180,31 @@ trap "tput cnorm" EXIT
 
 i=0
 while true; do
+    # handle current window no longer exists
+    unset -v idx
+    if [ "$i" -ne 0 ] && [ -n "$name" ]; then
+        idx=$(echo -n "$windows" | awk -F "$tab" -v "name=$name" '$1==name {print NR;exit}')
+    fi
+
     tput civis
     ((i++))
     all=$(zmx_ls)
     windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session')
+
+    # handle current window no longer exists
+    if [ -n "$idx" ] && ! echo "$windows" | grep -q "$name"; then
+        name=$(echo -n "$windows" | awk -F "$tab" -v "idx=$idx" 'NR==idx {print $1;exit}')
+        if [ -z "$name" ]; then
+            name=$(echo -n "$windows" | awk -F "$tab" 'END {print $1;exit}')
+        fi
+        if [ -z "$name" ]; then
+            exit
+        else
+            zmx_attach_existing "$name"
+            continue
+        fi
+    fi
+
     if [ $i -eq 1 ]; then
         if [ -z "$windows" ]; then
             name="$(uuidgen)"
@@ -260,16 +281,10 @@ while true; do
                 zmx_attach_existing "$name"
                 continue
             fi
-            next="$(next)"
             if [ "$resp" == "y" ]; then
                 zmx kill "$name"
             elif [ "$resp" == "Y" ]; then
                 zmx kill --force "$name"
-            fi
-            if [ "$next" == "$name" ]; then
-                exit
-            else
-                zmx_attach_existing "$next"
             fi
             ;;
         "s")
