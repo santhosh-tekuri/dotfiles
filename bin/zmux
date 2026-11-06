@@ -62,6 +62,22 @@ BEGIN { FS = OFS = "\t" }
 }
 EOF
 )
+keybinds=$(cat << 'EOF'
+c       create new window
+,       rename current window
+
+[1-9]   select window at position
+n       select next window
+p       select prev window
+&       kill current window
+
+s       switch session
+d       detach client
+q       exit prefix mode
+EOF
+)
+keybinds_lc=$(echo -n "$keybinds" | wc -l)
+keybinds_width=$(echo -n "$keybinds" | wc -L)
 
 function log() {
     true && echo "$1"
@@ -142,8 +158,15 @@ while true; do
     fi
     windows=$(echo -n "$windows" | sort "-t$tab" -k4n)
 
-    echo -n "$colors_dim_foreground"
-    zmx history "$name"
+    # draw help screen
+    row=$((($(tput lines)-keybinds_lc-1)/2))
+    col=$((($(tput cols)-keybinds_width)/2))
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        tput cup $row $col
+        echo -n "$line"
+        ((row++))
+    done <<< "$keybinds"
+
     # draw status bar --
     tput cup "$(tput lines)" 0
     echo -n "$colors_session_name"
