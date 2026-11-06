@@ -69,6 +69,8 @@ c       create new window
 [1-9]   select window at position
 n       select next window
 p       select prev window
+N       swap with next window
+P       swap with prev window
 &       kill current window
 
 s       switch session
@@ -112,6 +114,15 @@ function next() {
         t=$(echo -n "$windows" | awk -F "$tab" 'NR==1 {print $1;exit}')
     fi
     echo -n "$t"
+}
+
+function swap() {
+    if [ "$1" != "$name" ]; then
+        this_index=$(echo -n "$windows" | awk -F "$tab" -v "name=$name" '$1==name {print $4;exit}')
+        that_index=$(echo -n "$windows" | awk -F "$tab" -v "name=$1" '$1==name {print $4;exit}')
+        zmx set "$name" "index=$that_index"
+        zmx set "$1" "index=$this_index"
+    fi
 }
 
 function bell() {
@@ -229,6 +240,12 @@ while true; do
             ;;
         "n")
             zmx_attach_existing "$(next)"
+            ;;
+        "P")
+            swap "$(prev)"
+            ;;
+        "N")
+            swap "$(next)"
             ;;
         ",")
             prompt -rp "window name: " resp
