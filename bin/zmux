@@ -118,7 +118,6 @@ while true; do
     windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session')
     if [ $i -eq 1 ]; then
         if [ -z "$windows" ]; then
-            log "session not exists"
             name="$(uuidgen)"
             window="default"
             for dir in "${bookmarks[@]}"; do
@@ -130,11 +129,9 @@ while true; do
             tput cnorm
             zmx attach --labels "session=$session window=$window" "$name"
         else
-            log "session exists"
             windows=$(echo -n "$windows" | sort "-t$tab" -k5nr)
             name=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $1;exit}')
             window=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $3;exit}')
-            log "name is [$name]"
             zmx_attach_existing "$name"
         fi
         continue
