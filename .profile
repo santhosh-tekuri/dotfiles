@@ -33,7 +33,7 @@ export GOPATH=~/go
 export PATH=/usr/local/sbin:$GOPATH/bin:$PATH
 
 alias cls=clear
-alias kls="clear && printf '\e[3J'"
+alias kls="tput clear && tput E3"
 if ls --color=auto> /dev/null 2>&1; then
     alias ls="ls --color=auto"
 fi
