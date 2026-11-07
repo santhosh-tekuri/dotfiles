@@ -131,6 +131,8 @@ function prompt() {
     # shellcheck disable=SC2162
     read "$@"
     tput sgr0
+    last="${!#}"
+    test -n "${!last}"
 }
 
 function render_help() {
@@ -252,10 +254,13 @@ while true; do
             zmx_attach_existing "$name"
             ;;
         "c")
-            prompt -rep " create new window: " window
-            name="$(uuidgen)"
-            tput cnorm
-            zmx attach --labels "session=$session window=$window" "$name"
+            if prompt -rep " create new window: " window; then
+                name="$(uuidgen)"
+                tput cnorm
+                zmx attach --labels "session=$session window=$window" "$name"
+            else
+                zmx_attach_existing "$name"
+            fi
             ;;
         [0-9])
             line=$(echo -n "$windows" | sed -n "${ch}p")
@@ -278,8 +283,7 @@ while true; do
             swap "$(next)"
             ;;
         ",")
-            prompt -rep " rename window: " resp
-            if [ "$resp" != "" ]; then
+            if prompt -rep " rename window: " resp; then
                 zmx set "$name" "window=$resp"
             fi
             zmx_attach_existing "$name"
@@ -297,8 +301,7 @@ while true; do
             fi
             ;;
         "s")
-            prompt -rep " switch to session: " resp
-            if [ "$resp" != "" ]; then
+            if prompt -rep " switch to session: " resp; then
                 session="$resp"
                 i=0
             else
