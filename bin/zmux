@@ -68,6 +68,7 @@ keybinds=$(cat << 'EOF'
     P       swap with prev window
     &       kill current window
 
+    $       rename session
     s       switch session
     d       detach client
     q       exit prefix mode
@@ -296,6 +297,15 @@ while true; do
         ",")
             if prompt -rep " rename window: " resp; then
                 zmx set "$name" "window=$resp"
+            fi
+            zmx_attach_existing "$name"
+            ;;
+        "$")
+            if prompt -rep " rename session: " resp; then
+                echo -n "$windows" | cut -f1 | while IFS= read -r line; do
+                    zmx set "$line" "session=$resp"
+                done
+                session="$resp"
             fi
             zmx_attach_existing "$name"
             ;;
