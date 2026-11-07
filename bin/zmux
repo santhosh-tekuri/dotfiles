@@ -66,6 +66,7 @@ keybinds=$(cat << 'EOF'
     p       select prev window
     N       swap with next window
     P       swap with prev window
+    l       select last visited window
     &       kill current window
 
     $       rename session
@@ -281,6 +282,10 @@ while true; do
             else
                 bell
             fi
+            ;;
+        "l")
+            windows=$(echo -n "$windows" | sort "-t$tab" -k5nr)
+            zmx_attach_existing "$(next)"
             ;;
         "p")
             zmx_attach_existing "$(prev)"
