@@ -58,6 +58,7 @@ EOF
 )
 keybinds=$(cat << 'EOF'
     c       create new window
+    C       new window with command
     ,       rename current window
 
 [1-9]       select window at position
@@ -258,6 +259,16 @@ while true; do
                 name="$(uuidgen)"
                 tput cnorm
                 zmx attach --labels "session=$session window=$window" "$name"
+            else
+                zmx_attach_existing "$name"
+            fi
+            ;;
+        "C")
+            if prompt -rep " new window with command: " cmd; then
+                window=$(echo -n "$cmd" | cut -d ' ' -f1)
+                name="$(uuidgen)"
+                tput cnorm
+                zmx attach --labels "session=$session window=$window" "$name" $cmd
             else
                 zmx_attach_existing "$name"
             fi
