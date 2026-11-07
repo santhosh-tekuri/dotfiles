@@ -252,7 +252,7 @@ while true; do
             zmx_attach_existing "$name"
             ;;
         "c")
-            prompt -rp " window name: " window
+            prompt -rp " create new window: " window
             name="$(uuidgen)"
             tput cnorm
             zmx attach --labels "session=$session window=$window" "$name"
@@ -278,7 +278,7 @@ while true; do
             swap "$(next)"
             ;;
         ",")
-            prompt -rp " window name: " resp
+            prompt -rp " rename window: " resp
             if [ "$resp" != "" ]; then
                 zmx set "$name" "window=$resp"
             fi
@@ -297,7 +297,7 @@ while true; do
             fi
             ;;
         "s")
-            prompt -rp "session: " resp
+            prompt -rp " switch to session: " resp
             if [ "$resp" != "" ]; then
                 session="$resp"
                 i=0
