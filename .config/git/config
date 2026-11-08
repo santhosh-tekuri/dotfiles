@@ -1,6 +1,5 @@
-[user]
-    name = Santhosh Kumar Tekuri
-    email = santhosh.tekuri@gmail.com
+[include]
+    path = user.config
 [url "git@github.com:"]
     pushInsteadOf = "https://github.com/"
 [url "git@github.com:santhosh-tekuri/"]

@@ -50,6 +50,18 @@ for dir in "$PWD"/.config/*; do
     link "$dir" ~/.config
 done
 
+if [ ! -f "$PWD"/.config/git/user.config ]; then
+    read -rep "git user.name: " name
+    read -rep "git user.email: " email
+    if [ -n "$name" ] && [ -n "$email" ]; then
+        cat << EOF > "$PWD"/.config/git/user.config
+[user]
+    name = $name
+    email = $email
+EOF
+    fi
+fi
+
 # install zsh plugins
 mkdir -p ~/.local/share/zsh
 cd ~/.local/share/zsh
