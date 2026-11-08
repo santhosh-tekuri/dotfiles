@@ -206,6 +206,16 @@ function pick_session() {
     test -n "$t"
 }
 
+if [ "$session" == "-" ]; then
+    all=$(zmx_ls)
+    if ! command -v fzf >/dev/null; then
+        >&2 echo missing fzf command in PATH
+        exit 1
+    elif ! pick_session " attach to session: " session; then
+        exit
+    fi
+fi
+
 trap "tput cnorm" EXIT
 
 i=0
