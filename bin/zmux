@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # usage: zmux [SESSION]
-# tmux style session management for zmx
+# tmux style window & session management for zmx
+#
+# to pick session using fzf: zmux -
 
 set -e
 
