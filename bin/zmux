@@ -186,6 +186,24 @@ function render_status() {
     tput home
 }
 
+function pick_session() {
+    ls_sessions=$(ls_sessions)
+    ls_sessions=$(echo -n "$ls_sessions" | grep -v "$session" | true)
+    bm_sessions=$(
+        for dir in "${bookmarks[@]}"; do
+            if [ -d "$dir" ]; then
+                basename="$(basename "$dir")"
+            fi
+            if [ "$basename" != "$session" ] && ! echo -n "$ls_sessions" | grep -q "$basename"; then
+                echo "$basename"
+            fi
+        done
+    )
+    t=$(echo -e "${ls_sessions}\n${bm_sessions}" | fzf --layout=default --prompt "$1" || true)
+    printf -v "${!#}" "%s" "$t"
+    test -n "$t"
+}
+
 trap "tput cnorm" EXIT
 
 i=0
@@ -330,7 +348,12 @@ while true; do
             fi
             ;;
         "s")
-            if prompt -rep " switch to session: " resp; then
+            if command -v fzf >/dev/null; then
+                pick_session " switch to session: " resp || true
+            else
+                prompt -rep " switch to session: " resp || true
+            fi
+            if [ -n "$resp" ]; then
                 session="$resp"
                 i=0
             else
