@@ -2,6 +2,7 @@
 
 set -e
 
+colors_dim_text=$(tput setaf 8)
 colors_status_line=$(tput setab 4 && tput setaf 7)
 colors_session_name=$(tput setab 3 && tput setaf 0)
 
@@ -203,20 +204,23 @@ function render_status() {
 
 function pick_session() {
     ls_sessions=$(ls_sessions)
-    if [ -z "$session" ]; then
-        ls_sessions=$(echo -n "$ls_sessions" | grep -v "$session" | true)
+    if [ -n "$session" ]; then
+        ls_sessions=$(echo -n "$ls_sessions" | grep -v "$session" | cat)
     fi
-    bm_sessions=$(
+    input=$(
+        if [ -n "$ls_sessions" ]; then
+            echo "$ls_sessions"
+        fi
         for dir in "${bookmarks[@]}"; do
             if [ -d "$dir" ]; then
                 basename="$(basename "$dir")"
             fi
             if [ "$basename" != "$session" ] && ! echo -n "$ls_sessions" | grep -q "$basename"; then
-                echo "$basename"
+                echo "$colors_dim_text$basename$(tput sgr0)"
             fi
         done
     )
-    t=$(echo -e "${ls_sessions}\n${bm_sessions}" | fzf --layout=default --prompt "$1" || true)
+    t=$(echo "$input" | fzf --ansi --layout=default --prompt "$1" || true)
     printf -v "${!#}" "%s" "$t"
     test -n "$t"
 }
