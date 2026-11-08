@@ -2,6 +2,8 @@
 
 set -e
 
+# for customization -------------------------------------
+
 colors_dim_text=$(tput setaf 8)
 colors_status_line=$(tput setab 4 && tput setaf 7)
 colors_session_name=$(tput setab 3 && tput setaf 0)
@@ -76,6 +78,7 @@ keybinds=$(cat << 'EOF'
     c       create new window
     C       new window with command
     ,       rename current window
+    &       kill current window
 
 [1-9]       select window at position
     n       select next window
@@ -83,7 +86,7 @@ keybinds=$(cat << 'EOF'
     N       swap with next window
     P       swap with prev window
     l       select last visited window
-    &       kill current window
+    L       switch to last visited session
 
     $       rename session
     s       switch session
@@ -339,6 +342,20 @@ while true; do
         "l")
             windows=$(echo -n "$windows" | sort "-t$tab" -k5nr)
             zmx_attach_existing "$(next)"
+            ;;
+        "L")
+            ls_sessions=$(ls_sessions)
+            if [ -n "$session" ]; then
+                ls_sessions=$(echo -n "$ls_sessions" | grep -v "$session" | cat)
+            fi
+            s=$(echo -n "$ls_sessions" | awk 'NR==1 {print;exit}')
+            if [ -n "$s" ]; then
+                n=$(echo -n "$all" | awk -F "$tab" -v "session=$s" '$2==session {print $1;exit}')
+                session="$s"
+                zmx_attach_existing "$n"
+            else
+                zmx_attach_existing "$name"
+            fi
             ;;
         "p")
             zmx_attach_existing "$(prev)"
