@@ -248,7 +248,8 @@ while true; do
         sessions=$(ls_sessions)
         session=$(echo -n "$sessions" | awk -F "$tab" 'NR==1 {print;exit}')
         if [ -z "$session" ]; then
-            session=default
+            >&2 echo no sessions
+            exit 1
         fi
     fi
     windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session')
