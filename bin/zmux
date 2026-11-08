@@ -257,7 +257,7 @@ while true; do
     if [ $i -eq 1 ]; then
         if [ -z "$windows" ]; then
             name="$(uuidgen)"
-            window="default"
+            window="main"
             for dir in "${bookmarks[@]}"; do
                 if [ -d "$dir" ] && [ "$(basename "$dir")" == "$session" ]; then
                     cd "$dir"
