@@ -188,7 +188,9 @@ function render_status() {
 
 function pick_session() {
     ls_sessions=$(ls_sessions)
-    ls_sessions=$(echo -n "$ls_sessions" | grep -v "$session" | true)
+    if [ -z "$session" ]; then
+        ls_sessions=$(echo -n "$ls_sessions" | grep -v "$session" | true)
+    fi
     bm_sessions=$(
         for dir in "${bookmarks[@]}"; do
             if [ -d "$dir" ]; then
