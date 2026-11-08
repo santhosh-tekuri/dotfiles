@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# usage: zmux [SESSION]
-# tmux style window & session management for zmx
-#
-# to pick session using fzf: zmux -
-
 set -e
 
 colors_status_line=$(tput setab 4 && tput setaf 7)
@@ -24,6 +19,24 @@ fi
 # -------------------------------------------------------
 
 session="$1"
+if [ "$session" == "-h" ] || [ "$session" == "--help" ]; then
+    cat << 'EOF'
+usage: zmux [SESSION]
+tmux style window & session management for zmx
+
+examples:
+    zmux SESSION
+        attach to SESSION
+    zmx
+        attach to most recently used session
+    zmux -
+        pick session using fzf and attach
+    zmux -h
+    zmux --help
+        show help
+EOF
+    exit
+fi
 
 if ! command -v zmx >/dev/null 2>&1; then
     >&2 echo missing zmx command in PATH
