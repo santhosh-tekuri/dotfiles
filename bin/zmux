@@ -90,6 +90,17 @@ function zmx_ls() {
     zmx ls 2>/dev/null | awk "$awk_script"
 }
 
+function ls_sessions() {
+    echo -n "$all" \
+        | awk '
+          BEGIN { FS = OFS = "\t" }
+          { clients[$2] += $6 }
+          !($2 in attached) || ($5 > attached[$2]) { attached[$2] = $5 }
+          END { for (k in clients) print k, clients[k], attached[k] }' \
+        | sort "-t$tab" -k 2,2n -k 3,3nr \
+        | awk -F "$tab" '{print $1}'
+}
+
 function zmx_attach_existing() {
     tput cnorm
     name="$1"
@@ -189,16 +200,8 @@ while true; do
     ((i++))
     all=$(zmx_ls)
     if [ -z "$session" ]; then
-        sessions=$(echo -n "$all" | awk '
-        BEGIN { FS = OFS = "\t" }
-        { clients[$2] += $6 }
-        !($2 in attached) || ($5 > attached[$2]) { attached[$2] = $5 }
-        END { for (k in clients) print k, clients[k], attached[k] }')
-        t=$(echo -n "$sessions" | awk -F "$tab" '$2==0 {print}' | sort "-t$tab" -k3nr)
-        if [ -z "$t" ]; then
-            t=$(echo -n "$sessions" | awk -F "$tab" '$2>0 {print}' | sort "-t$tab" -k3nr)
-        fi
-        session=$(echo -n "$t" | awk -F "$tab" 'NR=1 {print $1;exit}')
+        sessions=$(ls_sessions)
+        session=$(echo -n "$sessions" | awk -F "$tab" 'NR==1 {print;exit}')
         if [ -z "$session" ]; then
             session=default
         fi
