@@ -2,6 +2,18 @@ dir=~/dotfiles
 
 source $dir/.profile
 
+# chpwd hook --
+autoload -Uz add-zsh-hook
+osc7() {
+    local path="$PWD"
+    if command -v jq 2>/dev/null; then
+        path=$(echo -n "$path" | jq -Rr '. | split("/") | map(@uri) | join("/")')
+    fi
+    echo -en "\e]7;file://${HOST:-localhost}${path}\a"
+}
+add-zsh-hook chpwd osc7
+osc7
+
 # add custom completion scripts
 fpath=(~/.zsh/completion $fpath)
 
