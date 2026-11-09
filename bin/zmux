@@ -82,7 +82,7 @@ BEGIN { FS = OFS = "\t" }
     if (!("attached" in map)) {
         map["attached"] = map["created"]
     }
-    print map["name"], map["session"], map["window"], map["index"], map["attached"], map["clients"]
+    print map["name"], map["session"], map["window"], map["index"], map["attached"], map["clients"], map["cwd"]
 }
 EOF
 )
@@ -240,6 +240,14 @@ function pick_session() {
     test -n "$t"
 }
 
+function dir_from_cwd() {
+    local dir
+    dir="/$(echo -n "$1" | cut -d'/' -f4-)"
+    dir="${dir//+/ }" # replace '+' with ' '
+    dir=$(printf '%b\n' "${dir//%/\\x}") # replace '%' with '\x' and printf with '%b' for backslash escape expansion
+    echo -n "$dir"
+}
+
 if [ "$session" == "-" ]; then
     all=$(zmx_ls)
     if ! command -v fzf >/dev/null; then
@@ -329,19 +337,25 @@ while true; do
             zmx_attach_existing "$name"
             ;;
         "c")
+            cwd=$(echo -n "$windows" | awk -F "$tab" -v "name=$name" '$1==name {print $7;exit}')
+            dir=$(dir_from_cwd "$cwd")
             if prompt -rep " create new window: " window; then
                 name="$(uuidgen)"
                 tput cnorm
+                cd "$dir"
                 zmx attach --labels "session=$session window=$window" "$name"
             else
                 zmx_attach_existing "$name"
             fi
             ;;
         "C")
+            cwd=$(echo -n "$windows" | awk -F "$tab" -v "name=$name" '$1==name {print $7;exit}')
+            dir=$(dir_from_cwd "$cwd")
             if prompt -rep " new window with command: " cmd; then
                 window=$(echo -n "$cmd" | cut -d ' ' -f1)
                 name="$(uuidgen)"
                 tput cnorm
+                cd "$dir"
                 zmx attach --labels "session=$session window=$window" "$name" $cmd
             else
                 zmx_attach_existing "$name"
