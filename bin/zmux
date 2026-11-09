@@ -2,8 +2,7 @@
 
 set -e
 
-if [ $# == 0 ]; then
-    cat << 'EOF'
+usage=$(cat << 'EOF'
 zmux provides tmux style window & session management for zmx
 
 usage:
@@ -28,6 +27,9 @@ environment variables:
         - to customize colors used
         - example: "$(tput setab 4 && tput setaf 7)"
 EOF
+)
+if [ $# == 0 ]; then
+    echo -n "$usage"
     exit
 fi
 
@@ -254,6 +256,9 @@ elif [ "$1" == "fzf" ]; then
     elif ! pick_session " attach to session: " session; then
         exit
     fi
+else
+    >&2 echo -n "$usage"
+    exit 1
 fi
 
 trap "tput cnorm" EXIT
