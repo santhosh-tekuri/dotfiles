@@ -2,6 +2,35 @@
 
 set -e
 
+if [ $# == 0 ]; then
+    cat << 'EOF'
+zmux is tmux style window & session management for zmx
+
+usage:
+    zmux
+        show this help
+    zmux attach
+        attach to most recently used session
+    zmux attach SESSION
+        attach to SESSION
+    zmux fzf
+        pick session using fzf and attach
+
+environment variables:
+    ZMUX_BOOKMARKS:
+        - contains list of favourite projects separated by colon
+        - can use wildcards
+        - defaults to "~"
+        - example: "~:~/dotfiles:~/.config/nvim:~/gh/santhosh-tekuri/*"
+    ZMUX_CLR_DIM_TEXT
+    ZMUX_CLR_STATUS_LINE
+    ZMUX_CLR_SESSION_NAME
+        - to customize colors used
+        - example: "$(tput setab 4 && tput setaf 7)"
+EOF
+    exit
+fi
+
 # read colors --
 
 colors_dim_text="${ZMUX_CLR_DIM_TEXT:-$(tput setaf 8)}"
@@ -19,39 +48,13 @@ for pat in "${raw_patterns[@]}"; do
 done
 shopt -u nullglob
 
-# -------------------------------------------------------
+function log() {
+    true && echo "$1"
+}
 
-session="$1"
-if [ "$session" == "-h" ] || [ "$session" == "--help" ]; then
-    cat << 'EOF'
-usage: zmux [SESSION]
-tmux style window & session management for zmx
-
-examples:
-    zmux SESSION
-        attach to SESSION
-    zmx
-        attach to most recently used session
-    zmux -
-        pick session using fzf and attach
-    zmux -h
-    zmux --help
-        show help
-
-environment variables:
-    ZMUX_BOOKMARKS:
-        contains list of favourite projects separated by colon
-        can use wildcards
-        defaults to "~"
-        example: "~:~/dotfiles:~/.config/nvim:~/gh/santhosh-tekuri/*"
-    ZMUX_CLR_DIM_TEXT
-    ZMUX_CLR_STATUS_LINE
-    ZMUX_CLR_SESSION_NAME
-        to customize colors used
-        example: "$(tput setab 4 && tput setaf 7)"
-EOF
-    exit
-fi
+function pause() {
+    read -rp "Press ENTER to continue..."
+}
 
 if ! command -v zmx >/dev/null 2>&1; then
     >&2 echo missing zmx command in PATH
@@ -86,6 +89,7 @@ BEGIN { FS = OFS = "\t" }
 }
 EOF
 )
+
 keybinds=$(cat << 'EOF'
     c       create new window
     C       new window with command
@@ -109,12 +113,14 @@ EOF
 keybinds_lc=$(echo -n "$keybinds" | wc -l)
 keybinds_width=$(echo -n "$keybinds" | wc -L)
 
-function log() {
-    true && echo "$1"
-}
-
-function pause() {
-    read -rp "Press ENTER to continue..."
+function render_help() {
+    row=$((($(tput lines)-keybinds_lc-1)/2))
+    col=$((($(tput cols)-keybinds_width)/2))
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        tput cup $row $col
+        echo -n "$line"
+        ((row++))
+    done <<< "$keybinds"
 }
 
 function zmx_ls() {
@@ -180,16 +186,6 @@ function prompt() {
     test -n "${!last}"
 }
 
-function render_help() {
-    row=$((($(tput lines)-keybinds_lc-1)/2))
-    col=$((($(tput cols)-keybinds_width)/2))
-    while IFS= read -r line || [[ -n "$line" ]]; do
-        tput cup $row $col
-        echo -n "$line"
-        ((row++))
-    done <<< "$keybinds"
-}
-
 function render_status() {
     tput cup "$(tput lines)" 0
     echo -n "$colors_session_name"
@@ -248,7 +244,9 @@ function dir_from_cwd() {
     echo -n "$dir"
 }
 
-if [ "$session" == "-" ]; then
+if [ "$1" == "attach" ]; then
+    session="$2"
+elif [ "$1" == "fzf" ]; then
     all=$(zmx_ls)
     if ! command -v fzf >/dev/null; then
         >&2 echo missing fzf command in PATH
