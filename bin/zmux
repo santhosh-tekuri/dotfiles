@@ -4,7 +4,7 @@ set -e
 
 if [ $# == 0 ]; then
     cat << 'EOF'
-zmux is tmux style window & session management for zmx
+zmux provides tmux style window & session management for zmx
 
 usage:
     zmux
