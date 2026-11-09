@@ -8,16 +8,16 @@ colors_dim_text=$(tput setaf 8)
 colors_status_line=$(tput setab 4 && tput setaf 7)
 colors_session_name=$(tput setab 3 && tput setaf 0)
 
-if [ -n "$ZMUX_BOOKMARKS" ]; then
-    readarray -d ':' -t bookmarks <<< "$ZMUX_BOOKMARKS"
-else
-    bookmarks=(
-        "$HOME"
-        "$HOME/dotfiles"
-        "$HOME/.config/nvim"
-        ~/gh/santhosh-tekuri/*
-    )
-fi
+# read bookmarks --
+bookmarks=()
+IFS=: read -ra raw_patterns <<< "${ZMUX_BOOKMARKS:-~}"
+shopt -s nullglob
+for pat in "${raw_patterns[@]}"; do
+  [[ -z "$pat" ]] && continue
+  eval "pat=($pat)"
+  bookmarks+=("${pat[@]}")
+done
+shopt -u nullglob
 
 # -------------------------------------------------------
 
@@ -37,6 +37,13 @@ examples:
     zmux -h
     zmux --help
         show help
+
+environment variables:
+    ZMUX_BOOKMARKS:
+        contains list of favourite projects separated by colon
+        can use wildcards
+        defaults to "~"
+        example: "~:~/dotfiles:~/.config/nvim:~/gh/santhosh-tekuri/*"
 EOF
     exit
 fi

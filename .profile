@@ -24,6 +24,7 @@ export NPM_CONFIG_CACHE=~/.cache/npm
 export RUSTUP_HOME=$XDG_DATA_HOME/rustup
 export MAVEN_OPTS="-Dhttps.protocols=TLSv1.2"
 export FZF_DEFAULT_OPTS=--reverse
+export ZMUX_BOOKMARKS="~:~/dotfiles:~/.config/nvim:~/gh/santhosh-tekuri/*"
 
 if [ -f /usr/local/bin/bash ]; then
     alias bash=/usr/local/bin/bash
