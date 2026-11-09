@@ -258,6 +258,10 @@ while true; do
     unset -v idx
     if [ "$i" -ne 0 ] && [ -n "$name" ]; then
         idx=$(echo -n "$windows" | awk -F "$tab" -v "name=$name" '$1==name {print NR;exit}')
+        if [ -z "$idx" ]; then
+            # killed window is recently created
+            idx=$(($(echo -n "$windows" | wc -l)+1))
+        fi
     fi
 
     tput civis
