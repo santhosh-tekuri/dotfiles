@@ -23,7 +23,7 @@ environment variables:
         - defaults to "~"
         - example: "~:~/dotfiles:~/.config/nvim:~/gh/santhosh-tekuri/*"
     ZMUX_CLR_DIM_TEXT
-    ZMUX_CLR_STATUS_LINE
+    ZMUX_CLR_STATUS
     ZMUX_CLR_SESSION_NAME
         - to customize colors used
         - example: "$(tput setab 4 && tput setaf 7)"
@@ -34,7 +34,7 @@ fi
 # read colors --
 
 colors_dim_text="${ZMUX_CLR_DIM_TEXT:-$(tput setaf 8)}"
-colors_status_line="${ZMUX_CLR_STATUS_LINE:-$(tput setab 4 && tput setaf 7)}"
+colors_status_line="${ZMUX_CLR_STATUS:-$(tput setab 4 && tput setaf 7)}"
 colors_session_name="${ZMUX_CLR_SESSION_NAME:-$(tput setab 3 && tput setaf 0)}"
 
 # read bookmarks --
