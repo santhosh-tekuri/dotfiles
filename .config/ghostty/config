@@ -11,6 +11,7 @@ font-feature = -calt, -liga, -dlig
 adjust-cell-height = 20%
 adjust-underline-position = 20%
 mouse-hide-while-typing = true
+unfocused-split-opacity = 1
 
 keybind=ctrl+left_bracket=text:\x1b
 keybind = cmd+k=text:\x02
