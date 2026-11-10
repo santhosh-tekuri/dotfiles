@@ -62,7 +62,7 @@ source ~/.local/share/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plug
 # setup prompt --
 setopt prompt_subst # reevaluate the prompt expression each time a prompt is displayed
 setopt transientrprompt # remove any right prompt from display when accepting a command line
-PS1="%(?..%F{red})\$(zmx-ps1)\$(ssh-ps1)\$(git-ps1)❯%f "
+PS1="\$(zmux-ps1)%(?..%F{red})\$(ssh-ps1)\$(git-ps1)❯%f "
 RPS1='[%~]%f%k'
 zle_highlight=(default:fg=yellow,bold)
 
