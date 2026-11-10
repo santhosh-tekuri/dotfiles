@@ -140,13 +140,6 @@ function ls_sessions() {
         | awk -F "$tab" '{print $1}'
 }
 
-function zmx_attach_existing() {
-    tput cnorm
-    name="$1"
-    zmx set "$name" "attached=$(date +%s)"
-    zmx attach "$name"
-}
-
 function prev() {
     t=$(echo -n "$windows" | grep -B1 "$name" | awk -F "$tab" 'NR==1 {print $1;exit}')
     if [ "$t" == "$name" ]; then
@@ -178,8 +171,10 @@ function bell() {
 
 function prompt() {
     tput cup "$(tput lines)" 0
-    echo -n "$colors_status_line"
-    tput el
+    if [ -z "$ZMUX_STATUS" ] && [ ! -p "$ZMUX_STATUS" ]; then
+        echo -n "$colors_status_line"
+        tput el
+    fi
     tput cnorm
     # shellcheck disable=SC2162
     read "$@"
@@ -188,31 +183,93 @@ function prompt() {
     test -n "${!last}"
 }
 
-function render_status() {
-    tput cup "$(tput lines)" 0
-    echo -n "$colors_session_name"
-    echo -n " $session "
+function status_line() {
+    echo -n "#$session"
     idx=0
-    echo -n " "
-    echo "$windows" | while read -r line; do
-        ((idx++))
-        win=$(echo -n "$line" | cut -f3)
-        if [ "$(echo -n "$line" | cut -f1)" == "$name" ]; then
-            tput sgr0 # active tab. reset colors
-        else
-            echo -n "$colors_status_line"
-        fi
-        echo -n " $idx:$win "
-    done
-    echo -n "$colors_status_line"
-    tput el # erase line
-    if [ -n "$SSH_CLIENT" ]; then
-        ssh="${USER}@$(hostname) "
-        tput cup "$(tput lines)" $(($(tput cols)-${#ssh}-1))
-        echo -n "$ssh"
+    if [ -n "$windows" ]; then
+        echo "$windows" | while IFS= read -r line; do
+            ((idx++))
+            win=$(echo -n "$line" | cut -f3)
+            if [ "$(echo -n "$line" | cut -f1)" == "$name" ]; then
+                echo -en $"\t*$idx:$win"
+            else
+                echo -en "\t $idx:$win"
+            fi
+        done
     fi
+    if ! echo "$windows" | grep -q "$name"; then
+        # about to create window
+        idx=$(echo -n "$windows" | wc -l)
+        ((idx++))
+        echo -en $"\t*$idx:$window"
+    fi
+    if [ -n "$SSH_CLIENT" ]; then
+        echo -en "\t@${USER}@$(hostname)"
+    else
+        echo -en "\t@"
+    fi
+    echo
+}
+
+function report_detach() {
+    if [ -n "$ZMUX_STATUS" ] && [ -p "$ZMUX_STATUS" ]; then
+        echo "detach" > "$ZMUX_STATUS"
+    fi
+}
+
+function report_status() {
+    if [ -n "$ZMUX_STATUS" ] && [ -p "$ZMUX_STATUS" ]; then
+        status_line > "$ZMUX_STATUS"
+    fi
+}
+function report_render_status() {
+    local status_line
+    status_line="$(status_line)"
+    if [ -n "$ZMUX_STATUS" ] && [ -p "$ZMUX_STATUS" ]; then
+        echo "$status_line" > "$ZMUX_STATUS"
+        tput home # to clear screen on detach
+    else
+        render_status "$status_line"
+    fi
+}
+
+function render_status() {
+    local -a arr
+    IFS="$tab" read -r -a arr <<< "$1"
+    for item in "${arr[@]}"; do
+        str=$(echo -n "$item" | cut -c 2-)
+        case "$(echo -n "$item" | cut -c 1)" in
+            "#")
+                tput cup "$(tput lines)" 0
+                echo -n "$colors_session_name"
+                echo -n " $str "
+                ;;
+            " ")
+                echo -n "$colors_status_line"
+                echo -n " $str "
+                ;;
+            "*")
+                tput sgr0 # active tab. reset colors
+                echo -n " $str "
+                ;;
+            "@")
+                echo -n "$colors_status_line"
+                tput el # erase line
+                tput cup "$(tput lines)" $(($(tput cols)-${#str}))
+                echo -n "$str "
+                ;;
+        esac
+    done
     tput sgr0 # reset colors
     tput home
+}
+
+function zmx_attach_existing() {
+    tput cnorm
+    name="$1"
+    zmx set "$name" "attached=$(date +%s)"
+    report_status
+    zmx attach "$name"
 }
 
 function pick_session() {
@@ -246,7 +303,21 @@ function dir_from_cwd() {
     echo -n "$dir"
 }
 
-if [ "$1" == "attach" ]; then
+if [ "$1" == "status" ]; then
+    mkfifo "$2"
+    trap 'rm "$2"; tput cnorm' EXIT
+    clear
+    tput civis
+    while true; do
+        while IFS= read -r line; do
+            if [ "$line" == "detach" ]; then
+                clear
+            else
+                render_status "$line"
+            fi
+        done < "$2"
+    done
+elif [ "$1" == "attach" ]; then
     session="$2"
 elif [ "$1" == "fzf" ]; then
     all=$(zmx_ls)
@@ -261,7 +332,11 @@ else
     exit 1
 fi
 
-trap "tput cnorm" EXIT
+function cleanup() {
+    report_detach
+    tput cnorm
+}
+trap 'cleanup' EXIT
 
 i=0
 while true; do
@@ -286,7 +361,7 @@ while true; do
             exit 1
         fi
     fi
-    windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session')
+    windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session' | sort "-t$tab" -k4n)
 
     # handle current window no longer exists
     if [ -n "$idx" ] && ! echo "$windows" | grep -q "$name"; then
@@ -313,11 +388,12 @@ while true; do
                 fi
             done
             tput cnorm
+            report_status
             zmx attach --labels "session=$session window=$window" "$name"
         else
-            windows=$(echo -n "$windows" | sort "-t$tab" -k5nr)
-            name=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $1;exit}')
-            window=$(echo -n "$windows" | awk -F "$tab" 'NR=1 {print $3;exit}')
+            wins=$(echo -n "$windows" | sort "-t$tab" -k5nr)
+            name=$(echo -n "$wins" | awk -F "$tab" 'NR=1 {print $1;exit}')
+            window=$(echo -n "$wins" | awk -F "$tab" 'NR=1 {print $3;exit}')
             zmx_attach_existing "$name"
         fi
         continue
@@ -326,14 +402,15 @@ while true; do
     if [ -z "$windows" ]; then
         exit
     fi
-    windows=$(echo -n "$windows" | sort "-t$tab" -k4n) # sort by index
+    # windows=$(echo -n "$windows" | sort "-t$tab" -k4n) # sort by index
 
     render_help
-    render_status
+    report_render_status "$(status_line)"
 
     read -r -s -n 1 ch
     case "$ch" in
         "d")
+            report_detach
             exit
             ;;
         "q")
@@ -346,6 +423,7 @@ while true; do
                 name="$(uuidgen)"
                 tput cnorm
                 cd "$dir"
+                report_status
                 zmx attach --labels "session=$session window=$window" "$name"
             else
                 zmx_attach_existing "$name"
@@ -359,6 +437,7 @@ while true; do
                 name="$(uuidgen)"
                 tput cnorm
                 cd "$dir"
+                report_status
                 zmx attach --labels "session=$session window=$window" "$name" $cmd
             else
                 zmx_attach_existing "$name"
@@ -373,8 +452,12 @@ while true; do
             fi
             ;;
         "l")
+            _windows="$windows"
             windows=$(echo -n "$windows" | sort "-t$tab" -k5nr)
-            zmx_attach_existing "$(next)"
+            last="$(next)"
+            windows="$_windows"
+            report_status
+            zmx_attach_existing "$last"
             ;;
         "L")
             ls_sessions=$(ls_sessions)
@@ -385,6 +468,8 @@ while true; do
             if [ -n "$s" ]; then
                 n=$(echo -n "$all" | awk -F "$tab" -v "session=$s" '$2==session {print $1;exit}')
                 session="$s"
+                all="$(zmx_ls)"
+                windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session' | sort "-t$tab" -k4n)
                 zmx_attach_existing "$n"
             else
                 zmx_attach_existing "$name"
@@ -405,6 +490,8 @@ while true; do
         ",")
             if prompt -rep " rename window: " resp; then
                 zmx set "$name" "window=$resp"
+                all="$(zmx_ls)"
+                windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session' | sort "-t$tab" -k4n)
             fi
             zmx_attach_existing "$name"
             ;;
