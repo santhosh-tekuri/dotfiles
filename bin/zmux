@@ -305,7 +305,7 @@ function pick_session() {
             fi
         done
     )
-    t=$(echo "$input" | fzf --ansi --layout=default --prompt "$1" || true)
+    t=$(echo "$input" | fzf --bind 'ctrl-y:print-query' --ansi --layout=default --prompt "$1" || true)
     printf -v "${!#}" "%s" "$t"
     test -n "$t"
 }
