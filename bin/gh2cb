@@ -31,6 +31,7 @@ for repo in "${repos[@]}"; do
     else
         git clone --bare "git@github.com:santhosh-tekuri/$repo.git" "$repo"
         cd "$repo"
+        git config remote.origin.fetch "+refs/heads/*:refs/heads/*"
         git remote set-url --push origin "git@codeberg.org:santhosh-tekuri/$repo.git"
     fi
     git push --mirror
