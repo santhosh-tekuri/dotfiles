@@ -5,9 +5,9 @@ set -e
 usage=$(cat << 'EOF'
 zmux provides tmux style window & session management for zmx
 
-usage:
-    zmux
-        show this help
+usage: zmux <command> [args...]
+
+commands:
     zmux attach
         attach to most recently used session
     zmux attach SESSION
@@ -21,6 +21,8 @@ usage:
         - reads updates to status from it
         - and renders to screen bottom
         - deletes FIFO_FILE on exit
+    zmux help
+        show this help
 
 environment variables:
     ZMUX_BOOKMARKS:
@@ -39,6 +41,9 @@ environment variables:
 EOF
 )
 if [ $# == 0 ]; then
+    >&2 echo "$usage"
+    exit 1
+elif [ "$1" == "help" ]; then
     echo "$usage"
     exit
 fi
