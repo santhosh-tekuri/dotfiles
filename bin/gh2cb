@@ -24,13 +24,13 @@ echo
 
 for repo in "${repos[@]}"; do
     echo "synching $repo..."
-    if [ -d "$repo.git" ]; then
-        cd "$repo.git"
+    if [ -d "$repo" ]; then
+        cd "$repo"
         git fetch -p origin
         git push --mirror
     else
-        git clone --mirror "git@github.com:santhosh-tekuri/$repo.git"
-        cd "$repo.git"
+        git clone --mirror "git@github.com:santhosh-tekuri/$repo.git" "$repo"
+        cd "$repo"
         git remote set-url --push origin "git@codeberg.org:santhosh-tekuri/$repo.git"
         git push --mirror
     fi
