@@ -11,6 +11,7 @@ repos=(
     silence.nvim
     term.nvim
     git.nvim
+    jsonschema
 )
 
 if [ $# != 0 ]; then
@@ -27,13 +28,12 @@ for repo in "${repos[@]}"; do
     if [ -d "$repo" ]; then
         cd "$repo"
         git fetch -p origin
-        git push --mirror
     else
-        git clone --mirror "git@github.com:santhosh-tekuri/$repo.git" "$repo"
+        git clone --bare "git@github.com:santhosh-tekuri/$repo.git" "$repo"
         cd "$repo"
         git remote set-url --push origin "git@codeberg.org:santhosh-tekuri/$repo.git"
-        git push --mirror
     fi
+    git push --mirror
     cd - >/dev/null
     echo
 done
