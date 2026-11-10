@@ -14,6 +14,13 @@ usage:
         attach to SESSION
     zmux fzf
         pick session using fzf and attach
+    zmux status FIFO_FILE
+        - typically used to render status always
+          in bottom split of native terminal
+        - creates FIFO_FILE using mkfifo
+        - reads updates to status from it
+        - and renders to screen bottom
+        - deletes FIFO_FILE on exit
 
 environment variables:
     ZMUX_BOOKMARKS:
@@ -26,10 +33,13 @@ environment variables:
     ZMUX_CLR_SESSION_NAME
         - to customize colors used
         - example: "$(tput setab 4 && tput setaf 7)"
+    ZMUX_STATUS
+        - path to FIFO_FILE to send status updates
+        - if FIFO_FILE exists it does not render status
 EOF
 )
 if [ $# == 0 ]; then
-    echo -n "$usage"
+    echo "$usage"
     exit
 fi
 
@@ -328,7 +338,7 @@ elif [ "$1" == "fzf" ]; then
         exit
     fi
 else
-    >&2 echo -n "$usage"
+    >&2 echo "$usage"
     exit 1
 fi
 
