@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+repos=(
+    dotfiles
+    notes
+    picker.nvim
+    quickfix.nvim
+    wordiff.nvim
+    silence.nvim
+    term.nvim
+    git.nvim
+)
+
+if [ $# != 0 ]; then
+    repos=("$@")
+fi
+
+eval "$(ssh-agent -s)"
+trap 'ssh-agent -k' EXIT
+ssh-add ~/.ssh/id_ed25519
+echo
+
+for repo in "${repos[@]}"; do
+    echo "synching $repo..."
+    if [ -d "$repo.git" ]; then
+        cd "$repo.git"
+        git fetch -p origin
+        git push --mirror
+    else
+        git clone --mirror "git@github.com:santhosh-tekuri/$repo.git"
+        cd "$repo.git"
+        git remote set-url --push origin "git@codeberg.org:santhosh-tekuri/$repo.git"
+        git push --mirror
+    fi
+    cd - >/dev/null
+    echo
+done
+
