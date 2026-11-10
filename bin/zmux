@@ -319,6 +319,10 @@ function dir_from_cwd() {
 }
 
 if [ "$1" == "status" ]; then
+    if [ $# != 2 ]; then
+        >&2 echo "usage: zmux status FIFO_FILE"
+        exit 1
+    fi
     mkfifo "$2"
     trap 'rm "$2"; tput cnorm' EXIT
     clear
