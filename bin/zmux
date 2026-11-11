@@ -14,7 +14,8 @@ commands:
         attach to SESSION
     zmux fzf
         pick session using fzf and attach
-    zmux status FIFO_FILE
+    zmux status [FIFO_FILE]
+        - if FIFO_FILE arg missing, uses envar ZMUX_STATUS
         - typically used to render status always
           in bottom split of native terminal
         - creates FIFO_FILE using mkfifo
@@ -36,7 +37,7 @@ environment variables:
         - to customize colors used
         - example: "$(tput setab 4 && tput setaf 7)"
     ZMUX_STATUS
-        - path to FIFO_FILE to send status updates
+        - path to FIFO_FILE used for status line updates
         - if FIFO_FILE exists it does not render status
 EOF
 )
@@ -323,12 +324,12 @@ function dir_from_cwd() {
 }
 
 if [ "$1" == "status" ]; then
-    if [ $# != 2 ]; then
-        >&2 echo "usage: zmux status FIFO_FILE"
-        exit 1
+    fifo_file="$ZMUX_STATUS"
+    if [ $# == 2 ]; then
+        fifo_file="$2"
     fi
-    mkfifo "$2"
-    trap 'rm "$2"; tput cnorm' EXIT
+    mkfifo "$fifo_file"
+    trap 'rm "$fifo_file"; tput cnorm' EXIT
     clear
     tput civis
     while true; do
@@ -338,7 +339,7 @@ if [ "$1" == "status" ]; then
             else
                 render_status "$line"
             fi
-        done < "$2"
+        done < "$fifo_file"
     done
 elif [ "$1" == "attach" ]; then
     session="$2"
