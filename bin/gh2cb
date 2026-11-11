@@ -18,23 +18,29 @@ if [ $# != 0 ]; then
     repos=("$@")
 fi
 
+function log() {
+    echo "$(tput bold)[$repo] $1$(tput sgr0)"
+}
+
 eval "$(ssh-agent -s)"
 trap 'ssh-agent -k' EXIT
 ssh-add ~/.ssh/id_ed25519
 echo
 
 for repo in "${repos[@]}"; do
-    echo "synching $repo..."
     if [ -d "$repo" ]; then
         cd "$repo"
+        log "fetching from github..."
         git fetch -p origin
     else
+        log "cloning from github..."
         git clone --bare "git@github.com:santhosh-tekuri/$repo.git" "$repo"
         cd "$repo"
         git config remote.origin.fetch "+refs/heads/*:refs/heads/*"
-        git remote set-url --push origin "git@codeberg.org:santhosh-tekuri/$repo.git"
+        git remote add --mirror=push codeberg "git@codeberg.org:santhosh-tekuri/$repo.git"
     fi
-    git push --mirror
+    log "pushing to codeberg..."
+    git push codeberg
     cd - >/dev/null
     echo
 done
