@@ -8,6 +8,8 @@ zmux provides tmux style window & session management for zmx with prefix ctrl+\
 usage: zmux <command> [args...]
 
 commands:
+    zmux ls
+        list sessions
     zmux attach
         attach to most recently used session
     zmux attach SESSION
@@ -323,7 +325,11 @@ function dir_from_cwd() {
     echo -n "$dir"
 }
 
-if [ "$1" == "status" ]; then
+if [ "$1" == "ls" ]; then
+    all="$(zmx_ls)"
+    ls_sessions
+    exit
+elif [ "$1" == "status" ]; then
     fifo_file="$ZMUX_STATUS"
     if [ $# == 2 ]; then
         fifo_file="$2"
