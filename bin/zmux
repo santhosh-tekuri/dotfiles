@@ -184,9 +184,13 @@ function bell() {
     printf '\a'
 }
 
+function fifo_exists() {
+    [ -n "$ZMUX_STATUS" ] && [ -p "$ZMUX_STATUS" ]
+}
+
 function prompt() {
     tput cup "$(tput lines)" 0
-    if [ -z "$ZMUX_STATUS" ] && [ ! -p "$ZMUX_STATUS" ]; then
+    if ! fifo_exists; then
         echo -n "$colors_status_line"
         tput el
     fi
@@ -227,20 +231,20 @@ function status_line() {
 }
 
 function report_detach() {
-    if [ -n "$ZMUX_STATUS" ] && [ -p "$ZMUX_STATUS" ]; then
+    if fifo_exists; then
         echo "detach" > "$ZMUX_STATUS"
     fi
 }
 
 function report_status() {
-    if [ -n "$ZMUX_STATUS" ] && [ -p "$ZMUX_STATUS" ]; then
+    if fifo_exists; then
         status_line > "$ZMUX_STATUS"
     fi
 }
 function report_render_status() {
     local status_line
     status_line="$(status_line)"
-    if [ -n "$ZMUX_STATUS" ] && [ -p "$ZMUX_STATUS" ]; then
+    if fifo_exists; then
         echo "$status_line" > "$ZMUX_STATUS"
         tput home # to clear screen on detach
     else
