@@ -5,13 +5,16 @@ set -e
 repos=(
     dotfiles
     notes
+
     picker.nvim
     quickfix.nvim
     wordiff.nvim
     silence.nvim
     term.nvim
     git.nvim
+
     jsonschema
+    boon
 )
 
 if [ $# != 0 ]; then
