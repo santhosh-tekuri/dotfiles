@@ -2,7 +2,7 @@ alias karabiner="sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit
 alias kanata='sudo kanata -c ~/.config/kanata/kanata.kbd'
 
 if test -d /opt/homebrew/bin; then
-    eval $(/opt/homebrew/bin/brew shellenv)
+    eval "$(/opt/homebrew/bin/brew shellenv)"
     for d in coreutils findutils gnu-sed gnu-tar grep make; do
         export PATH=/opt/homebrew/opt/$d/libexec/gnubin:$PATH
         export MANPATH=/opt/homebrew/opt/$d/libexec/gnuman:$MANPATH
@@ -25,6 +25,7 @@ export RUSTUP_HOME=$XDG_DATA_HOME/rustup
 export MAVEN_OPTS="-Dhttps.protocols=TLSv1.2"
 export FZF_DEFAULT_OPTS=--reverse
 export ZMUX_BOOKMARKS="~:~/dotfiles:~/.config/nvim:~/gh/santhosh-tekuri/*"
+export ZMUX_STATUS=$TMPDIR/zmuxstatus.fifo
 
 if [ -f /usr/local/bin/bash ]; then
     alias bash=/usr/local/bin/bash
