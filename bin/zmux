@@ -325,6 +325,8 @@ function dir_from_cwd() {
     echo -n "$dir"
 }
 
+trap 'exit 131' QUIT
+
 if [ "$1" == "ls" ]; then
     all="$(zmx_ls)"
     ls_sessions
