@@ -42,6 +42,8 @@ autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
 
+bindkey -s '\e[108;6u' 'kls\n'
+
 function hilite(){
     echo -en "\033[31m"  ## red
     eval $* | while read line; do
