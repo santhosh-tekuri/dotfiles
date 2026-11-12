@@ -468,7 +468,7 @@ while true; do
                 tput cnorm
                 cd "$dir"
                 report_status
-                zmx attach --labels "session=$session window=$window" "$name" $cmd
+                zmx attach --labels "session=$session window=$window" "$name" $cmd || true
             else
                 zmx_attach_existing "$name"
             fi
