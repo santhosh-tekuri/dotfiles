@@ -46,8 +46,7 @@ environment variables:
 EOF
 )
 if [ $# == 0 ]; then
-    >&2 echo "$usage"
-    exit 1
+    set -- ls
 elif [ "$1" == "help" ]; then
     echo "$usage"
     exit
