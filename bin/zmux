@@ -361,7 +361,7 @@ elif [ "$1" == "fzf" ]; then
         exit
     fi
 else
-    >&2 echo "$usage"
+    >&2 echo "error: unknown command $1"
     exit 1
 fi
 
