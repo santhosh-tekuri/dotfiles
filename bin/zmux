@@ -5,6 +5,8 @@ set -e
 usage=$(cat << 'EOF'
 zmux provides tmux style window & session management for zmx with prefix ctrl+\ 
 
+demo: https://asciinema.org/a/FcSniDIN5WIQAi3M
+
 usage: zmux <command> [args...]
 
 commands:
