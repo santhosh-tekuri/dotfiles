@@ -140,7 +140,7 @@ function render_help() {
     while IFS= read -r line || [[ -n "$line" ]]; do
         tput cup $row $col
         echo -n "$line"
-        ((row++))
+        ((row++)) || true
     done <<< "$keybinds"
 }
 
@@ -211,7 +211,7 @@ function status_line() {
     idx=0
     if [ -n "$windows" ]; then
         echo "$windows" | while IFS= read -r line; do
-            ((idx++))
+            ((idx++)) || true
             win=$(echo -n "$line" | cut -f3)
             if [ "$(echo -n "$line" | cut -f1)" == "$name" ]; then
                 echo -en $"\t*$idx:$win"
@@ -223,7 +223,7 @@ function status_line() {
     if ! echo "$windows" | grep -q "$name"; then
         # about to create window
         idx=$(echo -n "$windows" | wc -l)
-        ((idx++))
+        ((idx++)) || true
         echo -en $"\t*$idx:$window"
     fi
     if [ -n "$SSH_CLIENT" ]; then
@@ -390,7 +390,7 @@ while true; do
     fi
 
     tput civis
-    ((i++))
+    ((i++)) || true
     all=$(zmx_ls)
     if [ -z "$session" ]; then
         sessions=$(ls_sessions)
