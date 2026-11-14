@@ -545,14 +545,12 @@ while true; do
             ;;
         "&")
             prompt -rs -n1 -p " kill current window? (y/n) (Y to force kill)" resp
-            if [ "$resp" != "y" ] && [ "$resp" != "Y" ]; then
-                zmx_attach_existing "$name"
-                continue
-            fi
             if [ "$resp" == "y" ]; then
                 zmx kill "$name"
             elif [ "$resp" == "Y" ]; then
                 zmx kill --force "$name"
+            else
+                zmx_attach_existing "$name"
             fi
             ;;
         "s")
