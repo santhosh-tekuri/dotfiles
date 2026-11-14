@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
 if [ -n "$ZMX_SESSION" ]; then
-    session="$(zmx get "$ZMX_SESSION" session 2>/dev/null)"
-    window="$(zmx get "$ZMX_SESSION" window 2>/dev/null)"
-    if [ "$session" == "" ] && [ "$window" == "" ]; then
-        echo -n "$ZMX_SESSION "
-    else
-        echo -n "${session}.${window} "
+    if [ -z "$ZMUX_STATUS" ] || [ ! -p "$ZMUX_STATUS" ]; then
+        session="$(zmx get "$ZMX_SESSION" session 2>/dev/null)"
+        window="$(zmx get "$ZMX_SESSION" window 2>/dev/null)"
+        if [ "$session" == "" ] && [ "$window" == "" ]; then
+            echo -n "$ZMX_SESSION "
+        else
+            echo -n "${session}.${window} "
+        fi
     fi
 fi
