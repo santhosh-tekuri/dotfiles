@@ -328,42 +328,48 @@ function dir_from_cwd() {
 
 trap 'exit 131' QUIT
 
-if [ "$1" == "ls" ]; then
-    all="$(zmx_ls)"
-    ls_sessions
-    exit
-elif [ "$1" == "status" ]; then
-    fifo_file="$ZMUX_STATUS"
-    if [ $# == 2 ]; then
-        fifo_file="$2"
-    fi
-    mkfifo "$fifo_file"
-    trap 'rm "$fifo_file"; tput cnorm' EXIT
-    clear
-    tput civis
-    while true; do
-        while IFS= read -r line; do
-            if [ "$line" == "detach" ]; then
-                clear
-            else
-                render_status "$line"
-            fi
-        done < "$fifo_file"
-    done
-elif [ "$1" == "attach" ]; then
-    session="$2"
-elif [ "$1" == "fzf" ]; then
-    all=$(zmx_ls)
-    if ! command -v fzf >/dev/null; then
-        >&2 echo missing fzf command in PATH
-        exit 1
-    elif ! pick_session " attach to session: " session; then
+case "$1" in
+    "ls")
+        all="$(zmx_ls)"
+        ls_sessions
         exit
-    fi
-else
-    >&2 echo "error: unknown command $1"
-    exit 1
-fi
+        ;;
+    "status")
+        fifo_file="$ZMUX_STATUS"
+        if [ $# == 2 ]; then
+            fifo_file="$2"
+        fi
+        mkfifo "$fifo_file"
+        trap 'rm "$fifo_file"; tput cnorm' EXIT
+        clear
+        tput civis
+        while true; do
+            while IFS= read -r line; do
+                if [ "$line" == "detach" ]; then
+                    clear
+                else
+                    render_status "$line"
+                fi
+            done < "$fifo_file"
+        done
+        ;;
+    "fzf")
+        all=$(zmx_ls)
+        if ! command -v fzf >/dev/null; then
+            >&2 echo missing fzf command in PATH
+            exit 1
+        elif ! pick_session " attach to session: " session; then
+            exit
+        fi
+        ;;
+    "attach")
+        session="$2"
+        ;;
+    "*")
+        >&2 echo "error: unknown command $1"
+        exit 1
+        ;;
+esac
 
 function cleanup() {
     report_detach
