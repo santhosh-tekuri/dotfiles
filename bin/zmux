@@ -568,6 +568,8 @@ while true; do
                 zmx_attach_existing "$name"
                 continue
             fi
+        else
+            break
         fi
     done
 done
