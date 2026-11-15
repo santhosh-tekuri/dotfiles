@@ -160,6 +160,7 @@ function ls_sessions() {
 }
 
 function prev() {
+    local windows="$1"
     t=$(echo -n "$windows" | grep -B1 "$name" | awk -F "$tab" 'NR==1 {print $1;exit}')
     if [ "$t" == "$name" ]; then
         t=$(echo -n "$windows" | awk -F "$tab" 'END {print $1}')
@@ -168,6 +169,7 @@ function prev() {
 }
 
 function next() {
+    local windows="$1"
     t=$(echo -n "$windows" | grep -A1 "$name" | awk -F "$tab" 'END {print $1}')
     if [ "$t" == "$name" ]; then
         t=$(echo -n "$windows" | awk -F "$tab" 'NR==1 {print $1;exit}')
@@ -491,10 +493,7 @@ while true; do
             fi
             ;;
         "l")
-            _windows="$windows"
-            windows=$(echo -n "$windows" | sort "-t$tab" -k5nr)
-            last="$(next)"
-            windows="$_windows"
+            last="$(next "$(echo -n "$windows" | sort "-t$tab" -k5nr)")"
             report_status
             zmx_attach_existing "$last"
             ;;
@@ -515,16 +514,16 @@ while true; do
             fi
             ;;
         "p")
-            zmx_attach_existing "$(prev)"
+            zmx_attach_existing "$(prev "$windows")"
             ;;
         "n")
-            zmx_attach_existing "$(next)"
+            zmx_attach_existing "$(next "$windows")"
             ;;
         "P")
-            swap "$(prev)"
+            swap "$(prev "$windows")"
             ;;
         "N")
-            swap "$(next)"
+            swap "$(next "$windows")"
             ;;
         ",")
             if prompt -rep " rename window: " resp; then
