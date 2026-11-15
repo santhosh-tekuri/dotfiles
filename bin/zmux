@@ -564,10 +564,8 @@ while true; do
             fi
             if [ -z "$name" ]; then
                 exit
-            else
-                zmx_attach_existing "$name"
-                continue
             fi
+            zmx_attach_existing "$name"
         else
             break
         fi
