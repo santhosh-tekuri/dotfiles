@@ -222,7 +222,7 @@ function status_line() {
     fi
     if ! echo "$windows" | grep -q "$name"; then
         # about to create window
-        idx=$(echo -n "$windows" | wc -l)
+        idx=$(echo "$windows" | wc -l)
         idx=$((idx+1))
         echo -en $"\t*$idx:$window"
     fi
