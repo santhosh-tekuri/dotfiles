@@ -280,7 +280,7 @@ function render_status() {
             "@")
                 echo -n "$colors_status_line"
                 tput el # erase line
-                tput cup "$(tput lines)" $(($(tput cols)-${#str}))
+                tput cup "$(tput lines)" $(($(tput cols)-${#str}-1))
                 echo -n "$str "
                 ;;
         esac
