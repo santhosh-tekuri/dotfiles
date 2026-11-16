@@ -423,7 +423,6 @@ while true; do
     if [ -z "$windows" ]; then
         exit
     fi
-    # windows=$(echo -n "$windows" | sort "-t$tab" -k4n) # sort by index
 
     render_help
     report_render_status "$(status_line)"
@@ -571,4 +570,3 @@ while true; do
         zmx_attach_existing "$name"
     done
 done
-
