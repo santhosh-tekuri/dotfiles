@@ -374,9 +374,12 @@ case "$1" in
 esac
 
 function cleanup() {
+    local exit_code=$?
     report_detach
     tput cnorm
-    tput clear && tput E3
+    if [ "$exit_code" -eq 0 ]; then
+        tput clear && tput E3
+    fi
 }
 trap 'cleanup' EXIT
 
