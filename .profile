@@ -48,6 +48,7 @@ alias str-quote="jq -R -s ."
 alias str-unquote="jq -r ."
 alias encrypt="openssl enc -aes-256-cbc -salt"
 alias decrypt="openssl enc -aes-256-cbc -d -md md5"
+alias yaml2json="ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))'"
 
 alias get='curl -G'
 alias post='curl -XPOST'
