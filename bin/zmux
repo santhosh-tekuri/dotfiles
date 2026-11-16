@@ -547,28 +547,24 @@ while true; do
             ;;
     esac
 
-    while true; do
-        # handle current window no longer exists
-        if ! zmx ls --short | grep -q "$name"; then
-            idx=$(echo -n "$windows" | awk -F "$tab" -v "name=$name" '$1==name {print NR;exit}')
-            if [ -z "$idx" ]; then
-                # current window is recently created window
-                idx=$(($(echo "$windows" | wc -l)+1))
-            fi
-
-            all=$(zmx_ls)
-            windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session' | sort "-t$tab" -k4n)
-            name=$(echo -n "$windows" | awk -F "$tab" -v "idx=$idx" 'NR==idx {print $1;exit}')
-            if [ -z "$name" ]; then
-                name=$(echo -n "$windows" | awk -F "$tab" 'END {print $1;exit}')
-            fi
-            if [ -z "$name" ]; then
-                exit
-            fi
-            zmx_attach_existing "$name"
-        else
-            break
+    # handle current window no longer exists
+    while ! zmx ls --short | grep -q "$name"; do
+        idx=$(echo -n "$windows" | awk -F "$tab" -v "name=$name" '$1==name {print NR;exit}')
+        if [ -z "$idx" ]; then
+            # current window is recently created window
+            idx=$(($(echo "$windows" | wc -l)+1))
         fi
+
+        all=$(zmx_ls)
+        windows=$(echo -n "$all" | awk -F "$tab" -v "session=$session" '$2 == session' | sort "-t$tab" -k4n)
+        name=$(echo -n "$windows" | awk -F "$tab" -v "idx=$idx" 'NR==idx {print $1;exit}')
+        if [ -z "$name" ]; then
+            name=$(echo -n "$windows" | awk -F "$tab" 'END {print $1;exit}')
+        fi
+        if [ -z "$name" ]; then
+            exit
+        fi
+        zmx_attach_existing "$name"
     done
 done
 
