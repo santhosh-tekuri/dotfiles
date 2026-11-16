@@ -40,10 +40,20 @@ for repo in "${repos[@]}"; do
         git clone --bare "git@github.com:santhosh-tekuri/$repo.git" "$repo"
         cd "$repo"
         git config remote.origin.fetch "+refs/heads/*:refs/heads/*"
+    fi
+
+    log "pushing to codeberg..."
+    if ! git remote get-url --push codeberg >/dev/null 2>&1; then
         git remote add --mirror=push codeberg "git@codeberg.org:santhosh-tekuri/$repo.git"
     fi
-    log "pushing to codeberg..."
     git push codeberg
+
+    log "pushing to tangled..."
+    if ! git remote get-url --push tangled >/dev/null 2>&1; then
+        git remote add --mirror=push tangled "git@tangled.org:santhosh-tekuri.tngl.sh/$repo"
+    fi
+    git push tangled
+
     cd - >/dev/null
     echo
 done
