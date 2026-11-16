@@ -100,10 +100,10 @@ function expand-alias() {
     [[ ! $BUFFER =~ "^\\\\.*" ]] && zle _expand_alias # expand only if not starts with '\'
     zle self-insert
 }
-zle -N expand-alias
-bindkey -M main ' ' expand-alias
-bindkey '^ '   magic-space          # control-space to bypass completion
-bindkey -M isearch " "  magic-space # normal space during searches
+# zle -N expand-alias
+# bindkey -M main ' ' expand-alias
+# bindkey '^ '   magic-space          # control-space to bypass completion
+# bindkey -M isearch " "  magic-space # normal space during searches
 
 # tool integrations --
 if command -v fzf >/dev/null 2>&1; then
