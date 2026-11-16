@@ -376,6 +376,7 @@ esac
 function cleanup() {
     report_detach
     tput cnorm
+    tput clear && tput E3
 }
 trap 'cleanup' EXIT
 
