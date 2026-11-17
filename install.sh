@@ -63,11 +63,19 @@ EOF
 fi
 
 # install zsh plugins
-mkdir -p ~/.local/share/zsh
+mkdir -p ~/.local/share/zsh/completions
 cd ~/.local/share/zsh
 gitclone https://github.com/zdharma-continuum/fast-syntax-highlighting.git
 gitclone https://github.com/zsh-users/zsh-autosuggestions.git
 gitclone https://github.com/zsh-users/zsh-history-substring-search.git
 gitclone https://github.com/Aloxaf/fzf-tab.git
+
+if command -v kubectl >/dev/null 2>&1; then
+    kubectl completion zsh > ~/.local/share/zsh/completions/_kubectl
+fi
+if command -v docker >/dev/null 2>&1; then
+    docker completion zsh > ~/.local/share/zsh/completions/_docker
+fi
+
 cd - > /dev/null
 

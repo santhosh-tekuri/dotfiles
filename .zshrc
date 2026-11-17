@@ -15,7 +15,7 @@ add-zsh-hook chpwd osc7
 osc7
 
 # add custom completion scripts
-fpath=(~/.zsh/completion $fpath)
+fpath=(~/.local/share/zsh/completions $fpath)
 
 # enable command completions
 autoload -U compinit
@@ -111,13 +111,6 @@ if command -v fzf >/dev/null 2>&1; then
     compdef _gnu_generic fzf
     source ~/.local/share/zsh/fzf-tab/fzf-tab.plugin.zsh
     zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept
-fi
-
-if command -v kubectl >/dev/null 2>&1; then
-    source <(kubectl completion $(basename zsh))
-fi
-if command -v docker >/dev/null 2>&1; then
-    source <(docker completion $(basename zsh))
 fi
 
 # misc --
