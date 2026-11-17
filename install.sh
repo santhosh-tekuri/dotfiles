@@ -33,7 +33,7 @@ function gitclone() {
         echo pulling "$name"
         cd "$name" && git pull && cd - > /dev/null
     else
-        echo fetching "$name"
+        echo cloning "$name"
         git clone "$url"
     fi
 }
